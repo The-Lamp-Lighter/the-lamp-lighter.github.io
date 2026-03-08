@@ -127,6 +127,61 @@
             margin: 0;
             line-height: 1.4;
         }
+
+            /* Efeito Konsole Garuda: Escuro, Blur Forte e Transparência */
+        #cmd {
+            background: rgba(10, 10, 15, 0.85); /* Levemente mais escuro */
+            backdrop-filter: blur(20px) saturate(150%); /* Blur forte estilo Garuda */
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            font-family: 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+            width: 95%;
+            max-width: 900px;
+            height: 500px;
+            display: none; /* Escondido por padrão */
+            flex-direction: column;
+            padding: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Container de saída de texto */
+        #terminal-output {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--main-color) transparent;
+        }
+
+        /* Linha de entrada (Prompt) */
+        .terminal-line {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            color: var(--main-color);
+        }
+
+        .prompt-symbol {
+            color: #ff00ff; /* Cor Neon Rosa estilo Garuda */
+            font-weight: bold;
+        }
+
+        #terminal-input {
+            background: transparent;
+            border: none;
+            color: #00ff88;
+            outline: none;
+            flex-grow: 1;
+            font-family: inherit;
+            font-size: 1em;
+        }
+    
+        /* Cores dos comandos no histórico */
+        .cmd-user { color: #00ff88; font-weight: bold; }
+        .cmd-res { color: #ffffff; margin-bottom: 10px; opacity: 0.9; }
+        .cmd-error { color: #ff4b4b; }
+        .cmd-info { color: #50fa7b; } /* Cor de sucesso */
         
     </style>
 </head>
@@ -202,6 +257,18 @@
             <p style="font-size: 0.8em; opacity: 0.7; margin-top: 10px;">
                 Pressione <b>Ctrl + F5</b> para recarregar quando o servidor ligar.
             </p>
+        </div>
+    </div>
+
+    <div id="cmd" class="content-section">
+        <div id="terminal-output">
+            <div class="cmd-res">Welcome to Lunarium Terminal v1.0.0 (Garuda Edition)</div>
+            <div class="cmd-res">Digite 'help' para ver os comandos disponíveis.</div>
+        </div>
+        <div class="terminal-line">
+            <span class="prompt-symbol">➜</span>
+            <span style="color: #00d4ff;">~/lab</span>
+            <input type="text" id="terminal-input" autofocus spellcheck="false">
         </div>
     </div>
         
@@ -287,6 +354,103 @@
             sendMessage();
         }
     });
+
+
+        // --- LÓGICA DO TERMINAL ---
+const terminalInput = document.getElementById('terminal-input');
+const terminalOutput = document.getElementById('terminal-output');
+
+let commandHistory = [];
+let historyIndex = -1;
+
+// Lista de Comandos Criados (Você pode criar quantos quiser aqui)
+const commands = {
+    'help': () => "Comandos: help, clear, date, lua, echo [texto], color [cor], about",
+    'about': () => "Lunarium Terminal - Criado para simular o ambiente Garuda Linux no Lab.",
+    'date': () => new Date().toLocaleString(),
+    'clear': () => {
+        terminalOutput.innerHTML = "";
+        return "";
+    },
+    'lua': () => "A Lua está no servidor: " + SERVER_URL,
+    'echo': (args) => args.join(" "),
+    'color': (args) => {
+        if(!args[0]) return "Uso: color [cor]";
+        document.documentElement.style.setProperty('--main-color', args[0]);
+        return "Cor alterada para " + args[0];
+    }
+};
+
+terminalInput.addEventListener('keydown', function(e) {
+    if (e.key === "Enter") {
+        const fullCmd = this.value.trim();
+        if (fullCmd === "") return;
+
+        // Adiciona ao histórico
+        commandHistory.push(fullCmd);
+        historyIndex = commandHistory.length;
+
+        // Processa comando
+        const parts = fullCmd.split(" ");
+        const cmd = parts[0].toLowerCase();
+        const args = parts.slice(1);
+
+        // Exibe no terminal o que foi digitado
+        printToTerminal(`➜ ~/lab ${fullCmd}`, 'cmd-user');
+
+        if (commands[cmd]) {
+            const result = commands[cmd](args);
+            if (result) printToTerminal(result, 'cmd-res');
+        } else {
+            printToTerminal(`Comando não encontrado: ${cmd}`, 'cmd-error');
+        }
+
+        this.value = "";
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }
+
+    // Navegar no histórico (Seta para cima)
+    if (e.key === "ArrowUp") {
+        if (historyIndex > 0) {
+            historyIndex--;
+            this.value = commandHistory[historyIndex];
+        }
+        e.preventDefault();
+    }
+
+    // Navegar no histórico (Seta para baixo)
+    if (e.key === "ArrowDown") {
+        if (historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            this.value = commandHistory[historyIndex];
+        } else {
+            historyIndex = commandHistory.length;
+            this.value = "";
+        }
+    }
+    
+    // Auto-completar (Seta para a direita ou Tab)
+    if (e.key === "ArrowRight" || e.key === "Tab") {
+        const current = this.value.toLowerCase();
+        const match = Object.keys(commands).find(c => c.startsWith(current));
+        if (match) {
+            this.value = match;
+        }
+        e.preventDefault();
+    }
+});
+
+function printToTerminal(text, className) {
+    const div = document.createElement('div');
+    div.className = className;
+    div.innerText = text;
+    terminalOutput.appendChild(div);
+}
+
+// Focar no input automaticamente ao clicar no terminal
+document.getElementById('cmd').addEventListener('click', () => {
+    terminalInput.focus();
+});
 </script>
 
 </body>
