@@ -420,10 +420,13 @@ const commands = {
         }
     },
 
-    'v_all': (args) => {
-        return `${versoes}`;
+    'v_all': () => {
+        // Transformamos o objeto versoes em um texto legível
+        return Object.entries(versoes)
+            .map(([key, value]) => `${key.toUpperCase()}: ${value}`)
+            .join("\n");
         
-    }
+    },
 
     // Comando para ver o Hexadecimal atual
     'hex': () => {
