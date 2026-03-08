@@ -388,7 +388,8 @@ const commands = {
         -v: v somado com algo mostra a versão atual (Digite 'v help' para ver todas as opções de comando com 'v')
         -v_all: mostra a versão de tudo
         -v_help: mostra todos os comandos com 'v'
-        -hex: mostra o código hexadecimal do tema (cor) atual do sistema e a cor padrão do sistema`,
+        -hex: mostra o código hexadecimal do tema (cor) atual do sistema e a cor padrão do sistema
+        -download_dv: baixa a ferramenta de versionamento chamada "Diversion" muito utilizada na unreal (mas também servindo para qualquer outra pasta ou conjunto de arquivos)`,
 
     'v_help': () => `Comandos com 'v' disponíveis:
                     -v site
@@ -436,6 +437,12 @@ const commands = {
         if (!corAtual) corAtual = corPadrao;
 
         return `Hexadecimal atual: ${corAtual}\nHexadecimal padrão: ${corPadrao}`;
+    },
+
+    'download_dv': () => {
+        const url = "dv-binaries.s3.us-east-2.amazonaws.com";
+        window.open(url, '_balnk');
+        return `Iniciando download em ${url}`,     
     },
 };
 
