@@ -90,41 +90,42 @@
         }
         /* Aviso de Offline */
        /* Ajuste do container de offline para alinhar itens lado a lado */
+        /* Container principal do aviso offline */
         #offline-screen {
-            display: none; /* Mantém escondido por padrão */
+            display: none; /* O JavaScript mudará para 'flex' quando necessário */
             background: var(--bg-card);
             padding: 20px;
             border-radius: 15px;
             backdrop-filter: blur(10px);
     
-            /* Mágica do alinhamento */
-            display: none; /* O JS vai mudar para 'flex' quando necessário */
-            align-items: center; /* Centraliza verticalmente a imagem com o texto */
-            gap: 20px; /* Cria o espacinho entre a imagem e o texto */
-            text-align: left; /* Justifica o texto para a esquerda */
+            /* Configuração para ficar lado a lado */
+            align-items: center; 
+            justify-content: flex-start;
+            gap: 20px; /* O espacinho que você pediu entre imagem e texto */
         }
 
+        /* Tamanho da imagem */
         #offline-screen img {
-            width: 120px; /* Ajuste o tamanho conforme preferir */
+            width: 120px; /* Ajuste conforme o tamanho da sua imagem Yui */
             height: auto;
-            border-radius: 10px; /* Deixa as bordas da imagem levemente arredondadas */
+            border-radius: 10px;
         }
 
-        /* Container para agrupar as frases ao lado da imagem */
+        /* Estilo do bloco de texto */
         .offline-text {
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            text-align: left; /* Justificado para a esquerda */
         }
 
-        #offline-screen h2 {
-            margin: 0 0 5px 0; /* Remove margens excessivas */
+        .offline-text h2 {
+            margin: 0 0 5px 0;
             color: #ff4b4b;
         }
 
-        #offline-screen p {
+        .offline-text p {
             margin: 0;
-            color: white;
+            line-height: 1.4;
         }
         
     </style>
