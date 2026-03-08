@@ -369,6 +369,12 @@ const terminalOutput = document.getElementById('terminal-output');
 let commandHistory = [];
 let historyIndex = -1;
 
+const versoes = {
+      'site': 'v1.2.0',
+      'terminal': 'v1.1.0',
+      'lua_ia': 'v1.4.0'
+    
+};
 // Lista de Comandos Criados (Você pode criar quantos quiser aqui)
 const commands = {
     'help': () => `Comandos disponíveis: 
@@ -378,7 +384,9 @@ const commands = {
         -lua: Veja infos sobre a Lua
         -echo [digite_um_texto]: É um print de texto simples
         -color [digite_uma_cor]: Altera a cor do sistema (site), (pode ser usado código hexadecimal)
-        -about: informações do sistema`,
+        -about: informações do sistema
+        -v: v somado com algo (como: 'v site' ou 'v terminal' etc) mostra a versão atual
+        -hex: mostra o código hexadecimal do tema (cor) atual do sistema e a cor padrão do sistema`,
     
     'about': () => "Lunarium's Lab Terminal: O site foi criado para testes e diversão, está sempre em desenvolvimento com coisas novas e novos testes de funcionalidades e mecânicas, Autor: Lunarium (github: The-Lamp-Lighter)",
     'date': () => new Date().toLocaleString(),
@@ -390,12 +398,30 @@ const commands = {
     'echo': (args) => args.join(" "),
     'color': (args) => {
         if(!args[0]) return "Uso: trocar a cor do sistema (site) para uma cor desejada color [cor](use 'Color default' para voltar para a cor padrão)";
-        if(args === "default") {
-            let novaCor = args[0].toLowerCase() === "default" ? "#00ff88" : args[0];
-        }
         document.documentElement.style.setProperty('--main-color', args[0]);
         return "Cor do sistema alterada para " + args[0];
     }
+    // Comando de Versão Restrito
+    'v': (args) => {
+        const alvo = args[0] ? args[0].toLowerCase() : "";
+        
+        // Verifica se o que o usuário digitou existe no nosso objeto de versões
+        if (versoes[alvo]) {
+            return `Versão do ${alvo.toUpperCase()}: ${versoes[alvo]}`;
+        } else {
+            return `Erro: Opção inválida. Use: v site, v terminal ou v lua_ia`;
+        }
+    },
+
+    // Comando para ver o Hexadecimal atual
+    'hex': () => {
+        const corPadrao = "#00ff88";
+        // Pega a cor atual do CSS. Se estiver vazia, assume a padrão.
+        let corAtual = document.documentElement.style.getPropertyValue('--main-color').trim();
+        if (!corAtual) corAtual = corPadrao;
+
+        return `Hexadecimal atual: ${corAtual}\nHexadecimal padrão: ${corPadrao}`;
+    },
 };
 
 terminalInput.addEventListener('keydown', function(e) {
