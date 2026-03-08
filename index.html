@@ -385,8 +385,15 @@ const commands = {
         -echo [digite_um_texto]: É um print de texto simples
         -color [digite_uma_cor]: Altera a cor do sistema (site), (pode ser usado código hexadecimal)
         -about: informações do sistema
-        -v: v somado com algo (como: 'v site' ou 'v terminal' etc) mostra a versão atual
+        -v: v somado com algo mostra a versão atual (Digite 'v help' para ver todas as opções de comando com 'v')
+        -v_all: mostra a versão de tudo
+        -v_help: mostra todos os comandos com 'v'
         -hex: mostra o código hexadecimal do tema (cor) atual do sistema e a cor padrão do sistema`,
+
+    'v_help': () => `Comandos com 'v' disponíveis:
+        -v site
+        -v terminal
+        -v lua_ia`,
     
     'about': () => "Lunarium's Lab Terminal: O site foi criado para testes e diversão, está sempre em desenvolvimento com coisas novas e novos testes de funcionalidades e mecânicas, Autor: Lunarium (github: The-Lamp-Lighter)",
     'date': () => new Date().toLocaleString(),
@@ -409,9 +416,14 @@ const commands = {
         if (versoes[alvo]) {
             return `Versão do ${alvo.toUpperCase()}: ${versoes[alvo]}`;
         } else {
-            return `Erro: Opção inválida. Use: v site, v terminal ou v lua_ia`;
+            return `Erro: Opção inválida. Use: v_help para ver os comandos com 'v'`;
         }
     },
+
+    'v_all': (args) => {
+        return `${versoes}`,
+        
+    }
 
     // Comando para ver o Hexadecimal atual
     'hex': () => {
