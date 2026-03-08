@@ -182,6 +182,35 @@
         .cmd-res { color: #ffffff; margin-bottom: 10px; opacity: 0.9; }
         .cmd-error { color: #ff4b4b; }
         .cmd-info { color: #50fa7b; } /* Cor de sucesso */
+
+                /* Customização do Code Lab Editor */
+        .CodeMirror {
+            height: 500px; /* Define uma altura fixa para não sumir */
+            border: 1px solid rgba(0, 255, 136, 0.2); /* Borda sutil na cor principal */
+            border-radius: 8px;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 15px;
+            background: rgba(10, 10, 15, 0.9) !important; /* Fundo escuro igual ao terminal */
+            backdrop-filter: blur(10px);
+        }
+
+        .editor-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        /* Deixa o seletor de linguagem com a cara do seu site */
+        #language-select {
+            background: #1a1a1a;
+            color: var(--main-color);
+            border: 1px solid var(--main-color);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            outline: none;
+        }
         
     </style>
 </head>
