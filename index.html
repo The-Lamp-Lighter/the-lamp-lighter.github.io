@@ -3,55 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Projetos Python</title>
+    <title>Lighter's Lab</title>
     <style>
+        :root { --main-color: #00ff88; --bg-card: rgba(0, 0, 0, 0.8); }
         body {
-            /* Substituiremos o link abaixo pela sua imagem depois! */
-            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+            background: #121212 url('SUA_IMAGEM_AQUI') no-repeat center center fixed;
             background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            font-family: sans-serif;
+            display: flex; flex-direction: column; align-items: center; padding: 20px;
         }
-        .card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px); /* Efeito de vidro embaçado */
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 500px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        .nav-bar { margin-bottom: 20px; }
+        .nav-btn {
+            background: transparent; border: 1px solid var(--main-color);
+            color: var(--main-color); padding: 10px 20px; cursor: pointer; margin: 5px;
+            border-radius: 5px; transition: 0.3s;
         }
-        h1 { color: #00ff88; }
-        .btn {
-            display: inline-block;
-            background: #00ff88;
-            color: #121212;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            margin-top: 20px;
-            transition: 0.3s;
+        .nav-btn:hover { background: var(--main-color); color: black; }
+
+        .content-section {
+            display: none; /* Esconde as seções inicialmente */
+            background: var(--bg-card); padding: 30px; border-radius: 15px;
+            width: 90%; max-width: 600px; backdrop-filter: blur(10px);
         }
-        .btn:hover { background: #00cc6e; transform: scale(1.05); }
+        .active { display: block; } /* Mostra a seção ativa */
+
+        .project-card {
+            border-left: 4px solid var(--main-color);
+            background: rgba(255,255,255,0.05);
+            padding: 15px; margin: 10px 0; border-radius: 0 10px 10px 0;
+        }
+        .download-btn {
+            display: inline-block; background: var(--main-color);
+            color: black; padding: 5px 15px; text-decoration: none;
+            border-radius: 5px; font-weight: bold; font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>the-lamp-lighter</h1>
-        <p>Aprendiz de linguagens</p>
-        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.2); margin: 20px 0;">
-        <h3>Meu espaço</h3>
-        <p>Notificador de Água: Um script simples para manter a saúde em dia enquanto programa.</p>
-        <a href="#" class="btn">Ver no GitHub</a>
+
+    <h1>Lighter's Lab 🦅</h1>
+
+    <div class="nav-bar">
+        <button class="nav-btn" onclick="openTab('home')">Início</button>
+        <button class="nav-btn" onclick="openTab('scripts')">Scripts (.py)</button>
+        <button class="nav-btn" onclick="openTab('apps')">Apps (.exe)</button>
     </div>
+
+    <div id="home" class="content-section active">
+        <h2>Bem-vindo!</h2>
+        <p>Aqui você encontra meus projetos desenvolvidos no Garuda Linux.</p>
+    </div>
+
+    <div id="scripts" class="content-section">
+        <h2>Scripts Python</h2>
+        <div class="project-card">
+            <h3>🔔 Notificador de Água</h3>
+            <p>Um lembrete desktop simples usando Plyer.</p>
+            <a href="scripts/notificador.py" class="download-btn" download>Baixar .py</a>
+        </div>
+    </div>
+
+    <div id="apps" class="content-section">
+        <h2>Programas Prontos</h2>
+        <div class="project-card">
+            <h3>📦 Notificador (Windows EXE)</h3>
+            <p>Versão compilada para quem não tem Python instalado.</p>
+            <a href="downloads/notificador.exe" class="download-btn" download>Baixar Executável</a>
+        </div>
+    </div>
+
+    <script>
+        function openTab(tabName) {
+            var i;
+            var x = document.getElementsByClassName("content-section");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";  
+            }
+            document.getElementById(tabName).style.display = "block";  
+        }
+    </script>
+
 </body>
 </html>
