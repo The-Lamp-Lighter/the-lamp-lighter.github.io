@@ -45,6 +45,59 @@
             color: black; padding: 5px 15px; text-decoration: none;
             border-radius: 5px; font-weight: bold; font-size: 0.9em;
         }
+
+            /* Estilo das bolinhas de chat */
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .message {
+            max-width: 80%;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+        .user-msg {
+            align-self: flex-end;
+            background: #005c4b; /* Verde WhatsApp */
+            color: white;
+        }
+        .ia-msg {
+            align-self: flex-start;
+            background: #202c33; /* Cinza WhatsApp */
+            color: white;
+        }
+        /* Estilo do campo de texto */
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+        input#chat-input {
+            flex: 1;
+            background: #2a3942;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+        }
+        /* Aviso de Offline */
+        #offline-screen {
+            text-align: center;
+            display: none; /* Escondido por padrão */
+        }
+        #offline-screen img {
+            width: 150px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+        
     </style>
 </head>
 <body>
