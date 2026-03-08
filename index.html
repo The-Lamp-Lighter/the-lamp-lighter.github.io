@@ -165,48 +165,81 @@
 </div>
 
     <script>
-        function openTab(tabName) {
-            var i;
-            var x = document.getElementsByClassName("content-section");
-            for (i = 0; i < x.length; i++) {
-                x[i].style.display = "none";  
-            }
-            document.getElementById(tabName).style.display = "block";  
+    // Configuração do Link do seu PC Velho
+    const SERVER_URL = "https://subtle-joanie-subaxially.ngrok-free.dev"; 
+
+    function openTab(tabName) {
+        var i;
+        var x = document.getElementsByClassName("content-section");
+        for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";  
         }
-                // Substitua pelo IP que o seu PC velho terá no futuro
-        const SERVER_URL = "https://subtle-joanie-subaxially.ngrok-free.dev"; 
-
-        function checkServerStatus() {
-            const onlineChat = document.getElementById('online-chat');
-            const offlineScreen = document.getElementById('offline-screen');
-
-            // Tenta conectar ao servidor da IA
-            fetch(SERVER_URL + "/ping")
-                .then(() => {
-                    onlineChat.style.display = "block";
-                    offlineScreen.style.display = "none";
-                })
-                .catch(() => {
-                    onlineChat.style.display = "none";
-                    offlineScreen.style.display = "block";
-                });
+        document.getElementById(tabName).style.display = "block";
+        
+        // Se abrir a aba da IA, verifica se o PC está ligado
+        if(tabName === 'ia') {
+            checkServerStatus();
         }
+    }
 
-        // Chamar a verificação sempre que abrir a aba da IA
-        // Atualize sua função openTab existente para incluir isso:
-        function openTab(tabName) {
-            var i;
-            var x = document.getElementsByClassName("content-section");
-            for (i = 0; i < x.length; i++) {
-                x[i].style.display = "none";  
-            }
-            document.getElementById(tabName).style.display = "block";
-    
-            if(tabName === 'ia-aba') {
-                checkServerStatus();
-            }
-        }  
-    </script>
+    function checkServerStatus() {
+        const onlineChat = document.getElementById('online-chat');
+        const offlineScreen = document.getElementById('offline-screen');
+
+        // Tenta conectar ao servidor da IA (usando o header para pular o aviso do ngrok)
+        fetch(SERVER_URL + "/ping", {
+            headers: { "ngrok-skip-browser-warning": "true" }
+        })
+        .then(() => {
+            onlineChat.style.display = "block";
+            offlineScreen.style.display = "none";
+        })
+        .catch(() => {
+            onlineChat.style.display = "none";
+            offlineScreen.style.display = "block";
+        });
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('chat-input');
+        const container = document.getElementById('chat-container');
+        const msg = input.value;
+
+        if(!msg) return;
+
+        // 1. Mostra a mensagem do usuário na tela (Estilo WhatsApp)
+        container.innerHTML += `<div class="message user-msg">${msg}</div>`;
+        input.value = ""; // Limpa o campo
+        container.scrollTop = container.scrollHeight; // Rola para o fim
+
+        // 2. Envia para o seu PC velho
+        fetch(SERVER_URL + "/chat", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "ngrok-skip-browser-warning": "true" // Pula a tela de aviso do ngrok
+            },
+            body: JSON.stringify({ msg: msg })
+        })
+        .then(res => res.json())
+        .then(data => {
+            // 3. Mostra a resposta da Lua
+            container.innerHTML += `<div class="message ia-msg">${data.resposta}</div>`;
+            container.scrollTop = container.scrollHeight;
+        })
+        .catch(err => {
+            console.error("Erro ao falar com a Lua:", err);
+            container.innerHTML += `<div class="message ia-msg" style="background:#ff4b4b">Erro: Não consegui falar com o servidor.</div>`;
+        });
+    }
+
+    // Permite enviar a mensagem apertando ENTER
+    document.getElementById("chat-input").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    });
+</script>
 
 </body>
 </html>
