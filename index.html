@@ -7,11 +7,16 @@
     <style>
         :root { --main-color: #00ff88; --bg-card: rgba(0, 0, 0, 0.8); }
         body {
-            background: #121212 url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
-            font-family: sans-serif;
-            display: flex; flex-direction: column; align-items: center; padding: 20px;
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;          /* Faz a imagem cobrir tudo */
+            background-position: center;     /* Centraliza a imagem */
+            background-attachment: fixed;    /* A imagem não rola com a página */
+            background-repeat: no-repeat;
+            margin: 0;
+            min-height: 100vh;               /* Força o fundo a ter no mínimo a altura da tela */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .nav-bar { margin-bottom: 20px; }
         .nav-btn {
