@@ -172,6 +172,39 @@
             }
             document.getElementById(tabName).style.display = "block";  
         }
+                // Substitua pelo IP que o seu PC velho terá no futuro
+        const SERVER_URL = "http://SEU-IP-AQUI:5000"; 
+
+        function checkServerStatus() {
+            const onlineChat = document.getElementById('online-chat');
+            const offlineScreen = document.getElementById('offline-screen');
+
+            // Tenta conectar ao servidor da IA
+            fetch(SERVER_URL + "/ping")
+                .then(() => {
+                    onlineChat.style.display = "block";
+                    offlineScreen.style.display = "none";
+                })
+                .catch(() => {
+                    onlineChat.style.display = "none";
+                    offlineScreen.style.display = "block";
+                });
+        }
+
+        // Chamar a verificação sempre que abrir a aba da IA
+        // Atualize sua função openTab existente para incluir isso:
+        function openTab(tabName) {
+            var i;
+            var x = document.getElementsByClassName("content-section");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";  
+            }
+            document.getElementById(tabName).style.display = "block";
+    
+            if(tabName === 'ia-aba') {
+                checkServerStatus();
+            }
+        }  
     </script>
 
 </body>
