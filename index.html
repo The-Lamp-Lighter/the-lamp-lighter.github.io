@@ -390,7 +390,7 @@ const commands = {
     'echo': (args) => args.join(" "),
     'color': (args) => {
         if(!args[0]) return "Uso: trocar a cor do sistema (site) para uma cor desejada color [cor](use 'Color default' para voltar para a cor padrão)";
-        let color = args[0].toLowerCase() === "default" ? "#00ff88" : args[0];
+        let corFinal = args[0].toLowerCase() === "default" ? "#00ff88" : args[0];
         document.documentElement.style.setProperty('--main-color', args[0]);
         return "Cor do sistema alterada para " + args[0];
     }
