@@ -185,13 +185,17 @@
 
                 /* Customização do Code Lab Editor */
         .CodeMirror {
-            height: 500px; /* Define uma altura fixa para não sumir */
+            height: 700px;
+            widith: 95%;/* Define uma altura fixa para não sumir */
             border: 1px solid rgba(0, 255, 136, 0.2); /* Borda sutil na cor principal */
             border-radius: 8px;
             font-family: 'Fira Code', 'Cascadia Code', monospace;
             font-size: 15px;
-            background: rgba(10, 10, 15, 0.9) !important; /* Fundo escuro igual ao terminal */
-            backdrop-filter: blur(10px);
+            font-variant-ligatures: normal;
+            line-height: 1.6; /* Dá mais espaço entre as linhas */
+            padding: 10px;
+            background: rgba(10, 10, 15, 0.3) !important; /* Fundo escuro igual ao terminal */
+            backdrop-filter: blur(25px) saturate(160%);
         }
 
         .editor-controls {
@@ -615,7 +619,7 @@ function openTab(tabName) {
     } else if (tabName === 'editor') {
         target.style.display = "block";
         // IMPORTANTE: O CodeMirror precisa de um "refresh" quando a aba abre
-        setTimeout(() => editor.refresh(), 10);
+        setTimeout(() => editor.refresh(), 100);
     } else {
         target.style.display = "block";
     }
