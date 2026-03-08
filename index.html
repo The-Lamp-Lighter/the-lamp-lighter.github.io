@@ -278,15 +278,22 @@
     // Configuração do Link do seu PC Velho
     const SERVER_URL = "https://subtle-joanie-subaxially.ngrok-free.dev"; 
 
-    function openTab(tabName) {
+   function openTab(tabName) {
         var i;
         var x = document.getElementsByClassName("content-section");
         for (i = 0; i < x.length; i++) {
             x[i].style.display = "none";  
         }
-        document.getElementById(tabName).style.display = "block";
-        
-        // Se abrir a aba da IA, verifica se o PC está ligado
+
+        const target = document.getElementById(tabName);
+        // Se for o terminal, usa FLEX, se não, usa BLOCK
+        if (tabName === 'cmd') {
+              target.style.display = "flex";
+            setTimeout(() => document.getElementById('terminal-input').focus(), 50);
+        } else {
+            target.style.display = "block";
+        }
+    
         if(tabName === 'ia') {
             checkServerStatus();
         }
