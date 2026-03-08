@@ -1,4 +1,4 @@
-ka<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
@@ -213,29 +213,34 @@ ka<!DOCTYPE html>
 
         if(!msg) return;
 
-        // 1. Mostra a mensagem do usuário na tela (Estilo WhatsApp)
+        // 1. Mostra a mensagem do usuário
         container.innerHTML += `<div class="message user-msg">${msg}</div>`;
-        input.value = ""; // Limpa o campo
-        container.scrollTop = container.scrollHeight; // Rola para o fim
+        input.value = ""; 
+    
+        // 2. Coloca um aviso temporário (para você saber que o PC está trabalhando)
+        const tempId = "temp-" + Date.now();
+        container.innerHTML += `<div id="${tempId}" class="message ia-msg" style="opacity: 0.5;">Lua está processando...</div>`;
+        container.scrollTop = container.scrollHeight;
 
-        // 2. Envia para o seu PC velho
+        // 3. Envia para o servidor
         fetch(SERVER_URL + "/chat", {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
-                "ngrok-skip-browser-warning": "true" // Pula a tela de aviso do ngrok
-            },
+                "ngrok-skip-browser-warning": "true" 
+             },
             body: JSON.stringify({ msg: msg })
         })
         .then(res => res.json())
         .then(data => {
-            // 3. Mostra a resposta da Lua
+            // REMOVE o aviso de processando e coloca a resposta real que vem do Python
+            document.getElementById(tempId).remove();
             container.innerHTML += `<div class="message ia-msg">${data.resposta}</div>`;
             container.scrollTop = container.scrollHeight;
         })
         .catch(err => {
-            console.error("Erro ao falar com a Lua:", err);
-            container.innerHTML += `<div class="message ia-msg" style="background:#ff4b4b">Erro: Não consegui falar com o servidor.</div>`;
+            document.getElementById(tempId).innerHTML = "Erro: Servidor não respondeu.";
+            console.error(err);
         });
     }
 
