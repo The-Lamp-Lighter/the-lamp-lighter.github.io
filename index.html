@@ -263,12 +263,12 @@
         
     <div id="cmd" class="content-section">
         <div id="terminal-output">
-            <div class="cmd-res">Welcome to Lunarium Terminal v1.0.0 (Garuda Edition)</div>
+            <div class="cmd-res">Welcome to Lunarium's Lab Terminal v1.0.1</div>
             <div class="cmd-res">Digite 'help' para ver os comandos disponíveis.</div>
         </div>
         <div class="terminal-line">
-            <span class="prompt-symbol">➜</span>
-            <span style="color: #00d4ff;">~/lab</span>
+            <span class="prompt-symbol">⮑</span>
+            <span style="color: #00d4ff;">Lunarium's Lab</span>
             <input type="text" id="terminal-input" autofocus spellcheck="false">
         </div>
     </div>
@@ -371,8 +371,15 @@ let historyIndex = -1;
 
 // Lista de Comandos Criados (Você pode criar quantos quiser aqui)
 const commands = {
-    'help': () => "Comandos: help, clear, date, lua, echo [texto], color [cor], about",
-    'about': () => "Lunarium Terminal - Criado para simular o ambiente Garuda Linux no Lab.",
+    'help': () => "Comandos: 
+        "help: Veja os comandos existentes
+        "clear: Limpe o terminal
+        "date: Veja a data de hoje
+        "lua: Veja infos sobre a Lua
+        "echo [digite_um_texto]: É um print de texto simples
+        "color [digite_uma_cor]: Altera a cor do sistema (site)
+        "about: informações do sistema",
+    'about': () => "Lunarium's Lab Terminal: O site foi criado para testes e diversão, está sempre em desenvolvimento com coisas novas e novos testes de funcionalidades e mecânicas, Autor: Lunarium (github: The-Lamp-Lighter)",
     'date': () => new Date().toLocaleString(),
     'clear': () => {
         terminalOutput.innerHTML = "";
