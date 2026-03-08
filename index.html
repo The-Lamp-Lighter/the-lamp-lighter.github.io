@@ -195,7 +195,7 @@
         <button class="nav-btn" onclick="openTab('apps')">Apps (.exe)</button>
         <button class="nav-btn" onclick="openTab('ia')">Lua IA</button>
         <button class="nav-btn" onclick="openTab('cmd')">Terminal</button>
-        <button class="nav-btn" onclick="openTab('programar')">Programar</button>
+        <button class="nav-btn" onclick="openTab('code')">Programar</button>
     </div>
 
     <div id="home" class="content-section active">
@@ -271,6 +271,23 @@
             <span style="color: #00d4ff;">Lunarium's Lab</span>
             <input type="text" id="terminal-input" autofocus spellcheck="false">
         </div>
+    </div>
+
+    <div id="code" class="content-section">
+        <h2 style="color: var(--main-color);">Code Editor</h2>
+    
+        <div class="editor-controls" style="margin-bottom: 15px; display: flex; gap: 10px;">
+            <select id="language-select" onchange="changeLanguage()" 
+                style="background: #2a3942; color: white; border: 1px solid var(--main-color); padding: 8px; border-radius: 5px;">
+                <option value="python">Python (.py)</option>
+                <option value="javascript">JavaScript (.js)</option>
+                <option value="htmlmixed">HTML (.html)</option>
+                <option value="css">CSS (.css)</option>
+            </select>
+            <button class="nav-btn" style="margin:0" onclick="downloadCode()">Baixar Script</button>
+        </div>
+
+        <textarea id="code-editor"></textarea>
     </div>
 
     <script>
