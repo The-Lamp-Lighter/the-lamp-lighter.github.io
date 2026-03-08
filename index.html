@@ -89,14 +89,42 @@
             color: white;
         }
         /* Aviso de Offline */
+       /* Ajuste do container de offline para alinhar itens lado a lado */
         #offline-screen {
-            text-align: center;
-            display: none; /* Escondido por padrão */
+            display: none; /* Mantém escondido por padrão */
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+    
+            /* Mágica do alinhamento */
+            display: none; /* O JS vai mudar para 'flex' quando necessário */
+            align-items: center; /* Centraliza verticalmente a imagem com o texto */
+            gap: 20px; /* Cria o espacinho entre a imagem e o texto */
+            text-align: left; /* Justifica o texto para a esquerda */
         }
+
         #offline-screen img {
-            width: 150px;
-            border-radius: 50%;
-            margin-bottom: 15px;
+            width: 120px; /* Ajuste o tamanho conforme preferir */
+            height: auto;
+            border-radius: 10px; /* Deixa as bordas da imagem levemente arredondadas */
+        }
+
+        /* Container para agrupar as frases ao lado da imagem */
+        .offline-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        #offline-screen h2 {
+            margin: 0 0 5px 0; /* Remove margens excessivas */
+            color: #ff4b4b;
+        }
+
+        #offline-screen p {
+            margin: 0;
+            color: white;
         }
         
     </style>
@@ -164,11 +192,15 @@
     </div>
 
     <div id="offline-screen">
-        <img src="https://i.pinimg.com/originals/0c/67/5a/0c675a8e1061478d2b7d21b330093444.gif" alt="Offline">
-        <h2 style="color: #ff4b4b;">O Servidor está Offline :(</h2>
-        <p>A Lua está descansando no momento. Volte mais tarde! ✨</p>
-        <p>Se o servidor voltar ele não aparecerá como ativo, então recarregue a página</p>
+        <img src="https://www.google.com/url?sa=t&source=web&rct=j&url=https%3A%2F%2Fwww.hiclipart.com%2Ffree-transparent-background-png-clipart-oabgb&ved=0CBYQjRxqFwoTCLjG0bf4kJMDFQAAAAAdAAAAABAI&opi=89978449" alt="Offline">
+    
+        <div class="offline-text">
+            <h2>O Servidor está Offline :(</h2>
+            <p>A Lua está descansando no momento. Volte mais tarde! ✨</p>
+            <p>A página não se recarrega sozinha então quando estiver online precione Ctrl + F5 na barra de endereço para recarregar a página</p>
+        </div>
     </div>
+        
 </div>
 
     <script>
