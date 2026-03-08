@@ -400,7 +400,7 @@ const commands = {
         if(!args[0]) return "Uso: trocar a cor do sistema (site) para uma cor desejada color [cor](use 'Color default' para voltar para a cor padrão)";
         document.documentElement.style.setProperty('--main-color', args[0]);
         return "Cor do sistema alterada para " + args[0];
-    }
+    },
     // Comando de Versão Restrito
     'v': (args) => {
         const alvo = args[0] ? args[0].toLowerCase() : "";
