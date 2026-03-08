@@ -224,7 +224,7 @@
         <button class="nav-btn" onclick="openTab('apps')">Apps (.exe)</button>
         <button class="nav-btn" onclick="openTab('ia')">Lua IA</button>
         <button class="nav-btn" onclick="openTab('cmd')">Terminal</button>
-        <button class="nav-btn" onclick="openTab('code')">Programar</button>
+        <button class="nav-btn" onclick="openTab('code')">Code Editor</button>
     </div>
 
     <div id="home" class="content-section active">
@@ -444,8 +444,25 @@ const commands = {
         -v_all: mostra a versão de tudo
         -v_help: mostra todos os comandos com 'v'
         -hex: mostra o código hexadecimal do tema (cor) atual do sistema e a cor padrão do sistema
-        -download_dv: baixa a ferramenta de versionamento chamada "Diversion" muito utilizada na unreal (mas também servindo para qualquer outra pasta ou conjunto de arquivos)`,
+        -download_dv: baixa a ferramenta de versionamento chamada "Diversion" muito utilizada na unreal (mas também servindo para qualquer outra pasta ou conjunto de arquivos)
+        -info_scripts: veja as informações sobre a aba "Scripts"
+        -info_apps: Veja as informações sobre a aba "Apps"
+        -info_terminal: Veja as informações sobra a aba "Terminal"
+        -Info_lua_ia: Veja as infos sobre a aba "Lua IA"
+        -info_code_editor: Veja as informações sobre a aba "Code Editor"`,
 
+
+    'info_scripts': () => `A aba scripts é onde eu posto os meus scripts em python, ou até em outras linguagens, estando bons ou não eu os coloco lá para deixar registrado, e se eu perde-los posso baixa-los novamente`,
+    
+    'info_apps': () => `A aba serve para eu postar os "programinhas" que crio, alguns de brincadeira, alguns para uso comum, mas aqui (diferentemente da aba "scripts" eles já estão compilados para uso comum)`,
+    
+    'info_terminal': () => `Uma aba para facilitar a navegação rapida e ajuda dentro do site, eu adicionei por conta de um motivo simples: eu uso linux :D, e quem usa linux sabe que é difícil viver sem o terminal`,
+    
+    'info_lua_ia': () => `Há muito tempo atrás eu tinha o sonho de criar uma IA, e depois de decidir me debruçar sobre os estudos de programação eu consegui ir criando uma aos poucos, chamada Lua, que está neste site, mas ela depende de um notebook velho (que funciona como servidor :D) para poder rodar e pensar, então ela só poderá ser usada caso o "servidor" esteja ativo`,
+    
+    'info_code_editor': () => `Um editor de código via web, para você poder programar (nas linguagens disponívei até o momento) através da web, para que não quer baixar a linguagem no computador, independente do motivo, e também tem a opção da baixar o script, se você quisar baixar o seu código`,
+
+    
     'v_help': () => `Comandos com 'v' disponíveis:
                     -v site
                     -v terminal
