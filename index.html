@@ -290,6 +290,15 @@
         <textarea id="code-editor"></textarea>
     </div>
 
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/xml/xml.min.js"></script>
+
     <script>
     // Configuração do Link do seu PC Velho
     const SERVER_URL = "https://subtle-joanie-subaxially.ngrok-free.dev"; 
@@ -534,6 +543,58 @@ function printToTerminal(text, className) {
 document.getElementById('cmd').addEventListener('click', () => {
     terminalInput.focus();
 });
+
+        // Inicializa o editor com o tema Dracula
+var editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
+    lineNumbers: true,
+    theme: "dracula",
+    mode: "python",
+    indentUnit: 4,
+    matchBrackets: true,
+    autoCloseBrackets: true
+});
+
+// Atualiza o editor quando você troca de aba (necessário para ele carregar o layout)
+function openTab(tabName) {
+    var i;
+    var x = document.getElementsByClassName("content-section");
+    for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";  
+    }
+
+    const target = document.getElementById(tabName);
+    if (tabName === 'cmd') {
+        target.style.display = "flex";
+        setTimeout(() => document.getElementById('terminal-input').focus(), 50);
+    } else if (tabName === 'editor') {
+        target.style.display = "block";
+        // IMPORTANTE: O CodeMirror precisa de um "refresh" quando a aba abre
+        setTimeout(() => editor.refresh(), 10);
+    } else {
+        target.style.display = "block";
+    }
+
+    if(tabName === 'ia') checkServerStatus();
+}
+
+function changeLanguage() {
+    let lang = document.getElementById("language-select").value;
+    editor.setOption("mode", lang);
+};
+
+function downloadCode() {
+    const code = editor.getValue();
+    const lang = document.getElementById("language-select").value;
+    const extensions = { 'python': 'py', 'javascript': 'js', 'htmlmixed': 'html', 'css': 'css' };
+    
+    const blob = new Blob([code], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `script_lunarium.${extensions[lang]}`;
+    a.click();
+    URL.revokeObjectURL(url);
+};
 </script>
 
 </body>
