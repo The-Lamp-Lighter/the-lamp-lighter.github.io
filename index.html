@@ -371,14 +371,14 @@ let historyIndex = -1;
 
 // Lista de Comandos Criados (Você pode criar quantos quiser aqui)
 const commands = {
-    'help': () => "Comandos: 
-        "help: Veja os comandos existentes
-        "clear: Limpe o terminal
-        "date: Veja a data de hoje
-        "lua: Veja infos sobre a Lua
-        "echo [digite_um_texto]: É um print de texto simples
-        "color [digite_uma_cor]: Altera a cor do sistema (site)
-        "about: informações do sistema",
+    'help': () => 'Comandos disponíveis: 
+        -help: Veja os comandos existentes
+        -clear: Limpe o terminal
+        -date: Veja a data de hoje
+        -lua: Veja infos sobre a Lua
+        -echo [digite_um_texto]: É um print de texto simples
+        -color [digite_uma_cor]: Altera a cor do sistema (site)
+        -about: informações do sistema',
     'about': () => "Lunarium's Lab Terminal: O site foi criado para testes e diversão, está sempre em desenvolvimento com coisas novas e novos testes de funcionalidades e mecânicas, Autor: Lunarium (github: The-Lamp-Lighter)",
     'date': () => new Date().toLocaleString(),
     'clear': () => {
@@ -388,9 +388,10 @@ const commands = {
     'lua': () => "A Lua está no servidor: " + SERVER_URL,
     'echo': (args) => args.join(" "),
     'color': (args) => {
-        if(!args[0]) return "Uso: color [cor]";
+        if(!args[0]) return "Uso: trocar a cor do sistema (site) para uma cor desejada color [cor](use 'Color default' para voltar para a cor padrão)";
+        let color = args[0].toLowerCase() === "default" ? "#00ff88" : args[0];
         document.documentElement.style.setProperty('--main-color', args[0]);
-        return "Cor alterada para " + args[0];
+        return "Cor do sistema alterada para " + args[0];
     }
 };
 
