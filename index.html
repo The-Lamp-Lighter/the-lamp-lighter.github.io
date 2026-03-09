@@ -429,9 +429,10 @@ let commandHistory = [];
 let historyIndex = -1;
 
 const versoes = {
-      'site': 'v1.2.0',
-      'terminal': 'v1.1.0',
-      'lua_ia': 'v1.4.0'
+      'site': 'v26.2',
+      'terminal': 'v26.1',
+      'lua_ia': 'v26.4'
+      'code_editor': 'v26.1'
     
 };
 // Lista de Comandos Criados (Você pode criar quantos quiser aqui)
@@ -470,7 +471,8 @@ const commands = {
     'v_help': () => `Comandos com 'v' disponíveis:
                     -v site
                     -v terminal
-                    -v lua_ia`,
+                    -v lua_ia
+                    -v code_editor`,
     
     'about': () => "Lunarium's Lab Terminal: O site foi criado para testes e diversão, está sempre em desenvolvimento com coisas novas e novos testes de funcionalidades e mecânicas, Autor: Lunarium (github: The-Lamp-Lighter)",
     'date': () => new Date().toLocaleString(),
