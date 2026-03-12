@@ -244,6 +244,31 @@
             font-weight: bold;
             margin-right: 8px;
             text-transform: uppercase;
+
+         .news-content {
+             display: flex;
+             gap: 15px;
+             align-items: flex-start;
+        }
+
+         .news-cover {
+             width: 100px;
+             height: 65px;
+             object-fit: cover;
+             border-radius: 5px;
+             border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .news-details {
+             flex: 1;
+         }
+
+        .news-description {
+            display: block;
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.5); /* Mais apagadinha */
+            margin-top: 4px;
+            line-height: 1.3;
         }
 
         @keyframes fadeIn {
