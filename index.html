@@ -391,6 +391,8 @@
         <textarea id="code-editor"></textarea>
     </div>
 
+    
+
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/theme/dracula.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/codemirror.min.js"></script>
@@ -487,6 +489,8 @@
             sendMessage();
         }
     });
+
+        
 
 
         // --- LÓGICA DO TERMINAL ---
@@ -715,6 +719,70 @@ function downloadCode() {
     a.click();
     URL.revokeObjectURL(url);
 };
+
+async function fetchGithubUpdates() {
+    const user = "The-Lamp-Lighter"; 
+    const repo = "the-lamp-lighter.github.io";
+    const container = document.getElementById('news-container');
+
+    const defaultImages = {
+        style: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=200", 
+        script: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=200", 
+        tab: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=200",   
+        generic: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=200" 
+    };
+
+    try {
+        const response = await fetch(`https://api.github.com/repos/${user}/${repo}/commits?per_page=5`);
+        const commits = await response.json();
+        container.innerHTML = "";
+
+        commits.forEach(item => {
+            const date = new Date(item.commit.author.date).toLocaleDateString('pt-BR');
+            let fullMessage = item.commit.message;
+            
+            // 1. EXTRAÇÃO E LIMPEZA DA IMAGEM
+            let coverImg = defaultImages.generic;
+            const imgMatch = fullMessage.match(/img:([^\s\n]+)/); // Pega o link
+            
+            if (imgMatch) {
+                coverImg = imgMatch[1];
+                // Remove o "img:link" de QUALQUER lugar da mensagem para não poluir o texto
+                fullMessage = fullMessage.replace(imgMatch[0], ""); 
+            } else {
+                const msgLower = fullMessage.toLowerCase();
+                if (msgLower.includes("style") || msgLower.includes("css")) coverImg = defaultImages.style;
+                else if (msgLower.includes("script") || msgLower.includes("code")) coverImg = defaultImages.script;
+                else if (msgLower.includes("aba") || msgLower.includes("tab")) coverImg = defaultImages.tab;
+            }
+
+            // 2. SEPARAÇÃO DE TÍTULO E DESCRIÇÃO
+            // O GitHub Web separa título e descrição por dois "enters" (\n\n)
+            const parts = fullMessage.trim().split("\n");
+            const title = parts[0]; 
+            // Pega o resto, remove linhas vazias e junta tudo
+            const description = parts.slice(1).filter(line => line.trim() !== "").join(" ") 
+                                || "Atualização de rotina no repositório.";
+
+            const newsHTML = `
+                <div class="news-item">
+                    <span class="news-date">${date}</span>
+                    <div class="news-content">
+                        <img src="${coverImg}" class="news-cover" onerror="this.src='${defaultImages.generic}'">
+                        <div class="news-details">
+                            <span class="news-tag">Log</span>
+                            <strong style="display:block; color:var(--main-color); margin-top:5px;">${title}</strong>
+                            <span class="news-description">${description}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += newsHTML;
+        });
+    } catch (error) {
+        container.innerHTML = "<p style='opacity:0.5;'>Houve um erro ao conectar com o GitHub.</p>";
+    }
+}
 </script>
 
 </body>
