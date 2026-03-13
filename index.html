@@ -312,6 +312,30 @@
             to { opacity: 1; transform: translateY(0); }
             
         }
+
+        #news-container {
+            overflow: hidden;
+            max-height: 1000px; /* Um valor alto para quando estiver aberto */
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+            opacity: 1;
+        }
+
+        /* Quando escondido */
+        #news-container.collapsed {
+            max-height: 0;
+            opacity: 0;
+            pointer-events: none; /* Evita clicar em links invisíveis */
+        }
+
+        /* Animação da Seta */
+        #news-arrow {
+            display: inline-block;
+            transition: transform 0.4s ease;
+        }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
         
     </style>
 </head>
@@ -326,11 +350,10 @@
         <button class="nav-btn" onclick="openTab('ia')">Lua IA</button>
         <button class="nav-btn" onclick="openTab('cmd')">Terminal</button>
         <button class="nav-btn" onclick="openTab('code')">Code Editor</button>
-    </div>
-
-     <button id="toggle-menu" onclick="toggleMenu()">
+        <button id="toggle-menu" onclick="toggleMenu()">
             <span id="arrow-icon">▲</span>
         </button>
+    </div>
     
     <div id="home" class="content-section active">
         <h2>Bem-vindo ao Lunarium's Lab!</h2>
@@ -338,7 +361,13 @@
     
         <hr style="border: 0.5px solid rgba(0,255,136,0.2); margin: 20px 0;">
 
-        <h3 style="color: var(--main-color);"><span class="prompt-symbol">↣</span> Notícias & Atualizações</h3>
+      <h3 style="color: var(--main-color); display: flex; align-items: center; gap: 10px;">
+        <span class="prompt-symbol">↣</span> Notícias & Atualizações
+        <button id="toggle-news" onclick="toggleNews()" style="background:none; border:none; color:var(--main-color); cursor:pointer; font-size:0.8em;">
+            <span id="news-arrow">▲</span>
+        </button>
+      </h3>
+
         <div id="news-container">
             <p style="opacity: 0.6;">Sincronizando com o repositório...</p>
         </div>
@@ -833,6 +862,17 @@ function toggleMenu() {
 
     // Alterna a rotação da seta
     arrow.classList.toggle('arrow-down');
+}
+
+function toggleNews() {
+    const container = document.getElementById('news-container');
+    const arrow = document.getElementById('news-arrow');
+
+    // Alterna a classe que esconde o container
+    container.classList.toggle('collapsed');
+
+    // Faz a seta girar para indicar o estado
+    arrow.classList.toggle('rotate-180');
 }
         
 window.onload = fetchGithubUpdates;
