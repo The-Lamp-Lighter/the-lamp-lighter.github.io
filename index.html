@@ -392,6 +392,16 @@
 </head>
 <body>
 
+    <div id="login-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0f; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(20px);">
+        <div style="background: rgba(255,255,255,0.05); padding: 40px; border-radius: 15px; border: 1px solid var(--main-color); text-align: center; box-shadow: 0 0 20px var(--main-color);">
+            <h2 style="color: var(--main-color); margin-bottom: 20px;">Acesso Restrito: Lunarium's Lab</h2>
+            <input type="text" id="user-login" placeholder="Usuário" style="display: block; width: 250px; padding: 10px; margin: 10px auto; background: #1a1a1a; border: 1px solid #444; color: white; border-radius: 5px;">
+            <input type="password" id="pass-login" placeholder="Senha" style="display: block; width: 250px; padding: 10px; margin: 10px auto; background: #1a1a1a; border: 1px solid #444; color: white; border-radius: 5px;">
+            <button class="nav-btn" onclick="checkLogin()" style="width: 100%; margin-top: 10px;">Autenticar</button>
+            <p id="login-error" style="color: #ff4b4b; font-size: 0.8em; margin-top: 15px; display: none;">Acesso Negado. Credenciais inválidas.</p>
+        </div>
+    </div>
+
     <h1>Lunarium's Lab</h1>
     <div class="menu-wrapper"> <div class="nav-bar">
             <button class="nav-btn" onclick="openTab('home')">Início</button>
@@ -525,6 +535,44 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/xml/xml.min.js"></script>
 
     <script>
+
+        // 1. Nossa lista de pessoas permitidas (White-list)
+const authorizedUsers = {
+    "Lunarium": "9090", // Formato: "usuario": "senha"
+    "dev_convidado": "senha99",
+    "seu_nome": "sua_senha_secreta"
+};
+
+// 2. Função que roda assim que o site carrega
+function validateSession() {
+    const session = localStorage.getItem("lab_access");
+    if (session === "granted") {
+        document.getElementById("login-overlay").style.display = "none";
+    }
+}
+
+// 3. Função de verificação
+function checkLogin() {
+    const user = document.getElementById("user-login").value;
+    const pass = document.getElementById("pass-login").value;
+    const errorMsg = document.getElementById("login-error");
+
+    if (authorizedUsers[user] && authorizedUsers[user] === pass) {
+        // Sucesso!
+        localStorage.setItem("lab_access", "granted");
+        document.getElementById("login-overlay").style.fadeOut(); // Opcional: animação
+        document.getElementById("login-overlay").style.display = "none";
+    } else {
+        // Falha!
+        errorMsg.style.display = "block";
+        // Opcional: Mandar embora do site após 3 tentativas
+        console.warn("Tentativa de acesso não autorizada!");
+    }
+}
+
+// Chamar a validação ao carregar
+window.onload = validateSession;
+        
     // Configuração do Link do seu PC Velho
     const SERVER_URL = "https://subtle-joanie-subaxially.ngrok-free.dev"; 
 
