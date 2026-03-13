@@ -648,7 +648,8 @@ const commands = {
         -info_apps: Veja as informações sobre a aba "Apps"
         -info_terminal: Veja as informações sobra a aba "Terminal"
         -Info_lua_ia: Veja as infos sobre a aba "Lua IA"
-        -info_code_editor: Veja as informações sobre a aba "Code Editor"`,
+        -info_code_editor: Veja as informações sobre a aba "Code Editor"
+        -show_top-menu: esconde o menu do topo, se executado novamente mostra ele`,
 
 
     'info_scripts': () => `A aba scripts é onde eu posto os meus scripts em python, ou até em outras linguagens, estando bons ou não eu os coloco lá para deixar registrado, e se eu perde-los posso baixa-los novamente`,
@@ -716,6 +717,10 @@ const commands = {
         window.open(url, '_balnk');
         return `Iniciando download em ${url}, isso deve acabar em um instante`;     
     },
+
+    'show_top-menu': () => {
+        toggleMenu() 
+    }
 };
 
 terminalInput.addEventListener('keydown', function(e) {
