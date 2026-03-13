@@ -535,43 +535,58 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/xml/xml.min.js"></script>
 
     <script>
-
-        // 1. Nossa lista de pessoas permitidas (White-list)
+        
+// 1. Sua White-list
 const authorizedUsers = {
-    "Lunarium": "9090", // Formato: "usuario": "senha"
+    "Lunarium": "9090",
     "dev_convidado": "senha99",
-    "seu_nome": "sua_senha_secreta"
+    "joao": "joaodasilva@gmail.com"
 };
 
-// 2. Função que roda assim que o site carrega
+// 2. Validação (Verifica se já passou 7 dias)
 function validateSession() {
-    const session = localStorage.getItem("lab_access");
-    if (session === "granted") {
-        document.getElementById("login-overlay").style.display = "none";
+    const loginTime = localStorage.getItem("lab_access_time");
+    const overlay = document.getElementById("login-overlay");
+
+    if (loginTime) {
+        const tempoAgora = new Date().getTime();
+        const seteDiasEmMs = 7 * 24 * 60 * 60 * 1000;
+
+        if (tempoAgora - loginTime < seteDiasEmMs) {
+            // Ainda está no prazo, esconde o login
+            overlay.style.display = "none";
+            return;
+        } else {
+            // Expirou!
+            localStorage.removeItem("lab_access_time");
+            alert("Sessão expirada. Por favor, logue novamente.");
+        }
     }
+    // Se não caiu no 'if' acima, mostra o login
+    overlay.style.display = "flex";
 }
 
-// 3. Função de verificação
+// 3. Função de verificação (Botão Autenticar)
 function checkLogin() {
     const user = document.getElementById("user-login").value;
     const pass = document.getElementById("pass-login").value;
     const errorMsg = document.getElementById("login-error");
 
     if (authorizedUsers[user] && authorizedUsers[user] === pass) {
-        // Sucesso!
-        localStorage.setItem("lab_access", "granted");
-        document.getElementById("login-overlay").style.fadeOut(); // Opcional: animação
+        // Sucesso! Salvando o momento exato do login
+        localStorage.setItem("lab_access_time", new Date().getTime());
+        
+        // Removi o .fadeOut() que causava o erro
         document.getElementById("login-overlay").style.display = "none";
     } else {
         // Falha!
         errorMsg.style.display = "block";
-        // Opcional: Mandar embora do site após 3 tentativas
-        console.warn("Tentativa de acesso não autorizada!");
+        console.warn("Acesso negado para o usuário:", user);
     }
 }
 
-// Chamar a validação ao carregar
-window.onload = validateSession;
+// Chamar a validação assim que o site abrir
+window.addEventListener('load', validateSession);
         
     // Configuração do Link do seu PC Velho
     const SERVER_URL = "https://subtle-joanie-subaxially.ngrok-free.dev"; 
