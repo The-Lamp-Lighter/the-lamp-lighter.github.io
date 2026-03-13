@@ -20,6 +20,45 @@
             align-items: center;
             color: white !important;
         }
+        <button id="toggle-menu" onclick="toggleMenu()">
+            <span id="arrow-icon">▲</span>
+        </button>
+
+        /* Container do Menu com animação */
+        .nav-bar {
+            overflow: hidden; /* Esconde o conteúdo que 'sobrar' ao encolher */
+            max-height: 500px; /* Um valor alto o suficiente para caber tudo */
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+            opacity: 1;
+            display: flex; /* Mantém seus botões alinhados */
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Estado Fechado (CSS vai aplicar essa classe via JS) */
+        .nav-bar.closed {
+            max-height: 0;
+            opacity: 0;
+            margin-bottom: 0;
+        }
+
+        /* Estilo do Botão da Seta */
+        #toggle-menu {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--main-color);
+            color: var(--main-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: transform 0.4s; /* Anima a rotação da seta */
+        }
+
+        /* Quando o menu fechar, a seta gira 180 graus */
+        .arrow-down {
+            transform: rotate(180deg);
+        }
         .nav-bar { margin-bottom: 20px; }
         .nav-btn {
             background: transparent; border: 1px solid var(--main-color);
@@ -784,6 +823,17 @@ async function fetchGithubUpdates() {
     }
 }
 // Chama a função assim que a página termina de carregar
+function toggleMenu() {
+    const navBar = document.querySelector('.nav-bar');
+    const arrow = document.getElementById('arrow-icon').parentElement;
+
+    // Alterna a classe 'closed' na barra
+    navBar.classList.toggle('closed');
+
+    // Alterna a rotação da seta
+    arrow.classList.toggle('arrow-down');
+}
+        
 window.onload = fetchGithubUpdates;
 </script>
 
