@@ -215,7 +215,7 @@
             border-radius: 5px;
             cursor: pointer;
             outline: none;
-
+        }
         .news-item {
             background: rgba(255, 255, 255, 0.03);
             border-left: 3px solid var(--main-color);
@@ -244,7 +244,7 @@
             font-weight: bold;
             margin-right: 8px;
             text-transform: uppercase;
-
+        }
          .news-content {
              display: flex;
              gap: 15px;
@@ -783,6 +783,8 @@ async function fetchGithubUpdates() {
         container.innerHTML = "<p style='opacity:0.5;'>Houve um erro ao conectar com o GitHub.</p>";
     }
 }
+// Chama a função assim que a página termina de carregar
+window.onload = fetchGithubUpdates;
 </script>
 
 </body>
