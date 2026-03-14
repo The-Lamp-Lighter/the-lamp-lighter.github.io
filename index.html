@@ -255,6 +255,26 @@
             margin-left: 40px !important; 
             border-right-width: 30px !important; /* Espaço de segurança na direita */
         }
+
+        /* Cor do bloco de texto selecionado */
+        .CodeMirror-selected { 
+            background-color: rgba(0, 255, 136, 0.3) !important; /* Verde neon com transparência */
+        }
+
+        /* Cor da seleção quando o editor perde o foco (opcional) */
+        .CodeMirror-focused .CodeMirror-selected { 
+            background-color: rgba(0, 255, 136, 0.4) !important; 
+        }
+
+        /* Cor do cursor (aquela barrinha que pisca) */
+        .CodeMirror-cursor {
+            border-left: 2px solid var(--main-color) !important;
+        }
+
+        /* Efeito de "Linha Ativa" (onde o cursor está parado) */
+        .CodeMirror-activeline-background {
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
          .editor-controls {
              display: flex;
              gap: 15px;
@@ -625,7 +645,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/xml/xml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/addon/edit/closebrackets.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/addon/edit/closetag.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/addon/selection/active-line.min.js"></script>
     <script>
         
 // 1. Sua White-list
@@ -993,7 +1013,8 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
     autoCloseBrackets: true,
     autoCloseBrackets: true, // Adicionado
     autoCloseTags: true,     // Adicionado (útil para HTML)
-    lineWrapping: true,     
+    lineWrapping: true,   
+    styleActiveLine: true,
     gutters: ["CodeMirror-linenumbers"]
 });
 
