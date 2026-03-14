@@ -387,18 +387,88 @@
         .rotate-arrow {
             transform: rotate(180deg);
         }
+
+        /* Container Principal do Login */
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            /* Imagem de fundo estilo Matrix/Tech */
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        /* O Card de Login (Efeito Vidro) */
+        .login-card {
+            background: rgba(15, 15, 20, 0.4);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            padding: 50px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 255, 136, 0.1);
+            animation: fadeInDown 1s ease;
+        }
+
+        /* Animação de Saída (Quando logar) */
+        .login-exit {
+            opacity: 0;
+            transform: scale(1.2); /* Faz a tela dar um "zoom" para frente ao sumir */
+            pointer-events: none;
+        }
+
+        /* Campos de Input Estilizados */
+        .login-card input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: var(--main-color);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .login-card input:focus {
+            border-color: var(--main-color);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         
     </style>
 </head>
 <body>
 
-    <div id="login-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0f; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(20px);">
-        <div style="background: rgba(255,255,255,0.05); padding: 40px; border-radius: 15px; border: 1px solid var(--main-color); text-align: center; box-shadow: 0 0 20px var(--main-color);">
-            <h2 style="color: var(--main-color); margin-bottom: 20px;">Acesso Restrito: Lunarium's Lab</h2>
-            <input type="text" id="user-login" placeholder="Usuário" style="display: block; width: 250px; padding: 10px; margin: 10px auto; background: #1a1a1a; border: 1px solid #444; color: white; border-radius: 5px;">
-            <input type="password" id="pass-login" placeholder="Senha" style="display: block; width: 250px; padding: 10px; margin: 10px auto; background: #1a1a1a; border: 1px solid #444; color: white; border-radius: 5px;">
-            <button class="nav-btn" onclick="checkLogin()" style="width: 100%; margin-top: 10px;">Autenticar</button>
-            <p id="login-error" style="color: #ff4b4b; font-size: 0.8em; margin-top: 15px; display: none;">Acesso Negado. Credenciais inválidas.</p>
+    <div id="login-overlay">
+        <div class="login-card">
+            <div style="font-size: 50px; margin-bottom: 10px;">🌙</div>
+            <h2 style="color: var(--main-color); margin-top: 0; letter-spacing: 2px;">LUNARIUM'S LAB</h2>
+            <p style="color: #aaa; font-size: 0.9em; margin-bottom: 30px;">Identificação necessária para acesso ao sistema</p>
+        
+            <input type="text" id="user-login" placeholder="Codinome" autocomplete="off">
+            <input type="password" id="pass-login" placeholder="Chave de Segurança">
+        
+            <button class="nav-btn" onclick="checkLogin()" style="width: 110%; margin-left: -5%; margin-top: 20px; padding: 12px;">
+                LIBERAR ACESSO
+            </button>
+        
+            <p id="login-error" style="color: #ff4b4b; font-size: 0.8em; margin-top: 20px; display: none; font-weight: bold;">
+                ⚠️ ACESSO NEGADO: Credenciais Inválidas
+            </p>
         </div>
     </div>
 
@@ -571,17 +641,27 @@ function checkLogin() {
     const user = document.getElementById("user-login").value;
     const pass = document.getElementById("pass-login").value;
     const errorMsg = document.getElementById("login-error");
+    const overlay = document.getElementById("login-overlay");
 
     if (authorizedUsers[user] && authorizedUsers[user] === pass) {
-        // Sucesso! Salvando o momento exato do login
+        // 1. Salva o tempo de acesso
         localStorage.setItem("lab_access_time", new Date().getTime());
-        
-        // Removi o .fadeOut() que causava o erro
-        document.getElementById("login-overlay").style.display = "none";
+
+        // 2. Aplica a classe de animação (em vez de sumir de vez)
+        overlay.classList.add("login-exit");
+
+        // 3. Espera 800ms (tempo da transição do CSS) e então remove do display
+        setTimeout(() => {
+            overlay.style.display = "none";
+        }, 800);
+
     } else {
-        // Falha!
         errorMsg.style.display = "block";
-        console.warn("Acesso negado para o usuário:", user);
+        // Efeito de "tremer" o card se errar (opcional)
+        document.querySelector(".login-card").style.animation = "none";
+        setTimeout(() => {
+            document.querySelector(".login-card").style.animation = "shake 0.3s";
+        }, 10);
     }
 }
 
