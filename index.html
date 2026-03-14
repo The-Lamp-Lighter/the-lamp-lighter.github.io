@@ -255,25 +255,24 @@
             margin-left: 40px !important; 
             border-right-width: 30px !important; /* Espaço de segurança na direita */
         }
+        /* Seleção de texto (o bloco azul/verde quando você arrasta o mouse) */
+        .CodeMirror-line::-moz-selection, .CodeMirror-line > span::-moz-selection, .CodeMirror-line > span > span::-moz-selection { background: rgba(0, 255, 136, 0.9) !important; color: black !important; }
+        .CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection { background: rgba(0, 255, 136, 0.9) !important; color: black !important; }
 
-        /* Cor do bloco de texto selecionado */
-        .CodeMirror-selected { 
-            background-color: rgba(0, 255, 136, 0.3) !important; /* Verde neon com transparência */
-        }
+        /* Garante que o fundo da seleção apareça no motor do CodeMirror */
+        .CodeMirror-selected { background: rgba(0, 255, 136, 0.4) !important; }
+        .CodeMirror-focused .CodeMirror-selected { background: rgba(0, 255, 136, 0.4) !important; }
 
-        /* Cor da seleção quando o editor perde o foco (opcional) */
-        .CodeMirror-focused .CodeMirror-selected { 
-            background-color: rgba(0, 255, 136, 0.4) !important; 
-        }
-
-        /* Cor do cursor (aquela barrinha que pisca) */
-        .CodeMirror-cursor {
-            border-left: 2px solid var(--main-color) !important;
-        }
-
-        /* Efeito de "Linha Ativa" (onde o cursor está parado) */
+        /* Estilo da Linha Ativa (onde o cursor está) */
         .CodeMirror-activeline-background {
-            background: rgba(255, 255, 255, 0.05) !important;
+            background: rgba(0, 255, 136, 0.1) !important; /* Um brilho bem suave na linha toda */
+            border-top: 1px solid rgba(0, 255, 136, 0.2);
+            border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        /* Deixa os números das linhas acompanharem o destaque */
+        .CodeMirror-activeline-gutter {
+            background: rgba(0, 255, 136, 0.2) !important;
         }
          .editor-controls {
              display: flex;
