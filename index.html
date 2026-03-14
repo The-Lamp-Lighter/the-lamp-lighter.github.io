@@ -1135,15 +1135,12 @@ function renderNews() {
 
     if (!allNewsData || allNewsData.length === 0) return;
 
-    // 1. Atualiza o texto do botão de ordem
     if (orderLabel) {
         orderLabel.innerText = isDescending ? "Mais recentes" : "Mais antigas";
     }
 
-    // 2. Ordena os dados
     const sortedData = isDescending ? [...allNewsData] : [...allNewsData].reverse();
     
-    // 3. Limpa os containers antes de desenhar
     if (homeContainer) homeContainer.innerHTML = "";
     if (fullContainer) fullContainer.innerHTML = "";
 
@@ -1151,17 +1148,29 @@ function renderNews() {
         const date = new Date(item.commit.author.date).toLocaleDateString('pt-BR');
         let fullMessage = item.commit.message;
         
-        // Lógica de Imagem
+        // --- LÓGICA DE IDENTIFICAÇÃO (Título + Descrição) ---
+        const msgLower = fullMessage.toLowerCase();
         let coverImg = defaultImages.generic;
-        const imgMatch = fullMessage.match(/img:([^\s\n]+)/);
-        if (imgMatch) {
-            coverImg = imgMatch[1];
-            fullMessage = fullMessage.replace(imgMatch[0], ""); 
+        let typeText = "Geral";
+
+        if (msgLower.includes("style")) {
+            coverImg = defaultImages.style;
+            typeText = "Style";
+        } else if (msgLower.includes("script")) {
+            coverImg = defaultImages.script;
+            typeText = "Script";
+        } else if (msgLower.includes("tab") || msgLower.includes("aba")) {
+            coverImg = defaultImages.tab;
+            typeText = "Tab";
+        } else if (msgLower.includes("generica") || msgLower.includes("genérica")) {
+            coverImg = defaultImages.generic;
+            typeText = "Genérica";
         }
 
-        const parts = fullMessage.trim().split("\n");
-        const title = parts[0]; 
-        const description = parts.slice(1).join(" ") || "Atualização de sistema.";
+        // Separa o título da descrição para o visual
+        const parts = fullMessage.split("\n");
+        const title = parts[0];
+        const description = parts.slice(1).join(" ").trim() || "Atualização de sistema.";
 
         const newsHTML = `
             <div class="news-item">
@@ -1169,9 +1178,11 @@ function renderNews() {
                 <div class="news-content">
                     <img src="${coverImg}" class="news-cover" onerror="this.src='${defaultImages.generic}'">
                     <div class="news-details">
-                        <span class="news-tag">Log</span>
-                        <strong style="display:block; color:var(--main-color);">${title}</strong>
-                        <span class="news-description">${description}</span>
+                        <span class="news-tag">LOG</span>
+                        <strong style="display:block; color:var(--main-color); margin-top:5px;">${title}</strong>
+                        <span class="news-description" style="font-size: 0.85em; opacity: 0.8;">
+                            Tipo de atualização: ${typeText}<br>${description}
+                        </span>
                     </div>
                 </div>
             </div>
