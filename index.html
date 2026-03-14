@@ -219,37 +219,47 @@
 
                 /* Customização do Code Lab Editor */
        /* Limpa o campo de batalha */
+        /* Container do Editor */
         .CodeMirror {
             height: 600px !important;
             width: 100% !important;
             border: 1px solid rgba(0, 255, 136, 0.3);
             border-radius: 8px;
-            background: rgba(10, 10, 15, 0.9) !important; /* Fundo sólido para evitar transparência bugada */
+            background: rgba(10, 10, 15, 0.95) !important;
             font-family: 'Fira Code', monospace !important;
+            overflow: hidden;
         }
 
-        /* Ajusta a calha de forma relativa, sem 'quebrar' o fluxo do texto */
+        /* Remove a linha verde/borda da calha e limpa o fundo */
         .CodeMirror-gutters {
-            border-right: 1px solid var(--main-color) !important;
-            background-color: #282a36 !important; /* Cor sólida do Dracula */
-            white-space: nowrap;
+            background: transparent !important; /* Deixa o fundo igual ao do editor */
+            border-right: none !important;      /* MATA A BARRA FEIA AQUI */
             width: 40px !important;
         }
 
-        /* Garante que o texto tenha o seu próprio espaço ao lado da calha */
-        .CodeMirror-sizer {
-            margin-left: 45px !important; 
+        /* Estilo dos números das linhas */
+        .CodeMirror-linenumber {
+            color: var(--main-color) !important;
+            opacity: 0.5;
+            padding-right: 10px !important;
+            text-align: right !important;
         }
 
-        /* Remove aquela linha estranha e garante que o cursor apareça */
+        /* Ajusta o espaçamento do texto para não ficar grudado nem longe demais */
         .CodeMirror-lines {
-            padding: 4px 0 !important;
-    }
-                .editor-controls {
-                    display: flex;
-                    gap: 15px;
-                    margin-bottom: 15px;
-                    align-items: center;
+            padding-left: 5px !important; /* Espaço sutil após os números */
+        }
+
+        /* Garante que o seletor de texto não herde margens bugadas */
+        .CodeMirror-sizer {
+            margin-left: 40px !important; 
+            border-right-width: 30px !important; /* Espaço de segurança na direita */
+        }
+         .editor-controls {
+             display: flex;
+             gap: 15px;
+             margin-bottom: 15px;
+             align-items: center;
         }
 
         /* Deixa o seletor de linguagem com a cara do seu site */
