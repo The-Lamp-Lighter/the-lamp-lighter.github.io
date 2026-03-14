@@ -22,16 +22,20 @@
         }
 
         /* Container do Menu com animação */
-        .nav-bar {
-            overflow: hidden; /* Esconde o conteúdo que 'sobrar' ao encolher */
-            max-height: 500px; /* Um valor alto o suficiente para caber tudo */
-            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+       .nav-bar {
+            display: flex;
+            flex-wrap: nowrap; /* Impede que os botões pulem para baixo */
+            overflow: hidden;
+            max-width: 1200px; /* Aumentei um pouco para garantir */
+            transition: max-width 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s;
             opacity: 1;
-            display: flex; /* Mantém seus botões alinhados */
-            flex-wrap: wrap;
-            justify-content: center;
+            align-items: center;
         }
 
+        .nav-btn {
+            white-space: nowrap; /* Impede que o texto do botão quebre (ex: Code Editor em duas linhas) */
+            flex-shrink: 0; /* Impede que os botões espremam o texto */
+        }
         /* Estado Fechado (CSS vai aplicar essa classe via JS) */
         .nav-bar.closed {
             max-height: 0;
