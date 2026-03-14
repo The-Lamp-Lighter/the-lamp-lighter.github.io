@@ -228,6 +228,7 @@
             background: rgba(10, 10, 15, 0.95) !important;
             font-family: 'Fira Code', monospace !important;
             overflow: hidden;
+            box-sizing: border-box !important;
         }
 
         /* Remove a linha verde/borda da calha e limpa o fundo */
@@ -268,6 +269,13 @@
             background: rgba(0, 255, 136, 0.1) !important; /* Um brilho bem suave na linha toda */
             border-top: 1px solid rgba(0, 255, 136, 0.2);
             border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .CodeMirror-scroll {
+            box-sizing: border-box !important;
+            padding-right: 15px !important; /* Cria uma "margem de segurança" na direita */
+            margin-right: 0 !important;
+            overflow-x: hidden !important; /* Impede que o texto fuja pro lado */
         }
 
         /* Deixa os números das linhas acompanharem o destaque */
