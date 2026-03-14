@@ -88,11 +88,11 @@
             flex-direction: column;
             height: 600px;
             overflow-y: auto;
-            background: transparent;
+            background: rgba(10, 10, 15, 0.10);
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 10px;
-            background_blur: 7
+            backdrop-filter: blur(30px)
         }
         .message {
             max-width: 80%;
@@ -124,15 +124,13 @@
             border-radius: 5px;
             color: white;
         }
-        /* Aviso de Offline */
-       /* Ajuste do container de offline para alinhar itens lado a lado */
         /* Container principal do aviso offline */
         #offline-screen {
             display: none; /* O JavaScript mudará para 'flex' quando necessário */
-            background: var(--bg-card);
+            background: var(--bg-card) rgba(10, 10, 15, 0.15);
             padding: 20px;
             border-radius: 15px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(30px);
     
             /* Configuração para ficar lado a lado */
             align-items: center; 
@@ -232,7 +230,7 @@
             line-height: 1.6; /* Dá mais espaço entre as linhas */
             padding: 10px;
             background: rgba(10, 10, 15, 0.3) !important; /* Fundo escuro igual ao terminal */
-            backdrop-filter: blur(25px) saturate(160%);
+            backdrop-filter: blur(30px) saturate(160%) !important;
         }
 
         .editor-controls {
@@ -253,7 +251,7 @@
             outline: none;
         }
         .news-item {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.01);
             border-left: 3px solid var(--main-color);
             padding: 12px;
             margin-bottom: 10px;
@@ -262,7 +260,7 @@
             animation: fadeIn 0.5s ease-in-out;
         }
         .news-item:hover {
-            background: rgba(0, 255, 136, 0.05);
+            background: rgba(0, 255, 136, 0.03);
             transform: translateX(5px);
         }
         .news-date {
