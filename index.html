@@ -1091,7 +1091,8 @@ const defaultImages = {
     style: "STYLE.png", 
     script: "SCRIPT.png.jpg", 
     tab: "NEW_TAB.png",   
-    generic: "GENERIC.png"
+    generic: "GENERIC.png",
+    error: "erro.png"
 };
 
 async function fetchGithubUpdates() {
@@ -1168,6 +1169,9 @@ function renderNews() {
         } else if (msgLower.includes("generica") || msgLower.includes("genérica")) {
             coverImg = defaultImages.generic;
             typeText = "Genérica";
+        }else if (msgLower.includes("erro") || msgLower.includes("erro")) {
+            coverImg = defaultImages.error;
+            typeText = "Erro";
         }
 
         // Separa o título da descrição para o visual
