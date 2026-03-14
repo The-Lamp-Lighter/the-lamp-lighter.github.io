@@ -1095,69 +1095,73 @@ function downloadCode() {
     URL.revokeObjectURL(url);
 };
 
+// VARIÁVEIS GLOBAIS - Devem ficar fora de qualquer função
+let allNewsData = []; 
+let isDescending = true;
+const defaultImages = {
+    style: "STYLE.png", 
+    script: "SCRIPT.png.jpg", 
+    tab: "NEW_TAB.png",   
+    generic: "GENERIC.png"
+};
+
 async function fetchGithubUpdates() {
     const user = "The-Lamp-Lighter"; 
     const repo = "the-lamp-lighter.github.io";
-
-    let allNewsData = []; 
-    let isDescending = true;
-
-    const defaultImages = {
-        style: "STYLE.png", 
-        script: "SCRIPT.png.jpg", 
-        tab: "NEW_TAB.png",   
-        generic: "GENERIC.png"
-    };
     
+    console.log("Iniciando sincronização..."); // Para debug
+
     try {
-        // Buscamos os últimos 30 commits (ajuste se quiser mais)
         const response = await fetch(`https://api.github.com/repos/${user}/${repo}/commits?per_page=30`);
-        const data = await response.json();
+        const commits = await response.json();
         
-        if (Array.isArray(data)) {
-            allNewsData = data; 
+        if (Array.isArray(commits)) {
+            allNewsData = commits; 
+            console.log("Dados recebidos:", allNewsData.length, "commits");
             renderNews(); 
+        } else {
+            throw new Error("Resposta do GitHub não é um array");
         }
     } catch (error) {
-        console.error("Erro:", error);
-        document.getElementById('news-container').innerHTML = "<p>Erro ao conectar com o GitHub.</p>";
+        document.getElementById('news-container').innerHTML = "<p>Erro na conexão com o repositório.</p>";
+        console.error("Erro fatal no fetch:", error);
     }
 }
 
 function renderNews() {
     const homeContainer = document.getElementById('news-container');
     const fullContainer = document.getElementById('full-news-container');
-    
-    if (!allNewsData.length || !homeContainer || !fullContainer) return;
+    const orderLabel = document.getElementById('order-label');
 
-    const displayData = isDescending ? [...allNewsData] : [...allNewsData].reverse();
-    
-    homeContainer.innerHTML = "";
-    fullContainer.innerHTML = "";
+    if (!allNewsData || allNewsData.length === 0) return;
 
-    displayData.forEach((item, index) => {
+    // 1. Atualiza o texto do botão de ordem
+    if (orderLabel) {
+        orderLabel.innerText = isDescending ? "Mais recentes" : "Mais antigas";
+    }
+
+    // 2. Ordena os dados
+    const sortedData = isDescending ? [...allNewsData] : [...allNewsData].reverse();
+    
+    // 3. Limpa os containers antes de desenhar
+    if (homeContainer) homeContainer.innerHTML = "";
+    if (fullContainer) fullContainer.innerHTML = "";
+
+    sortedData.forEach((item, index) => {
         const date = new Date(item.commit.author.date).toLocaleDateString('pt-BR');
         let fullMessage = item.commit.message;
         
-        // --- SUA LÓGICA DE IMAGEM REESTABELECIDA ---
+        // Lógica de Imagem
         let coverImg = defaultImages.generic;
         const imgMatch = fullMessage.match(/img:([^\s\n]+)/);
-        
         if (imgMatch) {
             coverImg = imgMatch[1];
             fullMessage = fullMessage.replace(imgMatch[0], ""); 
-        } else {
-            const msgLower = fullMessage.toLowerCase();
-            if (msgLower.includes("style") || msgLower.includes("css")) coverImg = defaultImages.style;
-            else if (msgLower.includes("script") || msgLower.includes("code")) coverImg = defaultImages.script;
-            else if (msgLower.includes("aba") || msgLower.includes("tab")) coverImg = defaultImages.tab;
         }
 
-        // --- SUA LÓGICA DE TÍTULO E DESCRIÇÃO ---
         const parts = fullMessage.trim().split("\n");
         const title = parts[0]; 
-        const description = parts.slice(1).filter(line => line.trim() !== "").join(" ") 
-                            || "Atualização de rotina no repositório.";
+        const description = parts.slice(1).join(" ") || "Atualização de sistema.";
 
         const newsHTML = `
             <div class="news-item">
@@ -1166,23 +1170,27 @@ function renderNews() {
                     <img src="${coverImg}" class="news-cover" onerror="this.src='${defaultImages.generic}'">
                     <div class="news-details">
                         <span class="news-tag">Log</span>
-                        <strong style="display:block; color:var(--main-color); margin-top:5px;">${title}</strong>
+                        <strong style="display:block; color:var(--main-color);">${title}</strong>
                         <span class="news-description">${description}</span>
                     </div>
                 </div>
             </div>
         `;
 
-        // 1. Alimenta a HOME (Sempre os 3 mais recentes do repositório)
-        // Usamos allNewsData[index] original para garantir que a home não inverta
-        if (index < 3 && isDescending) {
-            homeContainer.innerHTML += newsHTML;
-        }
-
-        // 2. Alimenta a ABA NEWS (Tudo, respeitando o filtro)
-        fullContainer.innerHTML += newsHTML;
+        if (index < 5 && homeContainer) homeContainer.innerHTML += newsHTML;
+        if (fullContainer) fullContainer.innerHTML += newsHTML;
     });
 }
+
+// ESTA FUNÇÃO PRECISA SER GLOBAL PARA O 'ONCLICK' DO HTML ACHAR
+window.toggleNewsOrder = function() {
+    console.log("Alterando ordem...");
+    isDescending = !isDescending;
+    renderNews();
+};
+
+// Iniciar
+fetchGithubUpdates();
 
 function toggleNewsOrder() {
     isDescending = !isDescending;
