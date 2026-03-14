@@ -1108,23 +1108,37 @@ const defaultImages = {
 async function fetchGithubUpdates() {
     const user = "The-Lamp-Lighter"; 
     const repo = "the-lamp-lighter.github.io";
-    
-    console.log("Iniciando sincronização..."); // Para debug
+    let page = 1;
+    let allCommits = [];
+    let keepFetching = true;
+
+    console.log("Sincronizando histórico completo...");
 
     try {
-        const response = await fetch(`https://api.github.com/repos/${user}/${repo}/commits?per_page=30`);
-        const commits = await response.json();
-        
-        if (Array.isArray(commits)) {
-            allNewsData = commits; 
-            console.log("Dados recebidos:", allNewsData.length, "commits");
-            renderNews(); 
-        } else {
-            throw new Error("Resposta do GitHub não é um array");
+        while (keepFetching) {
+            // Buscamos 100 por vez (limite máximo do GitHub por página)
+            const response = await fetch(`https://api.github.com/repos/${user}/${repo}/commits?per_page=100&page=${page}`);
+            const commits = await response.json();
+
+            if (Array.isArray(commits) && commits.length > 0) {
+                allCommits = allCommits.concat(commits);
+                page++; // Vai para a próxima página
+            } else {
+                keepFetching = false; // Para quando não houver mais commits
+            }
+            
+            // Segurança para não travar o navegador em repositórios gigantescos
+            if (page > 20) keepFetching = false; 
         }
+
+        allNewsData = allCommits;
+        console.log("Total de notícias carregadas:", allNewsData.length);
+        renderNews();
+
     } catch (error) {
-        document.getElementById('news-container').innerHTML = "<p>Erro na conexão com o repositório.</p>";
-        console.error("Erro fatal no fetch:", error);
+        const homeContainer = document.getElementById('news-container');
+        if (homeContainer) homeContainer.innerHTML = "<p>Erro ao carregar histórico.</p>";
+        console.error("Erro na paginação do GitHub:", error);
     }
 }
 
