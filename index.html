@@ -601,6 +601,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/htmlmixed/htmlmixed.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/addon/edit/closetag.min.js"></script>
 
     <script>
         
@@ -956,7 +958,10 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
     mode: "python",
     indentUnit: 4,
     matchBrackets: true,
-    autoCloseBrackets: true
+    autoCloseBrackets: true,
+    autoCloseBrackets: true, // Adicionado
+    autoCloseTags: true,     // Adicionado (útil para HTML)
+    lineWrapping: true       // Evita que o código saia da tela lateralment
 });
 
 // Atualiza o editor quando você troca de aba (necessário para ele carregar o layout)
