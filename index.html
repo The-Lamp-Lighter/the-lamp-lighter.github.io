@@ -233,11 +233,34 @@
             backdrop-filter: blur(30px) saturate(160%) !important;
         }
 
-        .editor-controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-            align-items: center;
+        /* FORÇA A CALHA DOS NÚMEROS A APARECER */
+        .CodeMirror-gutters {
+            background-color: rgba(20, 20, 25, 0.8) !important; /* Fundo levemente diferente para contraste */
+            border-right: 1px solid var(--main-color) !important;
+            width: 45px !important; /* Largura fixa para os números não sumirem */
+            z-index: 3;
+        }
+
+        /* AJUSTA OS NÚMEROS DENTRO DA CALHA */
+        .CodeMirror-linenumber {
+            color: var(--main-color) !important;
+            padding-left: 10px !important;
+            padding-right: 5px !important;
+            opacity: 0.7;
+            min-width: 30px !important;
+            text-align: right !important;
+        }
+
+        /* EMPURRA O TEXTO PARA A DIREITA DA CALHA */
+        .CodeMirror-lines {
+            padding-left: 10px !important; /* Espaço entre o número e o início da letra */
+        }
+
+                .editor-controls {
+                    display: flex;
+                    gap: 15px;
+                    margin-bottom: 15px;
+                    align-items: center;
         }
 
         /* Deixa o seletor de linguagem com a cara do seu site */
