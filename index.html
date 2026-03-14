@@ -1110,7 +1110,8 @@ const defaultImages = {
     script: "SCRIPT.png.jpg", 
     tab: "NEW_TAB.png",   
     generic: "GENERIC.png",
-    error: "erro.png"
+    error: "erro.png",
+    big: "universe.jpg"
 };
 
 async function fetchGithubUpdates() {
@@ -1190,6 +1191,9 @@ function renderNews() {
         }else if (msgLower.includes("erro") || msgLower.includes("erro")) {
             coverImg = defaultImages.error;
             typeText = "Erro";
+        }else if (msgLower.includes("grande") || msgLower.includes("grande")) {
+            coverImg = defaultImages.big;
+            typeText = "Grande_Atualização";
         }
 
         // Separa o título da descrição para o visual
