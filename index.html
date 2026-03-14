@@ -792,7 +792,8 @@ const commands = {
         -info_terminal: Veja as informações sobra a aba "Terminal"
         -Info_lua_ia: Veja as infos sobre a aba "Lua IA"
         -info_code_editor: Veja as informações sobre a aba "Code Editor"
-        -show_top-menu: esconde o menu do topo, se executado novamente mostra ele`,
+        -show_top-menu: esconde o menu do topo, se executado novamente mostra ele
+        -logout: Dá logout da sessão atual`,
 
 
     'info_scripts': () => `A aba scripts é onde eu posto os meus scripts em python, ou até em outras linguagens, estando bons ou não eu os coloco lá para deixar registrado, e se eu perde-los posso baixa-los novamente`,
@@ -863,7 +864,19 @@ const commands = {
 
     'show_top-menu': () => {
         toggleMenu() 
-    }
+    },
+
+    'logout': () => {
+        // 1. Remove a marca de tempo do navegador
+        localStorage.removeItem("lab_access_time");
+        
+        // 2. Faz a página recarregar para ativar a tela de login
+        setTimeout(() => {
+            location.reload(); 
+        }, 1000);
+
+        return "Encerrando sessão... Até logo, Lunarium.";
+    },
 };
 
 terminalInput.addEventListener('keydown', function(e) {
