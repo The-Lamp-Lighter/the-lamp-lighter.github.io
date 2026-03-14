@@ -495,6 +495,14 @@
             from { opacity: 0; transform: translateY(-30px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        #full-news-container {
+            max-height: 70vh; /* Altura máxima de 70% da tela */
+            overflow-y: auto;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--main-color) transparent;
+        }
         
     </style>
 </head>
@@ -527,6 +535,7 @@
             <button class="nav-btn" onclick="openTab('ia')">Lua IA</button>
             <button class="nav-btn" onclick="openTab('cmd')">Terminal</button>
             <button class="nav-btn" onclick="openTab('code')">Code Editor</button>
+            <button class="nav-btn" onclick="openTab('news')">Notícias</button>
         </div>
 
     <button id="toggle-menu" onclick="toggleMenu()">
@@ -639,6 +648,20 @@
 
         <textarea id="code-editor"></textarea>
     </div>
+    
+    <div id="news" class="content-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="color: var(--main-color); margin: 0;">Histórico de Notícias</h2>
+        
+            <button onclick="toggleNewsOrder()" class="nav-btn" style="font-size: 0.8em; margin: 0;">
+                Ordem: <span id="order-label">Mais recentes</span>
+            </button>
+        </div>
+
+        <div id="full-news-container">
+            <p style="opacity: 0.6;">Carregando repositório...</p>
+        </div>
+    </div>
 
     
 
@@ -654,12 +677,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/addon/edit/closetag.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/addon/selection/active-line.min.js"></script>
     <script>
-        
+      
 // 1. Sua White-list
 const authorizedUsers = {
     "Lunarium": "9090",
     "dev_convidado": "senha99",
-    "joao": "joaodasilva@gmail.com"
+    "joao": ""
 };
 
 // 2. Validação (Verifica se já passou 7 dias)
@@ -813,9 +836,6 @@ window.addEventListener('load', validateSession);
             sendMessage();
         }
     });
-
-        
-
 
         // --- LÓGICA DO TERMINAL ---
 const terminalInput = document.getElementById('terminal-input');
@@ -1074,7 +1094,9 @@ function downloadCode() {
 async function fetchGithubUpdates() {
     const user = "The-Lamp-Lighter"; 
     const repo = "the-lamp-lighter.github.io";
-    const container = document.getElementById('news-container');
+
+    let allNewsData = []; 
+    let isDescending = true;
 
     const defaultImages = {
         style: "STYLE.png", 
@@ -1082,57 +1104,87 @@ async function fetchGithubUpdates() {
         tab: "NEW_TAB.png",   
         generic: "GENERIC.png"
     };
-
+    
     try {
-        const response = await fetch(`https://api.github.com/repos/${user}/${repo}/commits?per_page=5`);
-        const commits = await response.json();
-        container.innerHTML = "";
+        // Buscamos os últimos 30 commits (ajuste se quiser mais)
+        const response = await fetch(`https://api.github.com/repos/${user}/${repo}/commits?per_page=30`);
+        const data = await response.json();
+        
+        if (Array.isArray(data)) {
+            allNewsData = data; 
+            renderNews(); 
+        }
+    } catch (error) {
+        console.error("Erro:", error);
+        document.getElementById('news-container').innerHTML = "<p>Erro ao conectar com o GitHub.</p>";
+    }
+}
 
-        commits.forEach(item => {
-            const date = new Date(item.commit.author.date).toLocaleDateString('pt-BR');
-            let fullMessage = item.commit.message;
-            
-            // 1. EXTRAÇÃO E LIMPEZA DA IMAGEM
-            let coverImg = defaultImages.generic;
-            const imgMatch = fullMessage.match(/img:([^\s\n]+)/); // Pega o link
-            
-            if (imgMatch) {
-                coverImg = imgMatch[1];
-                // Remove o "img:link" de QUALQUER lugar da mensagem para não poluir o texto
-                fullMessage = fullMessage.replace(imgMatch[0], ""); 
-            } else {
-                const msgLower = fullMessage.toLowerCase();
-                if (msgLower.includes("style") || msgLower.includes("css")) coverImg = defaultImages.style;
-                else if (msgLower.includes("script") || msgLower.includes("code")) coverImg = defaultImages.script;
-                else if (msgLower.includes("aba") || msgLower.includes("tab")) coverImg = defaultImages.tab;
-            }
+function renderNews() {
+    const homeContainer = document.getElementById('news-container');
+    const fullContainer = document.getElementById('full-news-container');
+    
+    if (!allNewsData.length || !homeContainer || !fullContainer) return;
 
-            // 2. SEPARAÇÃO DE TÍTULO E DESCRIÇÃO
-            // O GitHub Web separa título e descrição por dois "enters" (\n\n)
-            const parts = fullMessage.trim().split("\n");
-            const title = parts[0]; 
-            // Pega o resto, remove linhas vazias e junta tudo
-            const description = parts.slice(1).filter(line => line.trim() !== "").join(" ") 
-                                || "Atualização de rotina no repositório.";
+    const displayData = isDescending ? [...allNewsData] : [...allNewsData].reverse();
+    
+    homeContainer.innerHTML = "";
+    fullContainer.innerHTML = "";
 
-            const newsHTML = `
-                <div class="news-item">
-                    <span class="news-date">${date}</span>
-                    <div class="news-content">
-                        <img src="${coverImg}" class="news-cover" onerror="this.src='${defaultImages.generic}'">
-                        <div class="news-details">
-                            <span class="news-tag">Log</span>
-                            <strong style="display:block; color:var(--main-color); margin-top:5px;">${title}</strong>
-                            <span class="news-description">${description}</span>
-                        </div>
+    displayData.forEach((item, index) => {
+        const date = new Date(item.commit.author.date).toLocaleDateString('pt-BR');
+        let fullMessage = item.commit.message;
+        
+        // --- SUA LÓGICA DE IMAGEM REESTABELECIDA ---
+        let coverImg = defaultImages.generic;
+        const imgMatch = fullMessage.match(/img:([^\s\n]+)/);
+        
+        if (imgMatch) {
+            coverImg = imgMatch[1];
+            fullMessage = fullMessage.replace(imgMatch[0], ""); 
+        } else {
+            const msgLower = fullMessage.toLowerCase();
+            if (msgLower.includes("style") || msgLower.includes("css")) coverImg = defaultImages.style;
+            else if (msgLower.includes("script") || msgLower.includes("code")) coverImg = defaultImages.script;
+            else if (msgLower.includes("aba") || msgLower.includes("tab")) coverImg = defaultImages.tab;
+        }
+
+        // --- SUA LÓGICA DE TÍTULO E DESCRIÇÃO ---
+        const parts = fullMessage.trim().split("\n");
+        const title = parts[0]; 
+        const description = parts.slice(1).filter(line => line.trim() !== "").join(" ") 
+                            || "Atualização de rotina no repositório.";
+
+        const newsHTML = `
+            <div class="news-item">
+                <span class="news-date">${date}</span>
+                <div class="news-content">
+                    <img src="${coverImg}" class="news-cover" onerror="this.src='${defaultImages.generic}'">
+                    <div class="news-details">
+                        <span class="news-tag">Log</span>
+                        <strong style="display:block; color:var(--main-color); margin-top:5px;">${title}</strong>
+                        <span class="news-description">${description}</span>
                     </div>
                 </div>
-            `;
-            container.innerHTML += newsHTML;
-        });
-    } catch (error) {
-        container.innerHTML = "<p style='opacity:0.5;'>Houve um erro ao conectar com o GitHub.</p>";
-    }
+            </div>
+        `;
+
+        // 1. Alimenta a HOME (Sempre os 3 mais recentes do repositório)
+        // Usamos allNewsData[index] original para garantir que a home não inverta
+        if (index < 3 && isDescending) {
+            homeContainer.innerHTML += newsHTML;
+        }
+
+        // 2. Alimenta a ABA NEWS (Tudo, respeitando o filtro)
+        fullContainer.innerHTML += newsHTML;
+    });
+}
+
+function toggleNewsOrder() {
+    isDescending = !isDescending;
+    const label = document.getElementById('order-label');
+    if(label) label.innerText = isDescending ? "Mais recentes" : "Mais antigas";
+    renderNews();
 }
 // Chama a função assim que a página termina de carregar
 function toggleMenu() {
