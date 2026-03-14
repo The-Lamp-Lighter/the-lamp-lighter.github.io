@@ -233,27 +233,25 @@
             backdrop-filter: blur(30px) saturate(160%) !important;
         }
 
-        /* FORÇA A CALHA DOS NÚMEROS A APARECER */
+       /* Isso força o container a dar espaço para a numeração */
         .CodeMirror-gutters {
-            background-color: rgba(20, 20, 25, 0.8) !important; /* Fundo levemente diferente para contraste */
+            left: 0 !important;
+            width: 40px !important; 
+            min-width: 40px !important;
+            position: absolute !important;
+            z-index: 10 !important;
+            background-color: #282a36 !important; /* Cor do tema Dracula */
             border-right: 1px solid var(--main-color) !important;
-            width: 45px !important; /* Largura fixa para os números não sumirem */
-            z-index: 3;
         }
 
-        /* AJUSTA OS NÚMEROS DENTRO DA CALHA */
-        .CodeMirror-linenumber {
-            color: var(--main-color) !important;
-            padding-left: 10px !important;
-            padding-right: 5px !important;
-            opacity: 0.7;
-            min-width: 30px !important;
-            text-align: right !important;
-        }
-
-        /* EMPURRA O TEXTO PARA A DIREITA DA CALHA */
+        /* Isso empurra o texto para não ficar em cima dos números */
         .CodeMirror-lines {
-            padding-left: 10px !important; /* Espaço entre o número e o início da letra */
+            margin-left: 45px !important; /* Tem que ser maior que a largura do gutter */
+        }
+
+        /* Garante que o cursor não suma na borda */
+        .CodeMirror-scroll {
+            margin-left: 0 !important;
         }
 
                 .editor-controls {
@@ -989,25 +987,29 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code-editor"), {
 
 // Atualiza o editor quando você troca de aba (necessário para ele carregar o layout)
 function openTab(tabName) {
-    var i;
-    var x = document.getElementsByClassName("content-section");
-    for (i = 0; i < x.length; i++) {
-        x[i].style.display = "none";  
+    const sections = document.getElementsByClassName("content-section");
+    for (let i = 0; i < sections.length; i++) {
+        sections[i].style.display = "none";
     }
 
     const target = document.getElementById(tabName);
-    if (tabName === 'cmd') {
-        target.style.display = "flex";
-        setTimeout(() => document.getElementById('terminal-input').focus(), 50);
-    } else if (tabName === 'editor') {
-        target.style.display = "block";
-        // IMPORTANTE: O CodeMirror precisa de um "refresh" quando a aba abre
-        setTimeout(() => editor.refresh(), 100);
-    } else {
-        target.style.display = "block";
+    target.style.display = (tabName === 'cmd') ? "flex" : "block";
+
+    if (tabName === 'code') {
+        // O segredo está aqui: esperar o display:block assentar e forçar o refresh
+        setTimeout(() => {
+            editor.refresh(); 
+            // Força a calha a ter 50px se ela insistir em sumir
+            const gutter = document.querySelector('.CodeMirror-gutters');
+            if (gutter) gutter.style.left = "0px";
+            
+            // Re-foca no editor para garantir que ele processe o layout
+            editor.focus();
+        }, 200);
     }
 
-    if(tabName === 'ia') checkServerStatus();
+    if (tabName === 'ia') checkServerStatus();
+    if (tabName === 'cmd') setTimeout(() => document.getElementById('terminal-input').focus(), 50);
 }
 
 function changeLanguage() {
