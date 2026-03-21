@@ -805,9 +805,10 @@
       
 // 1. Sua White-list
 const authorizedUsers = {
-    "Lunarium": "9090",
-    "dev_convidado": "senha99",
-    "joao": ""
+    "Lunarium": "e9c18d7063d8376d43501f22e379419f07a1267d3d13b634358a98319f6c0d65",
+    "Themitosan": "6c237681e70921603a306be9a1a5d9833fce5c1e268f52b1650970eaad0dce21",
+    "May": "7a3ed03b12b784c2581ae5308e31f2a80248b481d8b0d369ee2193dcc3c1c4c5",
+    "Chinelo": "060e33205a731400c2eb92bc12cf921a4e44cf1851d216f144337dd6ec5350a7"
 };
 
 // 2. Validação (Verifica se já passou 7 dias)
@@ -833,32 +834,34 @@ function validateSession() {
     overlay.style.display = "flex";
 }
 
-// 3. Função de verificação (Botão Autenticar)
-function checkLogin() {
+// 2. Função matemática para transformar texto em Hash (SHA-256)
+async function generateHash(text) {
+    const msgUint8 = new TextEncoder().encode(text);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// 3. Nova função de Login
+async function checkLogin() {
     const user = document.getElementById("user-login").value;
     const pass = document.getElementById("pass-login").value;
     const errorMsg = document.getElementById("login-error");
-    const overlay = document.getElementById("login-overlay");
 
-    if (authorizedUsers[user] && authorizedUsers[user] === pass) {
-        // 1. Salva o tempo de acesso
+    // Transformamos o que foi digitado em HASH
+    const hashDigitado = await generateHash(pass);
+
+    // Comparamos o Hash digitado com o Hash guardado
+    if (authorizedHashes[user] && authorizedHashes[user] === hashDigitado) {
         localStorage.setItem("lab_access_time", new Date().getTime());
-
-        // 2. Aplica a classe de animação (em vez de sumir de vez)
-        overlay.classList.add("login-exit");
-
-        // 3. Espera 800ms (tempo da transição do CSS) e então remove do display
-        setTimeout(() => {
-            overlay.style.display = "none";
-        }, 800);
-
+        document.getElementById("login-overlay").classList.add("login-exit");
+        setTimeout(() => { document.getElementById("login-overlay").style.display = "none"; }, 800);
     } else {
         errorMsg.style.display = "block";
         // Efeito de "tremer" o card se errar (opcional)
         document.querySelector(".login-card").style.animation = "none";
         setTimeout(() => {
-            document.querySelector(".login-card").style.animation = "shake 0.3s";
-        }, 10);
+            document.querySelector(".login-card").style.animation = "shake 0.3s";}, 10);
     }
 }
 
