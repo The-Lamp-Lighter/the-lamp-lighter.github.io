@@ -634,22 +634,29 @@
             font-size: 1.5em;
         }
 
+        /* Container do ícone no cabeçalho */
         .header-actions {
             position: absolute;
-            right: 10px;
+            right: 15px; /* Espaço da borda direita */
             top: 50%;
             transform: translateY(-50%);
+            z-index: 10; /* Garante que fique acima de tudo na barra */
+            display: flex;
+            align-items: center;
         }
 
+        /* Estilo do ícone em si */
         .config-icon {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem; /* Tamanho mais visível */
             cursor: pointer;
-            transition: color 0.3s, transform 0.3s;
+            padding: 5px; /* Aumenta a área de clique */
+            transition: all 0.3s ease;
         }
 
         .config-icon:hover {
             color: var(--main-color);
-            transform: rotate(90deg); /* Efeito clássico de girar a engrenagem */
+            transform: rotate(90deg) scale(1.1); /* Gira e cresce um pouco */
         }
         
         .dot.close { background: var(--red); }
