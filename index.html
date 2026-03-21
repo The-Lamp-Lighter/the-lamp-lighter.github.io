@@ -851,26 +851,30 @@ async function generateHash(text) {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// 3. Nova função de Login
 async function checkLogin() {
     const user = document.getElementById("user-login").value;
     const pass = document.getElementById("pass-login").value;
     const errorMsg = document.getElementById("login-error");
 
-    // Transformamos o que foi digitado em HASH
+    // 1. Geramos o hash da senha que você acabou de digitar
     const hashDigitado = await generateHash(pass);
 
-    // Comparamos o Hash digitado com o Hash guardado
-    if (authorizedUsers[user] && authorizedUsers[user] === hashDigitado) {
+    // 2. Pegamos o hash que está guardado na lista para esse usuário
+    const hashGuardado = authorizedUsers[user];
+
+    // DEDO-DURO: Mostra no console (F12) para compararmos
+    console.log("Usuário digitado:", user);
+    console.log("Hash que você gerou agora:", hashDigitado);
+    console.log("Hash que estava no código:", hashGuardado);
+
+    if (hashGuardado && hashGuardado === hashDigitado) {
+        console.log("✅ BATEU! Entrando...");
         localStorage.setItem("lab_access_time", new Date().getTime());
         document.getElementById("login-overlay").classList.add("login-exit");
         setTimeout(() => { document.getElementById("login-overlay").style.display = "none"; }, 800);
     } else {
+        console.log("❌ NÃO BATEU!");
         errorMsg.style.display = "block";
-        // Efeito de "tremer" o card se errar (opcional)
-        document.querySelector(".login-card").style.animation = "none";
-        setTimeout(() => {
-            document.querySelector(".login-card").style.animation = "shake 0.3s";}, 10);
     }
 }
 
