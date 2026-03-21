@@ -828,6 +828,15 @@ function validateSession() {
     if (loginTime) {
         const tempoAgora = new Date().getTime();
         const seteDiasEmMs = 7 * 24 * 60 * 60 * 1000;
+        if (tempoAgora - loginTime < seteDiasEmMs) {
+            overlay.style.display = "none";
+    
+            // Recupera o nome salvo e atualiza a janela
+            const savedUser = localStorage.getItem("current_user");
+            if(savedUser) updateUserWindow(savedUser);
+    
+            return;
+        }
 
         if (tempoAgora - loginTime < seteDiasEmMs) {
             // Ainda está no prazo, esconde o login
@@ -869,6 +878,10 @@ async function checkLogin() {
 
     if (hashGuardado && hashGuardado === hashDigitado) {
         console.log("✅ BATEU! Entrando...");
+        // Salva o nome do usuário para usar na janela personalizada
+        localStorage.setItem("current_user", user); 
+        // Chama a função que vai atualizar os dados na janela
+        updateUserWindow(user);
         localStorage.setItem("lab_access_time", new Date().getTime());
         document.getElementById("login-overlay").classList.add("login-exit");
         setTimeout(() => { document.getElementById("login-overlay").style.display = "none"; }, 800);
@@ -1536,6 +1549,52 @@ function openTab(tabName) {
        // Se estiver minimizada (escondida), você pode adicionar uma classe .minimized
       win.style.display = (win.style.display === 'none') ? 'block' : 'block';
      }
+
+  function updateUserWindow(username) {
+      const windowContent = document.querySelector('#win1 .content');
+      const osDetectado = detectOS(); // 🔍 Chama sua nova função aqui
+    
+      const cargo = (username.toLowerCase() === "lunarium") ? "ADMIN" : "OPERADOR";
+
+      windowContent.innerHTML = `
+          <div style="border-bottom: 1px solid var(--main-color); padding-bottom: 8px; margin-bottom: 10px;">
+              <span style="color:var(--main-color)">● OS</span>: ${osDetectado}<br>
+              <span style="color:var(--main-color)">● Operador</span>: <b>${username}</b><br>
+              <span style="color:var(--main-color)">● Cargo</span>: ${cargo}
+          </div>
+        
+          <div style="display: flex; flex-direction: column; gap: 5px;">
+              <p style="font-size: 0.75em; margin: 5px 0; opacity: 0.7;">ACESSO RÁPIDO:</p>
+              <button class="nav-btn" style="font-size: 0.8em; padding: 5px;" onclick="openTab('scripts')">📂 Scripts</button>
+              <button class="nav-btn" style="font-size: 0.8em; padding: 5px;" onclick="openTab('ia')">🌙 Lua IA</button>
+              <button class="nav-btn" style="font-size: 0.8em; padding: 5px;" onclick="openTab('cmd')">💻 Terminal</button>
+          </div>
+      `;
+    
+      document.querySelector('#win1 .window-title').innerText = `SESSION@${username.toUpperCase()}`;
+  }
+    function detectOS() {
+      const userAgent = window.navigator.userAgent;
+      const platform = window.navigator.platform;
+
+      // Verificação de Windows
+      if (userAgent.indexOf("Windows NT 10.0") !== -1) return "Windows 10/11";
+      if (userAgent.indexOf("Windows NT 6.2") !== -1) return "Windows 8";
+      if (userAgent.indexOf("Windows NT 6.1") !== -1) return "Windows 7";
+
+      // Verificação de Mac e dispositivos Apple
+      if (/Macintosh|MacIntel|MacPPC|Mac68K/.test(platform)) return "macOS";
+      if (/iPhone|iPad|iPod/.test(platform)) return "iOS";
+
+      // Verificação de Linux (Geral)
+      if (userAgent.indexOf("Linux") !== -1) {
+          // Tenta ver se há menção a Android
+          if (userAgent.indexOf("Android") !== -1) return "Android";
+          return "Linux System"; // Para distros específicas, o navegador raramente detalha
+      }
+
+      return "Sistema Desconhecido";
+  }
 
    // TILT DYNAMIC
   document.addEventListener('mousemove', (e) => {
