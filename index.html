@@ -635,23 +635,30 @@
         }
 
         /* Container do ícone no cabeçalho */
-        .header-actions {
-            position: absolute;
-            right: 15px; /* Espaço da borda direita */
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10; /* Garante que fique acima de tudo na barra */
+       /* Isso garante que o ícone fique preso ao topo da janela */
+        .window-header {
+            position: relative; /* CRUCIAL: serve como âncora para o ícone */
             display: flex;
             align-items: center;
+            justify-content: center; /* Centraliza o título */
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(0, 255, 136, 0.2);
         }
 
-        /* Estilo do ícone em si */
+        /* Posiciona o ícone no canto direito do header */
+        .header-actions {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
         .config-icon {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1.2rem; /* Tamanho mais visível */
+            color: rgba(0, 255, 136, 0.7); /* Use sua cor principal */
+            font-size: 1.1em;
             cursor: pointer;
-            padding: 5px; /* Aumenta a área de clique */
-            transition: all 0.3s ease;
+            z-index: 20; /* Garante que o clique funcione */
         }
 
         .config-icon:hover {
@@ -841,15 +848,14 @@
                 <button class="dot close"></button>
                 <button class="dot min"></button>
                 <button class="dot max" onclick="toggleMax('win1')"></button>
-                <div class="header-actions">
-                    <i class="fas fa-cog config-icon" onclick="openSettings()"></i>
-                </div>
             </div>
-            <div class="window-title">JANELA@OPERADORA</div>
-                <div class="header-actions">
-                    <i class="fas fa-cog config-icon" onclick="openSettings()"></i>
-                </div>
+
+            <div class="window-title">SESSION@LUNARIUM</div>
+
+            <div class="header-actions">
+                <i class="fas fa-cog config-icon" onclick="openSettings()"></i>
             </div>
+        </div>
             <div class="content">
                     <span style="color:var(#F26800)">OS</span>: Garuda Linux Gaming<br>
                     <span style="color:var(#F26800)">Operador atual</span>: Lunarium<br>
