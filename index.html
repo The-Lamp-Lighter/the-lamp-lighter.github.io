@@ -456,6 +456,15 @@
             transition: opacity 1.5s ease, visibility 1.5s;
         }
 
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        .login-card { animation-duration: 0.3s; }
+
         /* O Card de Login (Efeito Vidro) */
         .login-card {
             background: rgba(15, 15, 20, 0.4);
@@ -852,7 +861,7 @@ async function checkLogin() {
     const hashDigitado = await generateHash(pass);
 
     // Comparamos o Hash digitado com o Hash guardado
-    if (authorizedHashes[user] && authorizedHashes[user] === hashDigitado) {
+    if (authorizedUsers[user] && authorizedUsers[user] === hashDigitado) {
         localStorage.setItem("lab_access_time", new Date().getTime());
         document.getElementById("login-overlay").classList.add("login-exit");
         setTimeout(() => { document.getElementById("login-overlay").style.display = "none"; }, 800);
