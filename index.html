@@ -833,17 +833,6 @@
         </div>
 
 
-    <div class="shortcuts-grid">
-        <div class="shortcut-btn" onclick="openTab('scripts')">
-            <span class="shortcut-icon">📂</span>
-            <span>Scripts</span>
-        </div>
-        <div class="shortcut-btn" onclick="openTab('cmd')">
-            <span class="shortcut-icon">💻</span>
-            <span>Terminal</span>
-        </div>
-    </div>
-    
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/theme/dracula.min.css">
@@ -1610,13 +1599,18 @@ function openTab(tabName) {
               <span style="color:var(--main-color)">● Operador</span>: <b>${username}</b><br>
               <span style="color:var(--main-color)">● Cargo</span>: ${cargo}
           </div>
-        
-          <div style="display: flex; flex-direction: column; gap: 5px;">
-              <p style="font-size: 0.75em; margin: 5px 0; opacity: 0.7;">ACESSO RÁPIDO:</p>
-              <button class="nav-btn" style="font-size: 0.8em; padding: 5px;" onclick="openTab('scripts')">📂 Scripts</button>
-              <button class="nav-btn" style="font-size: 0.8em; padding: 5px;" onclick="openTab('ia')">🌙 Lua IA</button>
-              <button class="nav-btn" style="font-size: 0.8em; padding: 5px;" onclick="openTab('cmd')">💻 Terminal</button>
-          </div>
+         
+        <div class="shortcuts-grid">
+            <div class="shortcut-btn" onclick="openTab('scripts')">
+                <span class="shortcut-icon">📂</span>
+                <span>Scripts</span>
+            </div>
+            <div class="shortcut-btn" onclick="openTab('cmd')">
+                <span class="shortcut-icon">💻</span>
+                <span>Terminal</span>
+            </div>
+        </div>
+    
       `;
     
       document.querySelector('#win1 .window-title').innerText = `SESSION@${username.toUpperCase()}`;
