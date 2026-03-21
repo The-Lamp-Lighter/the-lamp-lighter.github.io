@@ -596,6 +596,43 @@
             width: 15px; height: 15px; border-radius: 50%;
             border: none; cursor: pointer; transition: 0.3s;
         }
+
+        /* Container que segura os atalhos */
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 colunas iguais */
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* O novo estilo do botão de atalho */
+        .shortcut-btn {
+            background: rgba(0, 255, 136, 0.05); /* Fundo sutil */
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: white;
+            padding: 15px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease; /* Faz o zoom ser suave */
+            font-size: 0.85em;
+        }
+
+        /* Efeito ao passar o mouse */
+        .shortcut-btn:hover {
+            transform: scale(1.05); /* O zoom que você pediu! */
+            background: rgba(0, 255, 136, 0.15);
+            border-color: var(--main-color);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .shortcut-icon {
+            font-size: 1.5em;
+        }
+        
         .dot.close { background: var(--red); }
         .dot.min { background: var(--orange); }
         .dot.max { background: #50fa7b; }
@@ -638,6 +675,7 @@
             <button class="nav-btn" onclick="openTab('code')">Code Editor</button>
             <button class="nav-btn" onclick="openTab('modeling-3d')">3D Studio</button>
             <button class="nav-btn" onclick="openTab('news')">Notícias</button>
+            <button class="nav-btn" onclick="openTab('custom')">Custom</button>
         </div>
 
     <button id="toggle-menu" onclick="toggleMenu()">
@@ -788,13 +826,23 @@
     </div>
 
     <div class="dock-trigger"></div>
-    <div class="dock">
-        <div class="dock-item active"></div>
-        <div class="dock-item active"></div>
-        <div class="dock-item"></div>
+        <div class="dock">
+            <div class="dock-item active"></div>
+            <div class="dock-item active"></div>
+            <div class="dock-item"></div>
+        </div>
+
+
+    <div class="shortcuts-grid">
+        <div class="shortcut-btn" onclick="openTab('scripts')">
+            <span class="shortcut-icon">📂</span>
+            <span>Scripts</span>
+        </div>
+        <div class="shortcut-btn" onclick="openTab('cmd')">
+            <span class="shortcut-icon">💻</span>
+            <span>Terminal</span>
+        </div>
     </div>
-
-
     
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/codemirror.min.css">
