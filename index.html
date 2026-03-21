@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lunarium's Lab</title>
     <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --main-color: #00ff88; --bg-card: rgba(0, 0, 0, 0.8); }
         body {
@@ -632,6 +633,24 @@
         .shortcut-icon {
             font-size: 1.5em;
         }
+
+        .header-actions {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .config-icon {
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .config-icon:hover {
+            color: var(--main-color);
+            transform: rotate(90deg); /* Efeito clássico de girar a engrenagem */
+        }
         
         .dot.close { background: var(--red); }
         .dot.min { background: var(--orange); }
@@ -812,11 +831,14 @@
     <div class="window" id="win1" style="top: 150px; left: 200px; z-index: 10;">
         <div class="window-header" onmousedown="dragStart(event, 'win1')">
             <div class="controls">
-                <button class="dot close" onclick="console.log('Close')"></button>
-                <button class="dot min" onclick="console.log('Min')"></button>
+                <button class="dot close"></button>
+                <button class="dot min"></button>
                 <button class="dot max" onclick="toggleMax('win1')"></button>
             </div>
-            <div class="window-title">JANELA@TESTE</div>
+            <div class="window-title">SESSION@LUNARIUM</div>
+            <div class="header-actions">
+                <i class="fas fa-cog config-icon" onclick="openSettings()"></i>
+            </div>
         </div>
         <div class="content">
                 <span style="color:var(#F26800)">OS</span>: Garuda Linux Gaming<br>
