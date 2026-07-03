@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Repositórios — Lunarium's Lab</title>
+<link rel="icon" href="assets/favicon.png">
+<script src="js/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=VT323&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Mono&family=Chakra+Petch:wght@500;600;700&family=Share+Tech+Mono&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/base.css">
+<style>
+  .repo-toolbar { display:flex; gap:12px; margin-bottom:22px; flex-wrap:wrap; }
+  .repo-toolbar input[type="text"] { flex:1; min-width:200px; }
+  .repo-toolbar select { max-width:220px; }
+
+  .project-card { margin-bottom: 14px; overflow:hidden; }
+  .project-head {
+    width:100%; display:flex; align-items:center; gap:14px; text-align:left;
+    background:none; border:none; padding:18px 20px; cursor:pointer; color:var(--text);
+    font-family:inherit;
+  }
+  .project-icon {
+    width:42px; height:42px; border-radius:var(--radius-sm); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background:hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .15);
+    color:hsl(var(--accent-h) var(--accent-s) calc(var(--accent-l) + 10%));
+  }
+  .project-info { flex:1; display:flex; flex-direction:column; gap:2px; }
+  .project-info strong { font-size:.95rem; color:var(--text-strong); }
+  .project-info .dim { font-size:.8rem; }
+  .project-chevron { transition: transform .2s ease; color:var(--text-faint); }
+  .project-head.open .project-chevron { transform: rotate(180deg); }
+
+  .project-versions {
+    max-height:0; overflow:hidden; transition:max-height .3s ease;
+    padding: 0 20px; border-top:1px solid transparent;
+  }
+  .project-versions.open { max-height:900px; padding: 6px 20px 20px 20px; border-top-color: var(--border); }
+
+  .version-row { display:flex; gap:12px; padding: 12px 0; border-left:2px solid var(--border); padding-left:16px; margin-left:6px; position:relative; }
+  .version-row:last-child { border-left-color: transparent; }
+  .version-dot {
+    position:absolute; left:-6px; top:14px; width:10px; height:10px; border-radius:50%;
+    background: var(--text-faint); border:2px solid var(--bg);
+  }
+  .version-row.latest .version-dot { background: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); box-shadow: 0 0 8px hsl(var(--accent-h) var(--accent-s) var(--accent-l)); }
+  .version-head { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+
+  .diversion-note { display:flex; gap:12px; align-items:flex-start; margin-top:24px; padding:16px 18px; }
+  .diversion-note i { color: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); margin-top:2px; }
+</style>
+</head>
+<body data-page="repo">
+  <div id="app-shell">
+    <div id="app-nav"></div>
+    <div>
+      <header class="topbar" id="app-topbar"></header>
+      <main id="app-main">
+        <div class="repo-toolbar">
+          <input type="text" id="repo-search" placeholder="Buscar projeto, script ou app…">
+          <select id="repo-filter-cat"></select>
+        </div>
+        <div id="project-list"></div>
+
+        <div class="panel diversion-note">
+          <i class="fa-solid fa-circle-info"></i>
+          <p class="dim" style="font-size:.82rem;margin:0;">
+            Isso funciona como um Diversion pessoal, direto no site: cada projeto guarda seu histórico de versões
+            e o link de download, sem precisar abrir o app. Quando um projeto tiver de fato um repositório no Diversion,
+            é só preencher o campo <code>diversionId</code> dele em <code>data/projects.js</code> pra futura sincronização automática.
+          </p>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div id="theme-panel-root"></div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="data/projects.js"></script>
+  <script src="js/repo.js"></script>
+  <script>
+    window.LunariumRepo.init("project-list", "repo-search", "repo-filter-cat");
+  </script>
+</body>
+</html>

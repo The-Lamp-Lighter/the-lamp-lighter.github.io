@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lunarium's Lab — Acesso</title>
+<link rel="icon" href="assets/favicon.png">
+<script src="js/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=VT323&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Mono&family=Chakra+Petch:wght@500;600;700&family=Share+Tech+Mono&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/base.css">
+<style>
+  body { display:flex; align-items:center; justify-content:center; padding:24px; overflow-x:hidden; }
+  .gate { width:100%; max-width:920px; display:grid; grid-template-columns:1.1fr 1fr; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--border); }
+  .gate-hero { padding:48px 40px; position:relative; display:flex; flex-direction:column; justify-content:space-between; background:var(--surface); min-height:480px; }
+  .gate-orbit { position:absolute; top:-60px; right:-60px; width:260px; height:260px; opacity:.55; pointer-events:none; }
+  .gate-orbit circle { fill:none; stroke:hsl(var(--accent-h) var(--accent-s) var(--accent-l)); }
+  .gate-eyebrow { font-family:var(--font-mono); font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:var(--text-faint); }
+  .gate-title { font-family:var(--font-display); font-size:2.5rem; font-weight:var(--display-weight); line-height:1.05; margin:14px 0 16px 0; color:var(--text-strong); }
+  .gate-title span { color:hsl(var(--accent-h) var(--accent-s) var(--accent-l)); }
+  .gate-desc { color:var(--text-dim); max-width:38ch; font-size:.92rem; }
+  .style-dots { display:flex; gap:10px; margin-top:28px; }
+  .style-dot {
+    width:30px; height:30px; border-radius:50%; cursor:pointer; border:2px solid transparent;
+    display:flex; align-items:center; justify-content:center; transition:all .2s ease;
+  }
+  .style-dot.active { border-color: var(--text-strong); transform: scale(1.15); }
+  .style-dot i { font-size:.7rem; }
+  .gate-form { padding:48px 40px; background:var(--surface-weak); display:flex; flex-direction:column; justify-content:center; }
+  .gate-form h2 { font-size:1.1rem; margin-bottom:4px; }
+  .gate-form .dim { font-size:.82rem; margin-bottom:24px; }
+  .gate-note { font-size:.72rem; color:var(--text-faint); margin-top:18px; display:flex; gap:8px; align-items:flex-start; }
+  @media (max-width: 760px) {
+    .gate { grid-template-columns:1fr; }
+    .gate-hero { min-height:auto; }
+  }
+</style>
+</head>
+<body data-style-preview>
+  <main class="gate panel">
+    <section class="gate-hero">
+      <svg class="gate-orbit" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="130" cy="130" r="128" stroke-width="1"/>
+        <circle cx="130" cy="130" r="92" stroke-width="1"/>
+        <circle cx="130" cy="130" r="56" stroke-width="1"/>
+      </svg>
+      <div>
+        <p class="gate-eyebrow">Sistema local · centro de ações</p>
+        <h1 class="gate-title">LUNARIUM'S<br><span>LAB</span></h1>
+        <p class="gate-desc">Terminal, notícias dos repositórios, versionamento de scripts &amp; apps e chat — tudo num só lugar, com a cara que você quiser.</p>
+      </div>
+      <div>
+        <p class="gate-eyebrow" style="margin-bottom:10px;">Escolha um estilo</p>
+        <div class="style-dots" id="style-dots"></div>
+      </div>
+    </section>
+    <section class="gate-form">
+      <h2><i class="fa-solid fa-satellite-dish accent"></i> Acessar laboratório</h2>
+      <p class="dim">Identifique-se para entrar no painel.</p>
+      <form id="login-form">
+        <div class="field">
+          <label for="login-name">Codinome</label>
+          <input type="text" id="login-name" placeholder="ex: lunarium" autocomplete="off" required>
+        </div>
+        <button type="submit" class="btn btn-solid" style="width:100%;justify-content:center;padding:.85em;">
+          <i class="fa-solid fa-power-off"></i> Entrar no laboratório
+        </button>
+      </form>
+      <p class="gate-note"><i class="fa-solid fa-circle-info" style="margin-top:2px;"></i> A sessão fica salva só neste navegador — nada é enviado pra fora. Dá pra trocar o estilo e a cor a qualquer momento lá dentro, em Aparência.</p>
+    </section>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script>
+    (function () {
+      var existing = window.LunariumAuth.get();
+      if (existing) window.location.href = "home.html";
+
+      var wrap = document.getElementById("style-dots");
+      var current = window.LunariumTheme.get();
+      window.LunariumTheme.STYLES.forEach(function (s) {
+        var dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "style-dot" + (s.id === current.style ? " active" : "");
+        dot.style.background = "hsl(" + s.hue + " 70% 55%)";
+        dot.title = s.label;
+        dot.innerHTML = '<i class="fa-solid ' + s.icon + '" style="color:#fff;"></i>';
+        dot.addEventListener("click", function () {
+          window.LunariumTheme.setStyle(s.id);
+          document.querySelectorAll(".style-dot").forEach(function (d) { d.classList.remove("active"); });
+          dot.classList.add("active");
+        });
+        wrap.appendChild(dot);
+      });
+
+      document.getElementById("login-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var name = document.getElementById("login-name").value;
+        window.LunariumAuth.login(name);
+        window.location.href = "home.html";
+      });
+    })();
+  </script>
+</body>
+</html>

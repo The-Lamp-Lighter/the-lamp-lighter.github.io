@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notícias — Lunarium's Lab</title>
+<link rel="icon" href="assets/favicon.png">
+<script src="js/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=VT323&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Mono&family=Chakra+Petch:wght@500;600;700&family=Share+Tech+Mono&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/base.css">
+<style>
+  .repo-filter { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .repo-filter button {
+    font-family: var(--font-mono); font-size:.72rem; padding:.5em .9em; border-radius:999px;
+    border:1px solid var(--border); background:var(--surface); color:var(--text-dim); cursor:pointer;
+  }
+  .repo-filter button.active { border-color:hsl(var(--accent-h) var(--accent-s) var(--accent-l)); color:var(--text-strong); background:hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .15); }
+  .config-note { font-size:.78rem; color:var(--text-faint); margin-top:24px; }
+  .config-note code { background:var(--input-bg); padding:2px 6px; border-radius:4px; }
+</style>
+</head>
+<body data-page="news">
+  <div id="app-shell">
+    <div id="app-nav"></div>
+    <div>
+      <header class="topbar" id="app-topbar"></header>
+      <main id="app-main">
+        <div class="repo-filter" id="repo-filter"></div>
+        <div id="news-list">
+          <div class="empty-state">
+            <div class="orbit"></div>
+            <h3>Sintonizando…</h3>
+            <p class="dim">Buscando commits recentes no GitHub.</p>
+          </div>
+        </div>
+        <p class="config-note">Os repositórios acompanhados aqui vêm de <code>window.LUNARIUM_GITHUB_REPOS</code> em <code>data/projects.js</code> — edite esse arquivo pra apontar pros seus repositórios reais.</p>
+      </main>
+    </div>
+  </div>
+  <div id="theme-panel-root"></div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="data/projects.js"></script>
+  <script src="js/news.js"></script>
+  <script>
+    (function () {
+      var allItems = [];
+      var activeRepo = "all";
+
+      function renderFilters() {
+        var repos = (window.LUNARIUM_GITHUB_REPOS || []).map(function (r) { return r.repo; });
+        var uniqueRepos = repos.filter(function (v, i) { return repos.indexOf(v) === i; });
+        var wrap = document.getElementById("repo-filter");
+        var html = '<button data-repo="all" class="active">Todos</button>';
+        html += uniqueRepos.map(function (r) { return '<button data-repo="' + r + '">' + r + '</button>'; }).join("");
+        wrap.innerHTML = html;
+        wrap.querySelectorAll("button").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            activeRepo = btn.dataset.repo;
+            wrap.querySelectorAll("button").forEach(function (b) { b.classList.remove("active"); });
+            btn.classList.add("active");
+            renderList();
+          });
+        });
+      }
+
+      function renderList() {
+        var list = document.getElementById("news-list");
+        var filtered = activeRepo === "all" ? allItems : allItems.filter(function (i) { return i.repo === activeRepo; });
+        if (!filtered.length) {
+          list.innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Nenhuma atividade encontrada</h3><p class="dim">Confira se os repositórios em <code>data/projects.js</code> existem e são públicos.</p></div>';
+          return;
+        }
+        list.innerHTML = filtered.map(function (it) { return window.LunariumNews.renderCard(it, false); }).join("");
+      }
+
+      renderFilters();
+      window.LunariumNews.fetchRecent(30).then(function (items) {
+        allItems = items;
+        renderList();
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel — Lunarium's Lab</title>
+<link rel="icon" href="assets/favicon.png">
+<script src="js/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=VT323&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Mono&family=Chakra+Petch:wght@500;600;700&family=Share+Tech+Mono&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/base.css">
+<style>
+  .greeting { margin-bottom: 26px; }
+  .greeting h1 { font-size: 1.8rem; margin-bottom: 4px; }
+  .action-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px; margin-bottom: 32px;
+  }
+  .action-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 22px; text-decoration: none; color: var(--text); position: relative; overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; cursor: pointer;
+    display: flex; flex-direction: column; gap: 10px; min-height: 150px;
+  }
+  .action-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .5); }
+  .action-card i.card-icon {
+    font-size: 1.3rem; width: 44px; height: 44px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    background: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .15);
+    color: hsl(var(--accent-h) var(--accent-s) calc(var(--accent-l) + 10%));
+  }
+  .action-card h3 { font-size: 1rem; margin: 0; }
+  .action-card p { font-size: .8rem; color: var(--text-dim); margin: 0; flex: 1; }
+  .action-card .card-arrow { position: absolute; top: 18px; right: 18px; color: var(--text-faint); font-size: .8rem; }
+
+  .split { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+
+  .section-title { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .section-title h2 { font-size: 1rem; margin: 0; }
+  .section-title a { font-size: .78rem; color: var(--text-dim); text-decoration:none; }
+  .section-title a:hover { color: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); }
+
+  .stat-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:.85rem; }
+  .stat-row:last-child { border-bottom:none; }
+  .stat-row span:first-child { color: var(--text-dim); }
+</style>
+</head>
+<body data-page="home">
+  <div id="app-shell">
+    <div id="app-nav"></div>
+    <div>
+      <header class="topbar" id="app-topbar"></header>
+      <main id="app-main">
+        <div class="greeting">
+          <h1 id="greet-title">Bem-vindo(a) de volta</h1>
+          <p class="dim" id="greet-sub">O laboratório está online. Escolha um módulo pra começar.</p>
+        </div>
+
+        <div class="action-grid">
+          <a class="action-card" href="terminal.html">
+            <i class="fa-solid fa-terminal card-icon"></i>
+            <h3>Terminal</h3>
+            <p>Console com comandos próprios do laboratório — atalhos, utilidades e easter eggs.</p>
+            <i class="fa-solid fa-arrow-right card-arrow"></i>
+          </a>
+          <a class="action-card" href="repo.html">
+            <i class="fa-solid fa-code-branch card-icon"></i>
+            <h3>Repositórios</h3>
+            <p>Scripts, apps e projetos com histórico de versões — seu mini Diversion embutido.</p>
+            <i class="fa-solid fa-arrow-right card-arrow"></i>
+          </a>
+          <a class="action-card" href="news.html">
+            <i class="fa-solid fa-tower-broadcast card-icon"></i>
+            <h3>Notícias</h3>
+            <p>Atividade recente dos seus repositórios no GitHub, direto na fonte.</p>
+            <i class="fa-solid fa-arrow-right card-arrow"></i>
+          </a>
+          <a class="action-card" href="chat.html">
+            <i class="fa-solid fa-comments card-icon"></i>
+            <h3>Chat</h3>
+            <p>Perfil com bio e código próprio — adicione contatos e converse, sem instalar nada.</p>
+            <i class="fa-solid fa-arrow-right card-arrow"></i>
+          </a>
+          <a class="action-card" data-theme-toggle>
+            <i class="fa-solid fa-palette card-icon"></i>
+            <h3>Aparência</h3>
+            <p>Troque o estilo do laboratório e ajuste a cor de destaque na roda de cor.</p>
+            <i class="fa-solid fa-arrow-right card-arrow"></i>
+          </a>
+        </div>
+
+        <div class="split">
+          <section class="panel" style="padding:20px;">
+            <div class="section-title">
+              <h2><i class="fa-solid fa-tower-broadcast accent"></i> Últimas atividades</h2>
+              <a href="news.html">ver tudo</a>
+            </div>
+            <div id="home-news-list">
+              <div class="empty-state" style="padding:24px;">
+                <div class="orbit"></div>
+                <p class="dim" style="font-size:.85rem;">Carregando atividade recente…</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel" style="padding:20px;">
+            <div class="section-title"><h2><i class="fa-solid fa-gauge-high accent"></i> Status</h2></div>
+            <div class="stat-row"><span>Sessão</span><span id="stat-session">—</span></div>
+            <div class="stat-row"><span>Estilo ativo</span><span id="stat-style">—</span></div>
+            <div class="stat-row"><span>Repositórios catalogados</span><span id="stat-repos">—</span></div>
+            <div class="stat-row"><span>Contatos no chat</span><span id="stat-contacts">—</span></div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div id="theme-panel-root"></div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="data/projects.js"></script>
+  <script src="js/news.js"></script>
+  <script>
+    (function () {
+      var session = window.LunariumAuth.get();
+      if (session) {
+        var hour = new Date().getHours();
+        var saud = hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
+        document.getElementById("greet-title").textContent = saud + ", " + session.name + ".";
+        document.getElementById("stat-session").textContent = session.name + " · " + session.role;
+      }
+      var t = window.LunariumTheme.get();
+      var preset = window.LunariumTheme.STYLES.find(function (s) { return s.id === t.style; });
+      document.getElementById("stat-style").textContent = preset ? preset.label : t.style;
+      document.addEventListener("lunarium:theme-change", function () {
+        var t2 = window.LunariumTheme.get();
+        var p2 = window.LunariumTheme.STYLES.find(function (s) { return s.id === t2.style; });
+        document.getElementById("stat-style").textContent = p2 ? p2.label : t2.style;
+      });
+
+      if (window.LUNARIUM_PROJECTS) {
+        document.getElementById("stat-repos").textContent = window.LUNARIUM_PROJECTS.length;
+      }
+      try {
+        var contacts = JSON.parse(localStorage.getItem("lunarium.chat.contacts") || "[]");
+        document.getElementById("stat-contacts").textContent = contacts.length;
+      } catch (e) { document.getElementById("stat-contacts").textContent = "0"; }
+
+      if (window.LunariumNews) {
+        window.LunariumNews.fetchRecent(4).then(function (items) {
+          var list = document.getElementById("home-news-list");
+          if (!items.length) {
+            list.innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Sem atividade por aqui</h3><p>Configure os repositórios em data/projects.js.</p></div>';
+            return;
+          }
+          list.innerHTML = items.map(function (it) { return window.LunariumNews.renderCard(it, true); }).join("");
+        }).catch(function () {
+          document.getElementById("home-news-list").innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Não deu pra buscar agora</h3><p class="dim">Confira a conexão ou tente na aba Notícias.</p></div>';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

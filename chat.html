@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat — Lunarium's Lab</title>
+<link rel="icon" href="assets/favicon.png">
+<script src="js/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=VT323&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Mono&family=Chakra+Petch:wght@500;600;700&family=Share+Tech+Mono&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/base.css">
+<style>
+  .chat-layout { display:grid; grid-template-columns: 270px 1fr; gap:16px; height: calc(100vh - 150px); min-height:460px; }
+  @media (max-width: 800px) { .chat-layout { grid-template-columns: 1fr; height:auto; } }
+
+  .chat-contacts { display:flex; flex-direction:column; overflow:hidden; }
+  .me-card { display:flex; align-items:center; gap:10px; padding:16px; border-bottom:1px solid var(--border); }
+  .avatar-badge {
+    width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .2); font-size:1.1rem; flex-shrink:0;
+  }
+  .me-card strong { display:block; font-size:.88rem; }
+  .me-card .code-pill {
+    font-family:var(--font-mono); font-size:.68rem; color:var(--text-dim); cursor:pointer;
+    display:flex; align-items:center; gap:5px;
+  }
+  .add-contact { padding:12px 14px; border-bottom:1px solid var(--border); display:flex; gap:6px; }
+  .add-contact input { font-size:.78rem; padding:.55em .7em; }
+  .contact-list { overflow-y:auto; flex:1; }
+  .contact-item {
+    display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer;
+    border-left:3px solid transparent; transition: background .15s ease;
+  }
+  .contact-item:hover { background: var(--surface); }
+  .contact-item.active { background: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .12); border-left-color: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); }
+  .contact-item strong { font-size:.85rem; display:block; }
+  .contact-item small { color:var(--text-dim); font-size:.72rem; }
+  .contact-item .pending-tag { font-size:.6rem; color:var(--text-faint); font-family:var(--font-mono); }
+
+  .chat-main { display:flex; flex-direction:column; overflow:hidden; }
+  .chat-head { display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--border); }
+  .chat-head strong { font-size:.92rem; }
+  .chat-head small { color:var(--text-dim); font-size:.75rem; }
+  .chat-messages { flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:10px; }
+  .msg { max-width:70%; padding:.6em .9em; border-radius: var(--radius-sm); font-size:.86rem; line-height:1.4; }
+  .msg.me { align-self:flex-end; background: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); color: var(--on-accent); border-bottom-right-radius:2px; }
+  .msg.them { align-self:flex-start; background: var(--surface); border:1px solid var(--border); border-bottom-left-radius:2px; }
+  .msg time { display:block; font-size:.62rem; opacity:.7; margin-top:4px; }
+  .chat-inputrow { display:flex; gap:8px; padding:14px 18px; border-top:1px solid var(--border); }
+  .chat-inputrow input { flex:1; }
+
+  /* onboarding */
+  .onboard-overlay { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:80; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .onboard-card { width:100%; max-width:420px; padding:28px; }
+  .avatar-pick { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 18px 0; }
+  .avatar-pick button { width:38px; height:38px; border-radius:50%; border:2px solid var(--border); background:var(--surface); font-size:1.1rem; cursor:pointer; }
+  .avatar-pick button.active { border-color: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); }
+</style>
+</head>
+<body data-page="chat">
+  <div id="app-shell">
+    <div id="app-nav"></div>
+    <div>
+      <header class="topbar" id="app-topbar"></header>
+      <main id="app-main">
+        <div class="chat-layout">
+          <aside class="panel chat-contacts">
+            <div class="me-card">
+              <span class="avatar-badge" id="me-avatar">🌙</span>
+              <div>
+                <strong id="me-name">—</strong>
+                <span class="code-pill" id="me-code" title="Clique para copiar"><i class="fa-regular fa-copy"></i> —</span>
+              </div>
+            </div>
+            <form class="add-contact" id="add-contact-form">
+              <input type="text" id="add-contact-input" placeholder="Código do contato" autocomplete="off">
+              <button class="btn-icon btn-solid" type="submit" aria-label="Adicionar"><i class="fa-solid fa-plus"></i></button>
+            </form>
+            <div class="contact-list" id="contact-list"></div>
+          </aside>
+
+          <section class="panel chat-main">
+            <div id="chat-empty" class="empty-state" style="margin:auto;">
+              <div class="orbit"></div>
+              <h3>Escolha uma conversa</h3>
+              <p class="dim">Ou adicione alguém pelo código ao lado.</p>
+            </div>
+            <div id="chat-active" class="hidden" style="display:contents;">
+              <div class="chat-head">
+                <span class="avatar-badge" id="active-avatar"></span>
+                <div>
+                  <strong id="active-name"></strong><br>
+                  <small id="active-sub"></small>
+                </div>
+                <button class="btn btn-danger" id="remove-contact-btn" style="margin-left:auto;font-size:.72rem;padding:.4em .8em;"><i class="fa-solid fa-trash"></i></button>
+              </div>
+              <div class="chat-messages" id="chat-messages"></div>
+              <form class="chat-inputrow" id="send-form">
+                <input type="text" id="send-input" placeholder="Escreva uma mensagem…" autocomplete="off">
+                <button class="btn btn-solid btn-icon" type="submit" aria-label="Enviar"><i class="fa-solid fa-paper-plane"></i></button>
+              </form>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="onboard-root"></div>
+  <div id="theme-panel-root"></div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/chat.js"></script>
+  <script>
+  (function () {
+    var activeCode = null;
+
+    function fmtTime(ts) {
+      return new Date(ts).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    }
+    function escapeHtml(str) {
+      var d = document.createElement("div"); d.textContent = str || ""; return d.innerHTML;
+    }
+
+    function renderMe() {
+      var p = window.LunariumChat.getProfile();
+      if (!p) return;
+      document.getElementById("me-avatar").textContent = p.avatar;
+      document.getElementById("me-name").textContent = p.name;
+      document.getElementById("me-code").innerHTML = '<i class="fa-regular fa-copy"></i> ' + p.code;
+    }
+
+    function renderContacts() {
+      var contacts = window.LunariumChat.getContacts();
+      var list = document.getElementById("contact-list");
+      if (!contacts.length) {
+        list.innerHTML = '<p class="dim" style="padding:16px;font-size:.8rem;">Nenhum contato ainda. Adicione pelo código acima.</p>';
+        return;
+      }
+      list.innerHTML = contacts.map(function (c) {
+        return (
+          '<div class="contact-item' + (c.code === activeCode ? ' active' : '') + '" data-code="' + c.code + '">' +
+            '<span class="avatar-badge">' + c.avatar + '</span>' +
+            '<div><strong>' + escapeHtml(c.name) + '</strong>' +
+            (c.pending ? '<br><span class="pending-tag">local · sem sincronização</span>' : '<small>' + c.code + '</small>') +
+            '</div>' +
+          '</div>'
+        );
+      }).join("");
+      list.querySelectorAll(".contact-item").forEach(function (el) {
+        el.addEventListener("click", function () { openThread(el.dataset.code); });
+      });
+    }
+
+    function renderMessages() {
+      var box = document.getElementById("chat-messages");
+      var thread = window.LunariumChat.getThread(activeCode);
+      if (!thread.length) {
+        box.innerHTML = '<p class="dim" style="margin:auto;font-size:.82rem;">Nenhuma mensagem ainda. Diga oi!</p>';
+        return;
+      }
+      box.innerHTML = thread.map(function (m) {
+        return '<div class="msg ' + m.from + '">' + escapeHtml(m.text) + '<time>' + fmtTime(m.ts) + '</time></div>';
+      }).join("");
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function openThread(code) {
+      activeCode = code;
+      var contact = window.LunariumChat.getContacts().find(function (c) { return c.code === code; });
+      if (!contact) return;
+      document.getElementById("chat-empty").classList.add("hidden");
+      document.getElementById("chat-active").classList.remove("hidden");
+      document.getElementById("active-avatar").textContent = contact.avatar;
+      document.getElementById("active-name").textContent = contact.name;
+      document.getElementById("active-sub").textContent = contact.pending ? "local · sem sincronização real" : contact.code;
+      renderContacts();
+      renderMessages();
+      document.getElementById("send-input").focus();
+    }
+
+    document.getElementById("add-contact-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var input = document.getElementById("add-contact-input");
+      var res = window.LunariumChat.addContactByCode(input.value);
+      if (!res.ok) { alert(res.error); return; }
+      input.value = "";
+      renderContacts();
+      openThread(res.contact.code);
+    });
+
+    document.getElementById("send-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var input = document.getElementById("send-input");
+      if (!activeCode || !input.value.trim()) return;
+      window.LunariumChat.sendMessage(activeCode, input.value);
+      input.value = "";
+      renderMessages();
+    });
+
+    document.getElementById("remove-contact-btn").addEventListener("click", function () {
+      if (!activeCode) return;
+      if (!confirm("Remover este contato e a conversa?")) return;
+      window.LunariumChat.removeContact(activeCode);
+      activeCode = null;
+      document.getElementById("chat-active").classList.add("hidden");
+      document.getElementById("chat-empty").classList.remove("hidden");
+      renderContacts();
+    });
+
+    document.getElementById("me-code").addEventListener("click", function () {
+      var p = window.LunariumChat.getProfile();
+      if (!p) return;
+      navigator.clipboard && navigator.clipboard.writeText(p.code);
+      var el = document.getElementById("me-code");
+      var old = el.innerHTML;
+      el.innerHTML = '<i class="fa-solid fa-check"></i> copiado!';
+      setTimeout(function () { el.innerHTML = old; }, 1200);
+    });
+
+    document.addEventListener("lunarium:chat-update", function (e) {
+      if (e.detail.code === activeCode) renderMessages();
+      renderContacts();
+    });
+
+    function showOnboarding() {
+      var root = document.getElementById("onboard-root");
+      var chosenAvatar = window.LunariumChat.AVATAR_EMOJIS[0];
+      var avatarsHtml = window.LunariumChat.AVATAR_EMOJIS.map(function (a, i) {
+        return '<button type="button" class="' + (i === 0 ? "active" : "") + '" data-avatar="' + a + '">' + a + '</button>';
+      }).join("");
+      root.innerHTML =
+        '<div class="onboard-overlay"><div class="panel onboard-card">' +
+          '<h2><i class="fa-solid fa-id-badge accent"></i> Crie seu perfil de chat</h2>' +
+          '<p class="dim" style="font-size:.85rem;margin-bottom:16px;">Isso gera um código único pra outras pessoas te adicionarem — como um Discord da vida.</p>' +
+          '<form id="onboard-form">' +
+            '<div class="field"><label>Nome de exibição</label><input type="text" id="ob-name" required></div>' +
+            '<div class="field"><label>Bio (opcional)</label><input type="text" id="ob-bio" maxlength="80"></div>' +
+            '<div class="field"><label>Avatar</label><div class="avatar-pick">' + avatarsHtml + '</div></div>' +
+            '<button class="btn btn-solid" type="submit" style="width:100%;justify-content:center;padding:.8em;">Criar perfil</button>' +
+          '</form>' +
+        '</div></div>';
+
+      root.querySelectorAll(".avatar-pick button").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          root.querySelectorAll(".avatar-pick button").forEach(function (b) { b.classList.remove("active"); });
+          btn.classList.add("active");
+          chosenAvatar = btn.dataset.avatar;
+        });
+      });
+
+      document.getElementById("onboard-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        window.LunariumChat.createProfile({
+          name: document.getElementById("ob-name").value,
+          bio: document.getElementById("ob-bio").value,
+          avatar: chosenAvatar
+        });
+        root.innerHTML = "";
+        boot();
+      });
+    }
+
+    function boot() {
+      var profile = window.LunariumChat.getProfile();
+      if (!profile) { showOnboarding(); return; }
+      renderMe();
+      renderContacts();
+    }
+
+    boot();
+  })();
+  </script>
+</body>
+</html>

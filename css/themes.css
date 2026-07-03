@@ -1,0 +1,183 @@
+/* ============================================================
+   LUNARIUM'S LAB — themes.css
+   Cada [data-style] define a "personalidade" (fontes, cantos,
+   texturas, saturação/luminosidade do acento). O MATIZ (--accent-h)
+   é escolhido à parte, pela roda de cor, e se aplica sobre
+   qualquer estilo — por isso ele fica de fora dos blocos abaixo.
+   ============================================================ */
+
+:root {
+  --accent-h: 258; /* sobrescrito via JS/localStorage */
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+/* ---------------------------------------------------------
+   1. LUNARIUM — tema assinatura (padrão)
+   Laboratório noturno: índigo profundo, vidro fosco, serif
+   com personalidade + mono técnico. Motivo de órbita/luar.
+--------------------------------------------------------- */
+[data-style="lunarium"] {
+  --bg: radial-gradient(ellipse 120% 80% at 20% -10%, #211c3d 0%, #0b0a16 45%, #08070f 100%);
+  --bg-texture: radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.35) 0, transparent 60%),
+                radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,.25) 0, transparent 60%),
+                radial-gradient(1.5px 1.5px at 60% 15%, rgba(255,255,255,.3) 0, transparent 60%),
+                radial-gradient(1px 1px at 35% 80%, rgba(255,255,255,.2) 0, transparent 60%);
+  --surface: rgba(255,255,255,.045);
+  --surface-strong: rgba(20,17,38,.65);
+  --surface-weak: rgba(14,12,26,.55);
+  --border: rgba(255,255,255,.09);
+  --input-bg: rgba(0,0,0,.25);
+  --text: #dcd8ee;
+  --text-strong: #f3f1fb;
+  --text-dim: #9c96bd;
+  --text-faint: #6c6690;
+  --on-accent: #14101f;
+  --accent-s: 72%;
+  --accent-l: 66%;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 20px 60px rgba(0,0,0,.45);
+  --glow-sm: 0 0 22px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .3);
+  --font-display: 'Fraunces', 'Georgia', serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --display-weight: 560;
+  --display-tracking: -.01em;
+}
+[data-style="lunarium"] :not(input):not(textarea) { }
+
+/* ---------------------------------------------------------
+   2. RETRÔ — terminal CRT fósforo verde, scanlines, glow
+--------------------------------------------------------- */
+[data-style="retro"] {
+  --bg: #050a06;
+  --bg-texture:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0px, rgba(0,0,0,.28) 1px, transparent 2px, transparent 3px),
+    radial-gradient(ellipse 140% 100% at 50% 0%, rgba(20,60,30,.35), transparent 60%);
+  --surface: rgba(10, 24, 12, .55);
+  --surface-strong: rgba(4, 12, 6, .85);
+  --surface-weak: rgba(4, 12, 6, .7);
+  --border: rgba(120, 255, 140, .22);
+  --input-bg: rgba(0,10,0,.5);
+  --text: #b9f6c4;
+  --text-strong: #d6ffe0;
+  --text-dim: #6fa87c;
+  --text-faint: #4a7454;
+  --on-accent: #04170a;
+  --accent-s: 90%;
+  --accent-l: 52%;
+  --radius: 3px;
+  --radius-sm: 2px;
+  --shadow: 0 0 0 1px rgba(120,255,140,.08), 0 18px 40px rgba(0,0,0,.6);
+  --glow-sm: 0 0 16px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .55);
+  --font-display: 'VT323', 'Courier New', monospace;
+  --font-body: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --display-weight: 400;
+  --display-tracking: .02em;
+}
+[data-style="retro"] h1, [data-style="retro"] h2 { text-shadow: 0 0 10px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .55); }
+[data-style="retro"] .brand-name { text-transform: uppercase; }
+
+/* ---------------------------------------------------------
+   3. FUTURISTA — HUD claro, holográfico, linhas finas
+--------------------------------------------------------- */
+[data-style="futurista"] {
+  --bg: linear-gradient(160deg, #eef4f9 0%, #e4edf5 45%, #dbe7f2 100%);
+  --bg-texture:
+    linear-gradient(rgba(20,60,90,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,60,90,.05) 1px, transparent 1px);
+  --surface: rgba(255,255,255,.55);
+  --surface-strong: rgba(255,255,255,.75);
+  --surface-weak: rgba(255,255,255,.6);
+  --border: rgba(20,60,90,.14);
+  --input-bg: rgba(255,255,255,.7);
+  --text: #2b3b47;
+  --text-strong: #10202c;
+  --text-dim: #5c7383;
+  --text-faint: #8ba0ad;
+  --on-accent: #06222c;
+  --accent-s: 75%;
+  --accent-l: 46%;
+  --radius: 6px;
+  --radius-sm: 4px;
+  --shadow: 0 12px 34px rgba(20,60,90,.12);
+  --glow-sm: 0 0 18px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .35);
+  --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'Rajdhani', 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --display-weight: 600;
+  --display-tracking: -.02em;
+}
+[data-style="futurista"] html { color-scheme: light; }
+[data-style="futurista"] .card { border-left-width: 2px; }
+
+/* ---------------------------------------------------------
+   4. CYBERPUNK — neon duotone sobre preto, cortes diagonais
+--------------------------------------------------------- */
+[data-style="cyberpunk"] {
+  --bg: #07050c;
+  --bg-texture:
+    linear-gradient(180deg, rgba(255,0,180,.05), transparent 30%),
+    repeating-linear-gradient(115deg, rgba(255,255,255,.02) 0 2px, transparent 2px 5px);
+  --surface: rgba(20, 8, 30, .5);
+  --surface-strong: rgba(10, 5, 16, .85);
+  --surface-weak: rgba(10, 5, 16, .65);
+  --border: rgba(255, 80, 220, .22);
+  --input-bg: rgba(0,0,0,.45);
+  --text: #e6d9f2;
+  --text-strong: #fbeeff;
+  --text-dim: #9d84b3;
+  --text-faint: #6b5a7f;
+  --on-accent: #0c0410;
+  --accent-s: 95%;
+  --accent-l: 58%;
+  --radius: 8px;
+  --radius-sm: 4px;
+  --shadow: 0 0 0 1px rgba(255,80,220,.1), 0 20px 50px rgba(0,0,0,.6);
+  --glow-sm: 0 0 20px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .55), 0 0 40px hsl(calc(var(--accent-h) + 140) var(--accent-s) var(--accent-l) / .25);
+  --font-display: 'Chakra Petch', 'Rajdhani', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+  --display-weight: 700;
+  --display-tracking: .01em;
+}
+[data-style="cyberpunk"] .nav-link.active { clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
+[data-style="cyberpunk"] h1, [data-style="cyberpunk"] h2 {
+  text-shadow: 1px 0 0 hsl(calc(var(--accent-h) + 140) 95% 58% / .6), -1px 0 0 hsl(var(--accent-h) 95% 58% / .6);
+}
+
+/* ---------------------------------------------------------
+   5. FOFO — pastel arredondado, acolhedor
+--------------------------------------------------------- */
+[data-style="fofo"] {
+  --bg: linear-gradient(165deg, #fdf1f8 0%, #f6eefd 50%, #eef3fd 100%);
+  --bg-texture:
+    radial-gradient(2px 2px at 15% 25%, rgba(255,255,255,.9) 0, transparent 60%),
+    radial-gradient(2px 2px at 75% 65%, rgba(255,255,255,.9) 0, transparent 60%),
+    radial-gradient(2px 2px at 45% 85%, rgba(255,255,255,.9) 0, transparent 60%);
+  --surface: rgba(255,255,255,.6);
+  --surface-strong: rgba(255,255,255,.8);
+  --surface-weak: rgba(255,255,255,.65);
+  --border: rgba(190,150,210,.28);
+  --input-bg: rgba(255,255,255,.75);
+  --text: #6b5468;
+  --text-strong: #4a3a4d;
+  --text-dim: #8f7a90;
+  --text-faint: #b39fb4;
+  --on-accent: #3a1830;
+  --accent-s: 72%;
+  --accent-l: 72%;
+  --radius: 22px;
+  --radius-sm: 16px;
+  --shadow: 0 14px 30px rgba(210,160,200,.25);
+  --glow-sm: 0 0 18px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .4);
+  --font-display: 'Quicksand', sans-serif;
+  --font-body: 'Nunito', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --display-weight: 700;
+  --display-tracking: 0;
+}
+[data-style="fofo"] html { color-scheme: light; }
+[data-style="fofo"] .card { border-left-width: 4px; border-radius: var(--radius-sm); }
