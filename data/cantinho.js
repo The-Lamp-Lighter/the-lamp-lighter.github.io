@@ -17,14 +17,8 @@ window.LUNARIUM_MOODBOARD = [
 
 /* Links rápidos — troque ou adicione à vontade. */
 window.LUNARIUM_CANTINHO_LINKS = [
-  { label: "Crunchyroll", url: "https://www.crunchyroll.com", icon: "fa-circle-play" },
-  { label: "MyAnimeList", url: "https://myanimelist.net", icon: "fa-list-check" },
-  { label: "AniList", url: "https://anilist.co", icon: "fa-star" },
-  { label: "Meu board no Pinterest", url: "https://pinterest.com", icon: "fa-thumbtack" }
-];
-
-/* O que está no radar agora — só uma lista simples. */
-window.LUNARIUM_CANTINHO_WATCHING = [
-  { title: "Koori no Jouheki", note: "revendo aquela cena específica ainda não resolvida 👀" },
-  { title: "K-ON!", note: "conforto de sempre" }
+  { label: "Pinterest", url: "https://br.pinterest.com/LunariumNova/", icon: "fa-brands fa-pinterest" },
+  { label: "Instagram", url: "https://www.instagram.com/lunariummoon/", icon: "fa-brands fa-instagram" },
+  { label: "Artstation", url: "https://www.artstation.com/lunarium_nebula", icon: "fa-brands fa-artstation" },
+  { label: "X (Twitter)", url: "https://twitter.com/LunariumNebula", icon: "fa-brands fa-x-twitter" },
 ];
