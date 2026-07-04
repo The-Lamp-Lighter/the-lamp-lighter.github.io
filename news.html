@@ -98,8 +98,21 @@
       });
 
       renderFilters();
-      window.LunariumNews.fetchRecent(100).then(function (items) {
-        allItems = items;
+      var listEl = document.getElementById("news-list");
+      listEl.innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Sintonizando…</h3><p class="dim">Buscando commits recentes no GitHub.</p></div>';
+
+      window.LunariumNews.fetchRecent(100).then(function (res) {
+        allItems = res.items;
+        if (allItems.length === 0) {
+          if (res.rateLimited) {
+            listEl.innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Limite da API do GitHub atingido</h3><p class="dim">Sem login, o GitHub libera 60 requisições/hora por IP. Espere alguns minutos e recarregue a página.</p></div>';
+            return;
+          }
+          if (res.notFound.length) {
+            listEl.innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Repositório não encontrado</h3><p class="dim">' + res.notFound.join(", ") + ' — confira se o nome em <code>data/projects.js</code> está exatamente igual ao do GitHub e se o repositório é público.</p></div>';
+            return;
+          }
+        }
         renderList();
       });
     })();

@@ -105,13 +105,26 @@
         line('<div class="term-help">' + (rows || '<span class="dim">nenhum projeto catalogado.</span>') + '</div>');
       }
     },
+    ratelimit: {
+      desc: "checa o limite atual da API do GitHub",
+      run: function () {
+        line("consultando…", "dim");
+        fetch("https://api.github.com/rate_limit").then(function (r) { return r.json(); }).then(function (data) {
+          var core = data.resources && data.resources.core;
+          if (!core) { line("não deu pra consultar agora.", "term-err"); return; }
+          var resetDate = new Date(core.reset * 1000).toLocaleTimeString("pt-BR");
+          line("requisições restantes: " + core.remaining + " / " + core.limit + " — reseta às " + resetDate);
+        }).catch(function () { line("erro de rede ao consultar.", "term-err"); });
+      }
+    },
     news: {
       desc: "mostra os 5 commits mais recentes",
       run: function () {
         line("buscando…", "dim");
-        window.LunariumNews.fetchRecent(5).then(function (items) {
-          if (!items.length) { line("nenhuma atividade encontrada (confira data/projects.js).", "dim"); return; }
-          items.forEach(function (it) {
+        window.LunariumNews.fetchRecent(5).then(function (res) {
+          if (res.rateLimited && res.items.length === 0) { line("limite da API do GitHub atingido — tente de novo em alguns minutos.", "term-err"); return; }
+          if (!res.items.length) { line("nenhuma atividade encontrada (confira data/projects.js).", "dim"); return; }
+          res.items.forEach(function (it) {
             line('<span class="accent">' + it.repo + '</span> ' + escapeHtml(it.message) + ' <span class="dim">(' + window.LunariumNews.timeAgo(it.date) + ')</span>');
           });
         });

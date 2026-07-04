@@ -25,31 +25,42 @@
   function fetchRepo(owner, repo) {
     var url = "https://api.github.com/repos/" + owner + "/" + repo + "/commits?per_page=30";
     return fetch(url, { headers: { Accept: "application/vnd.github+json" } })
-      .then(function (res) { return res.ok ? res.json() : []; })
-      .then(function (commits) {
-        if (!Array.isArray(commits)) return [];
-        return commits.map(function (c) {
-          return {
-            repo: repo,
-            owner: owner,
-            message: (c.commit && c.commit.message ? c.commit.message.split("\n")[0] : "(sem mensagem)"),
-            author: (c.commit && c.commit.author ? c.commit.author.name : "desconhecido"),
-            date: c.commit && c.commit.author ? c.commit.author.date : null,
-            url: c.html_url,
-            sha: c.sha ? c.sha.slice(0, 7) : ""
-          };
+      .then(function (res) {
+        if (res.status === 403) return { items: [], error: "rate_limit" };
+        if (res.status === 404) return { items: [], error: "not_found", repo: repo };
+        if (!res.ok) return { items: [], error: "other", status: res.status };
+        return res.json().then(function (commits) {
+          if (!Array.isArray(commits)) return { items: [], error: "other" };
+          var items = commits.map(function (c) {
+            return {
+              repo: repo,
+              owner: owner,
+              message: (c.commit && c.commit.message ? c.commit.message.split("\n")[0] : "(sem mensagem)"),
+              author: (c.commit && c.commit.author ? c.commit.author.name : "desconhecido"),
+              date: c.commit && c.commit.author ? c.commit.author.date : null,
+              url: c.html_url,
+              sha: c.sha ? c.sha.slice(0, 7) : ""
+            };
+          });
+          return { items: items, error: null };
         });
       })
-      .catch(function () { return []; });
+      .catch(function () { return { items: [], error: "network" }; });
   }
 
   function fetchRecent(limit) {
     var repos = window.LUNARIUM_GITHUB_REPOS || [];
     return Promise.all(repos.map(function (r) { return fetchRepo(r.owner, r.repo); }))
-      .then(function (lists) {
-        var all = [].concat.apply([], lists).filter(function (i) { return i.date; });
+      .then(function (results) {
+        var all = [].concat.apply([], results.map(function (r) { return r.items; })).filter(function (i) { return i.date; });
         all.sort(function (a, b) { return new Date(b.date) - new Date(a.date); });
-        return limit ? all.slice(0, limit) : all;
+        var errors = results.filter(function (r) { return r.error; }).map(function (r) { return r.error; });
+        return {
+          items: limit ? all.slice(0, limit) : all,
+          rateLimited: errors.indexOf("rate_limit") > -1,
+          notFound: results.filter(function (r) { return r.error === "not_found"; }).map(function (r) { return r.repo; }),
+          hadError: errors.length > 0 && all.length === 0
+        };
       });
   }
 
