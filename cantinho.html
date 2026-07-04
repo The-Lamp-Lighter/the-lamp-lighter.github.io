@@ -45,14 +45,14 @@
         <div class="cantinho-split">
           <section>
             <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-              <h2 style="font-size:1rem;margin:0;"><i class="fa-solid fa-images accent"></i> Quadro de inspiração</h2>
+              <h2 style="font-size:1rem;margin:0;"><i class="fa-solid fa-cubes"></i> Meus Trabalhos</h2>
             </div>
             <div id="mood-grid" class="mood-grid"></div>
           </section>
 
           <section>
             <div class="panel" style="padding:18px;margin-bottom:16px;">
-              <h2 style="font-size:.95rem;margin:0 0 12px 0;"><i class="fa-solid fa-link accent"></i> Links rápidos</h2>
+              <h2 style="font-size:.95rem;margin:0 0 12px 0;"><i class="fa-solid fa-link accent"></i> Minhas redes sociais</h2>
               <div id="links-list"></div>
             </div>
           </section>
@@ -73,7 +73,7 @@
       var grid = document.getElementById("mood-grid");
       if (!mood.length) {
         grid.style.gridColumn = "1 / -1";
-        grid.innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Ainda sem imagens aqui</h3><p class="dim">Cole os links das suas referências em <code>window.LUNARIUM_MOODBOARD</code>, em <code>data/cantinho.js</code>.</p></div>';
+        grid.innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Ainda sem imagens aqui</h3>;
       } else {
         grid.innerHTML = mood.map(function (m) {
           return '<figure class="mood-item"><img src="' + m.url + '" alt="' + escapeHtml(m.caption || "") + '" loading="lazy">' +
