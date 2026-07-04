@@ -13,7 +13,14 @@
 <link rel="stylesheet" href="css/themes.css">
 <link rel="stylesheet" href="css/base.css">
 <style>
-  .repo-filter { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+  .news-toolbar { display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+  .repo-filter { display:flex; gap:8px; flex-wrap:wrap; flex:1; }
+  .order-btn {
+    font-family: var(--font-mono); font-size:.72rem; padding:.5em .9em; border-radius:999px;
+    border:1px solid var(--border); background:var(--surface); color:var(--text-dim); cursor:pointer;
+    display:flex; align-items:center; gap:6px; white-space:nowrap;
+  }
+  .order-btn:hover { color:var(--text-strong); border-color:var(--text-dim); }
   .repo-filter button {
     font-family: var(--font-mono); font-size:.72rem; padding:.5em .9em; border-radius:999px;
     border:1px solid var(--border); background:var(--surface); color:var(--text-dim); cursor:pointer;
@@ -29,7 +36,10 @@
     <div>
       <header class="topbar" id="app-topbar"></header>
       <main id="app-main">
-        <div class="repo-filter" id="repo-filter"></div>
+        <div class="news-toolbar">
+          <div class="repo-filter" id="repo-filter"></div>
+          <button id="order-toggle" class="order-btn" type="button"><i class="fa-solid fa-arrow-down-wide-short"></i> <span id="order-label">Mais recentes</span></button>
+        </div>
         <div id="news-list">
           <div class="empty-state">
             <div class="orbit"></div>
@@ -51,6 +61,7 @@
     (function () {
       var allItems = [];
       var activeRepo = "all";
+      var descending = true;
 
       function renderFilters() {
         var repos = (window.LUNARIUM_GITHUB_REPOS || []).map(function (r) { return r.repo; });
@@ -71,7 +82,8 @@
 
       function renderList() {
         var list = document.getElementById("news-list");
-        var filtered = activeRepo === "all" ? allItems : allItems.filter(function (i) { return i.repo === activeRepo; });
+        var filtered = activeRepo === "all" ? allItems.slice() : allItems.filter(function (i) { return i.repo === activeRepo; });
+        if (!descending) filtered.reverse();
         if (!filtered.length) {
           list.innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Nenhuma atividade encontrada</h3><p class="dim">Confira se os repositórios em <code>data/projects.js</code> existem e são públicos.</p></div>';
           return;
@@ -79,8 +91,14 @@
         list.innerHTML = filtered.map(function (it) { return window.LunariumNews.renderCard(it, false); }).join("");
       }
 
+      document.getElementById("order-toggle").addEventListener("click", function () {
+        descending = !descending;
+        document.getElementById("order-label").textContent = descending ? "Mais recentes" : "Mais antigas";
+        renderList();
+      });
+
       renderFilters();
-      window.LunariumNews.fetchRecent(30).then(function (items) {
+      window.LunariumNews.fetchRecent(100).then(function (items) {
         allItems = items;
         renderList();
       });

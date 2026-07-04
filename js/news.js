@@ -23,7 +23,7 @@
   }
 
   function fetchRepo(owner, repo) {
-    var url = "https://api.github.com/repos/" + owner + "/" + repo + "/commits?per_page=5";
+    var url = "https://api.github.com/repos/" + owner + "/" + repo + "/commits?per_page=30";
     return fetch(url, { headers: { Accept: "application/vnd.github+json" } })
       .then(function (res) { return res.ok ? res.json() : []; })
       .then(function (commits) {

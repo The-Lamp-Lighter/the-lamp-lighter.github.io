@@ -6,11 +6,14 @@
    ============================================================ */
 
 /* Repositórios do GitHub que alimentam a aba "Notícias".
-   Troque "owner" pelo seu usuário/organização real no GitHub. */
+   Troque/adicione pelos seus repositórios reais — o formato é
+   sempre { owner: "usuário-ou-organização", repo: "nome-do-repositorio" }.
+   Já deixei o repositório do próprio Lunarium's Lab configurado (achei
+   o usuário certo no código do site antigo). Adicione os outros embaixo
+   quando souber o nome exato deles no GitHub. */
 window.LUNARIUM_GITHUB_REPOS = [
-  { owner: "lunarium-dev", repo: "the-lamp-lighter.github.io" },
-  { owner: "lunarium-dev", repo: "kon-desktop" },
-  { owner: "lunarium-dev", repo: "a-r-k-a" }
+  { owner: "The-Lamp-Lighter", repo: "the-lamp-lighter.github.io" }
+  // { owner: "The-Lamp-Lighter", repo: "nome-do-outro-repositorio" },
 ];
 
 /* Projetos/scripts/apps — cada um com histórico de versões,
