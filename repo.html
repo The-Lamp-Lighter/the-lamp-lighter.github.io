@@ -61,7 +61,7 @@
       <header class="topbar" id="app-topbar"></header>
       <main id="app-main">
         <div class="repo-toolbar">
-          <input type="text" id="repo-search" placeholder="Buscar projeto, script ou app…">
+          <input type="text" id="repo-search" placeholder="Procurar...">
           <select id="repo-filter-cat"></select>
         </div>
         <div id="project-list"></div>
@@ -69,11 +69,9 @@
         <div class="panel diversion-note">
           <i class="fa-solid fa-circle-info"></i>
           <p class="dim" style="font-size:.82rem;margin:0;">
-            O histórico de versões aqui é editado à mão em <code>data/projects.js</code> — é o jeito seguro de fazer isso
-            num site estático (sem servidor). Quando um projeto já tiver repositório de verdade no Diversion, preencha o
+            O histórico de versões aqui é editado à mão em <code>data/projects.js</code>. Quando um projeto já tiver repositório de verdade no Diversion, preencha o
             campo <code>diversionUrl</code> dele com o link do workspace: aparece um botão <strong>"Abrir no Diversion"</strong>
-            que leva direto pro repositório real, num clique. Não dá pra embutir a interface do Diversion aqui dentro
-            (apps com login bloqueiam isso por segurança), então o link direto é a forma mais confiável de conectar os dois.
+            que leva direto pro repositório real, num clique.
           </p>
         </div>
       </main>
