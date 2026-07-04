@@ -85,8 +85,8 @@
           <section class="panel chat-main">
             <div id="chat-empty" class="empty-state" style="margin:auto;">
               <div class="orbit"></div>
-              <h3>Escolha uma conversa</h3>
-              <p class="dim">Ou adicione alguém pelo código ao lado.</p>
+              <h3>Você ainda não tem nenhum contato :(</h3>
+              <p class="dim">Adicione amigos pelo código</p>
             </div>
             <div id="chat-active" class="hidden" style="display:contents;">
               <div class="chat-head">
@@ -138,7 +138,7 @@
       var contacts = window.LunariumChat.getContacts();
       var list = document.getElementById("contact-list");
       if (!contacts.length) {
-        list.innerHTML = '<p class="dim" style="padding:16px;font-size:.8rem;">Nenhum contato ainda. Adicione pelo código acima.</p>';
+        list.innerHTML = '<p class="dim" style="padding:16px;font-size:.8rem;">Nenhum contato ainda :(    Adicione pelo código acima</p>';
         return;
       }
       list.innerHTML = contacts.map(function (c) {
@@ -236,7 +236,7 @@
       root.innerHTML =
         '<div class="onboard-overlay"><div class="panel onboard-card">' +
           '<h2><i class="fa-solid fa-id-badge accent"></i> Crie seu perfil de chat</h2>' +
-          '<p class="dim" style="font-size:.85rem;margin-bottom:16px;">Isso gera um código único pra outras pessoas te adicionarem — como um Discord da vida.</p>' +
+          '<p class="dim" style="font-size:.85rem;margin-bottom:16px;">Isso gera um código único pra outras pessoas te adicionarem</p>' +
           '<form id="onboard-form">' +
             '<div class="field"><label>Nome de exibição</label><input type="text" id="ob-name" required></div>' +
             '<div class="field"><label>Bio (opcional)</label><input type="text" id="ob-bio" maxlength="80"></div>' +
