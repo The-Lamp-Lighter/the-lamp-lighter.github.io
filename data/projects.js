@@ -27,7 +27,7 @@ window.LUNARIUM_PROJECTS = [
     id: "anthology-ue5",
     name: "Anthology — UE5",
     category: "Unreal Engine",
-    icon: "fa-cubes",
+    icon: "fa-solid fa-cubes",
     description: "Antologia com histórias de gêneros diferentes num único executável, convergindo num final em comum.",
     diversionUrl: null,
     versions: [
@@ -41,7 +41,7 @@ window.LUNARIUM_PROJECTS = [
     id: "kon-desktop",
     name: "kon-desktop",
     category: "Electron",
-    icon: "fa-desktop",
+    icon: "fa-solid fa-desktop",
     description: "Companion desktop do K-ON! com máquina de estados por personagem e diálogos com efeito de digitação.",
     diversionUrl: null,
     versions: [
@@ -53,7 +53,7 @@ window.LUNARIUM_PROJECTS = [
     id: "arka",
     name: "A.R.K.A",
     category: "Web · Nova aba",
-    icon: "fa-window-restore",
+    icon: "fa-solid fa-window-restore",
     description: "Nova aba modular com cinco temas visuais, janelas flutuantes, visualizador 3D e terminal.",
     diversionUrl: null,
     versions: [
@@ -65,7 +65,7 @@ window.LUNARIUM_PROJECTS = [
     id: "card-game",
     name: "VORRHN — jogo de cartas",
     category: "Design de jogos",
-    icon: "fa-layer-group",
+    icon: "fa-solid fa-layer-group",
     description: "Cinco tipos de carta e um grimório de tradução de símbolos, parte do universo do jogo de terror/ARG.",
     diversionUrl: null,
     versions: [

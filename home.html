@@ -76,7 +76,7 @@
           <a class="action-card" href="news.html">
             <i class="fa-solid fa-tower-broadcast card-icon"></i>
             <h3>Notícias</h3>
-            <p>Registro de atividades do desenvolvidor do site</p>
+            <p>Registro de atividades do desenvolvedor do site</p>
             <i class="fa-solid fa-arrow-right card-arrow"></i>
           </a>
           <a class="action-card" href="chat.html">
@@ -151,13 +151,17 @@
       } catch (e) { document.getElementById("stat-contacts").textContent = "0"; }
 
       if (window.LunariumNews) {
-        window.LunariumNews.fetchRecent(4).then(function (items) {
+        window.LunariumNews.fetchRecent(4).then(function (res) {
           var list = document.getElementById("home-news-list");
-          if (!items.length) {
+          if (res.rateLimited && res.items.length === 0) {
+            list.innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Limite da API do GitHub atingido</h3><p class="dim">Sem login, o GitHub libera 60 requisições/hora. Espere um pouco e recarregue.</p></div>';
+            return;
+          }
+          if (!res.items.length) {
             list.innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Sem atividade por aqui</h3><p>Configure os repositórios em data/projects.js.</p></div>';
             return;
           }
-          list.innerHTML = items.map(function (it) { return window.LunariumNews.renderCard(it, true); }).join("");
+          list.innerHTML = res.items.map(function (it) { return window.LunariumNews.renderCard(it, true); }).join("");
         }).catch(function () {
           document.getElementById("home-news-list").innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Não deu pra buscar agora</h3><p class="dim">Confira a conexão ou tente na aba Notícias.</p></div>';
         });

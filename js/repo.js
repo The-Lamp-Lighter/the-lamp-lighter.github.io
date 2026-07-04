@@ -36,7 +36,7 @@
     return (
       '<article class="panel project-card" data-category="' + escapeHtml(p.category) + '">' +
         '<button class="project-head" data-toggle="' + p.id + '">' +
-          '<span class="project-icon"><i class="fa-solid ' + p.icon + '"></i></span>' +
+          '<span class="project-icon"><i class="' + p.icon + '"></i></span>' +
           '<span class="project-info">' +
             '<strong>' + escapeHtml(p.name) + '</strong>' +
             '<span class="dim">' + escapeHtml(p.description) + '</span>' +
