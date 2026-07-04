@@ -12,7 +12,8 @@
     { page: "terminal", href: "terminal.html", icon: "fa-terminal", label: "Terminal" },
     { page: "news",  href: "news.html",  icon: "fa-tower-broadcast", label: "Notícias" },
     { page: "repo",  href: "repo.html",  icon: "fa-code-branch", label: "Repositórios" },
-    { page: "chat",  href: "chat.html",  icon: "fa-comments", label: "Chat" }
+    { page: "chat",  href: "chat.html",  icon: "fa-comments", label: "Chat" },
+    { page: "cantinho", href: "cantinho.html", icon: "fa-heart", label: "Cantinho" }
   ];
 
   var TITLES = {
@@ -20,7 +21,8 @@
     terminal: { title: "Terminal", eyebrow: "Console do laboratório" },
     news: { title: "Notícias", eyebrow: "Atividade dos repositórios" },
     repo: { title: "Repositórios", eyebrow: "Scripts, apps & versões" },
-    chat: { title: "Chat", eyebrow: "Conversas" }
+    chat: { title: "Chat", eyebrow: "Conversas" },
+    cantinho: { title: "Cantinho", eyebrow: "Referências & links" }
   };
 
   function build() {

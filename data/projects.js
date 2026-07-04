@@ -15,9 +15,10 @@ window.LUNARIUM_GITHUB_REPOS = [
 
 /* Projetos/scripts/apps — cada um com histórico de versões,
    como um mini "Diversion" embutido no site.
-   `diversionId` é só um espaço reservado: quando o projeto
-   estiver de fato versionado no Diversion, coloque o ID/URL
-   real aqui pra sincronizar automaticamente no futuro. */
+   `diversionUrl`: link direto pro repositório real no Diversion
+   (ex: "https://app.diversion.dev/w/SEU-WORKSPACE/SEU-REPO"). Deixe
+   null enquanto o projeto ainda não estiver versionado lá — o botão
+   "Abrir no Diversion" some sozinho quando o campo está vazio. */
 window.LUNARIUM_PROJECTS = [
   {
     id: "anthology-ue5",
@@ -25,7 +26,7 @@ window.LUNARIUM_PROJECTS = [
     category: "Unreal Engine",
     icon: "fa-cubes",
     description: "Antologia com histórias de gêneros diferentes num único executável, convergindo num final em comum.",
-    diversionId: null,
+    diversionUrl: null,
     versions: [
       { version: "v0.4.0", date: "2026-06-28", changelog: "Terminal estilizado (Arch/Garuda) com DataTable de comandos.", downloadUrl: "#" },
       { version: "v0.3.0", date: "2026-06-10", changelog: "Sistema de partículas Niagara reativo à música via submix.", downloadUrl: "#" },
@@ -39,7 +40,7 @@ window.LUNARIUM_PROJECTS = [
     category: "Electron",
     icon: "fa-desktop",
     description: "Companion desktop do K-ON! com máquina de estados por personagem e diálogos com efeito de digitação.",
-    diversionId: null,
+    diversionUrl: null,
     versions: [
       { version: "v1.2.0", date: "2026-03-14", changelog: "Agendador de eventos ponderado + animações via spritesheet.", downloadUrl: "#" },
       { version: "v1.0.0", date: "2026-02-01", changelog: "Primeira versão pública com as cinco integrantes da HTT.", downloadUrl: "#" }
@@ -51,7 +52,7 @@ window.LUNARIUM_PROJECTS = [
     category: "Web · Nova aba",
     icon: "fa-window-restore",
     description: "Nova aba modular com cinco temas visuais, janelas flutuantes, visualizador 3D e terminal.",
-    diversionId: null,
+    diversionUrl: null,
     versions: [
       { version: "v2.1.0", date: "2026-01-18", changelog: "Visualizador 3D com Three.js e widget de missões.", downloadUrl: "#" },
       { version: "v2.0.0", date: "2025-12-02", changelog: "Reescrita com janelas flutuantes arrastáveis e notas locais.", downloadUrl: "#" }
@@ -63,7 +64,7 @@ window.LUNARIUM_PROJECTS = [
     category: "Design de jogos",
     icon: "fa-layer-group",
     description: "Cinco tipos de carta e um grimório de tradução de símbolos, parte do universo do jogo de terror/ARG.",
-    diversionId: null,
+    diversionUrl: null,
     versions: [
       { version: "v0.2.0", date: "2026-04-09", changelog: "Seis finais mapeados, um deles sem gatilho documentado (proposital).", downloadUrl: "#" },
       { version: "v0.1.0", date: "2026-03-01", changelog: "Primeira lista de tipos de carta e sessão estimada de 15–30 min.", downloadUrl: "#" }

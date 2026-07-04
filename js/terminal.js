@@ -143,6 +143,20 @@
         line('<div class="term-help">' + html + '</div>');
       }
     },
+    download_dv: {
+      desc: "baixa o instalador do Diversion (Windows)",
+      run: function () {
+        line("iniciando download do Diversion (Windows x86_64)…");
+        var a = document.createElement("a");
+        a.href = "https://dv-binaries.s3.us-east-2.amazonaws.com/windows_x86_64/diversion_windows_x86_64.exe";
+        a.download = "diversion_windows_x86_64.exe";
+        a.rel = "noopener";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        line('se o navegador não iniciar sozinho, <a class="accent" href="https://dv-binaries.s3.us-east-2.amazonaws.com/windows_x86_64/diversion_windows_x86_64.exe" target="_blank" rel="noopener">clique aqui</a>.', "dim");
+      }
+    },
     sudo: {
       desc: "???",
       run: function () { line("permissão negada: você já é o admin deste laboratório.", "term-err"); }

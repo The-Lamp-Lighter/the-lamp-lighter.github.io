@@ -44,7 +44,10 @@
           '<span class="tag">' + escapeHtml(p.category) + '</span>' +
           '<i class="fa-solid fa-chevron-down project-chevron"></i>' +
         '</button>' +
-        '<div class="project-versions" id="versions-' + p.id + '">' + versionsHtml + '</div>' +
+        '<div class="project-versions" id="versions-' + p.id + '">' +
+          (p.diversionUrl ? '<a class="btn btn-solid" style="margin-bottom:14px;font-size:.78rem;" href="' + p.diversionUrl + '" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir no Diversion</a>' : '') +
+          versionsHtml +
+        '</div>' +
       '</article>'
     );
   }
