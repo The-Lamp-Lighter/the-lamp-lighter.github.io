@@ -66,8 +66,8 @@
           <input type="text" id="login-name" placeholder="Ex: lunarium" autocomplete="username" required>
         </div>
         <div class="field">
-          <label for="login-pass">Senha</label>
-          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" required minlength="6">
+          <label for="login-pass">Senha (mínimo 8 caracteres)</label>
+          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" required minlength="8">
         </div>
         <p id="form-error" class="hidden" style="color:#ff8a8a;font-size:.8rem;margin:-8px 0 14px 0;"></p>
         <button type="submit" class="btn btn-solid" id="submit-btn" style="width:100%;justify-content:center;padding:.85em;">
@@ -156,10 +156,16 @@
           }
           window.location.href = "home.html";
         }).catch(function (err) {
-          var msg = (err && err.message) || "algo deu errado.";
+          console.error("Erro de autenticação:", err);
+          var msg = (err && (err.message || err.error_description || err.msg || err.hint)) || "";
+          if (!msg) {
+            try { msg = JSON.stringify(err); } catch (e) { msg = String(err); }
+          }
+          if (!msg || msg === "{}") msg = "algo deu errado (sem detalhes do servidor — confira o Console do navegador, F12, pra mais informação).";
           if (/already registered|already exists/i.test(msg)) msg = "esse usuário já existe.";
           if (/invalid login credentials/i.test(msg)) msg = "usuário ou senha incorretos.";
-          if (/password.*at least/i.test(msg)) msg = "a senha precisa ter pelo menos 6 caracteres.";
+          if (/password.*(at least|should be)/i.test(msg)) msg = "senha curta demais pro Supabase — tenta com pelo menos 8 caracteres.";
+          if (/database error|unexpected_failure|500/i.test(msg)) msg = "erro no servidor ao criar o perfil — confira se rodou supabase-setup.sql corretamente (veja o Console, F12, pra detalhes técnicos).";
           showError(msg);
           submitBtn.disabled = false;
         });
