@@ -58,26 +58,37 @@
       </div>
     </section>
     <section class="gate-form">
-      <h2><i class="fa-solid fa-satellite-dish accent"></i> Acessar laboratório</h2>
-      <p class="dim">Identifique-se para entrar no painel.</p>
+      <h2 id="gate-title"><i class="fa-solid fa-satellite-dish accent"></i> Acessar laboratório</h2>
+      <p class="dim" id="gate-subtitle">Entre com seu usuário e senha.</p>
       <form id="login-form">
         <div class="field">
-          <label for="login-name">Nickname</label>
-          <input type="text" id="login-name" placeholder="Ex: User123" autocomplete="off" required>
+          <label for="login-name">Usuário</label>
+          <input type="text" id="login-name" placeholder="Ex: lunarium" autocomplete="username" required>
         </div>
-        <button type="submit" class="btn btn-solid" style="width:100%;justify-content:center;padding:.85em;">
+        <div class="field">
+          <label for="login-pass">Senha</label>
+          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" required minlength="6">
+        </div>
+        <p id="form-error" class="hidden" style="color:#ff8a8a;font-size:.8rem;margin:-8px 0 14px 0;"></p>
+        <button type="submit" class="btn btn-solid" id="submit-btn" style="width:100%;justify-content:center;padding:.85em;">
           <i class="fa-solid fa-power-off"></i> Entrar no laboratório
         </button>
       </form>
-      <p class="gate-note"><i class="fa-solid fa-circle-info" style="margin-top:2px;"></i> A sessão ficará salva apenas neste navegador</p>
+      <p class="gate-note"><i class="fa-solid fa-circle-info" style="margin-top:2px;"></i> <span id="gate-toggle-text">Ainda não tem conta? <a href="#" id="toggle-mode" class="accent">Criar uma agora</a></span></p>
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
   <script src="js/auth.js"></script>
   <script>
     (function () {
-      var existing = window.LunariumAuth.get();
-      if (existing) window.location.href = "home.html";
+      var mode = "login"; // ou "signup"
+
+      window.LunariumAuth.getSession().then(function (session) {
+        if (session) window.location.href = "home.html";
+      });
 
       var wrap = document.getElementById("style-dots");
       var current = window.LunariumTheme.get();
@@ -96,11 +107,62 @@
         wrap.appendChild(dot);
       });
 
+      function setMode(next) {
+        mode = next;
+        var title = document.getElementById("gate-title");
+        var submitBtn = document.getElementById("submit-btn");
+        var toggleText = document.getElementById("gate-toggle-text");
+        if (mode === "signup") {
+          title.innerHTML = '<i class="fa-solid fa-user-plus accent"></i> Criar conta';
+          document.getElementById("gate-subtitle").textContent = "Escolha um usuário e uma senha.";
+          submitBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Criar conta';
+          toggleText.innerHTML = 'Já tem conta? <a href="#" id="toggle-mode" class="accent">Entrar</a>';
+        } else {
+          title.innerHTML = '<i class="fa-solid fa-satellite-dish accent"></i> Acessar laboratório';
+          document.getElementById("gate-subtitle").textContent = "Entre com seu usuário e senha.";
+          submitBtn.innerHTML = '<i class="fa-solid fa-power-off"></i> Entrar no laboratório';
+          toggleText.innerHTML = 'Ainda não tem conta? <a href="#" id="toggle-mode" class="accent">Criar uma agora</a>';
+        }
+        document.getElementById("toggle-mode").addEventListener("click", function (e) {
+          e.preventDefault();
+          setMode(mode === "signup" ? "login" : "signup");
+        });
+      }
+      document.getElementById("toggle-mode").addEventListener("click", function (e) {
+        e.preventDefault();
+        setMode("signup");
+      });
+
+      function showError(msg) {
+        var el = document.getElementById("form-error");
+        el.textContent = msg;
+        el.classList.remove("hidden");
+      }
+
       document.getElementById("login-form").addEventListener("submit", function (e) {
         e.preventDefault();
-        var name = document.getElementById("login-name").value;
-        window.LunariumAuth.login(name);
-        window.location.href = "home.html";
+        document.getElementById("form-error").classList.add("hidden");
+        var name = document.getElementById("login-name").value.trim();
+        var pass = document.getElementById("login-pass").value;
+        var submitBtn = document.getElementById("submit-btn");
+        submitBtn.disabled = true;
+
+        var action = mode === "signup" ? window.LunariumAuth.signUp(name, pass) : window.LunariumAuth.login(name, pass);
+        action.then(function (data) {
+          if (!data.session) {
+            showError("Conta criada, mas sem sessão automática — pode ser que a confirmação de e-mail ainda esteja ativa no Supabase. Desative em Authentication → Providers → Email.");
+            submitBtn.disabled = false;
+            return;
+          }
+          window.location.href = "home.html";
+        }).catch(function (err) {
+          var msg = (err && err.message) || "algo deu errado.";
+          if (/already registered|already exists/i.test(msg)) msg = "esse usuário já existe.";
+          if (/invalid login credentials/i.test(msg)) msg = "usuário ou senha incorretos.";
+          if (/password.*at least/i.test(msg)) msg = "a senha precisa ter pelo menos 6 caracteres.";
+          showError(msg);
+          submitBtn.disabled = false;
+        });
       });
     })();
   </script>

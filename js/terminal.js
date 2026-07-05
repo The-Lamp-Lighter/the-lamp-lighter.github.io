@@ -45,8 +45,9 @@
     whoami: {
       desc: "mostra a sessão atual",
       run: function () {
-        var s = window.LunariumAuth.get();
-        line(s ? s.name + ' <span class="dim">(' + s.role + ')</span>' : "visitante");
+        window.LunariumAuth.getProfile().then(function (p) {
+          line(p ? (p.display_name || p.username) + ' <span class="dim">(' + (p.is_admin ? "ADMIN" : "operador") + ')</span>' : "visitante");
+        });
       }
     },
     date: {
@@ -143,17 +144,18 @@
     sysinfo: {
       desc: "informações do laboratório (estilo neofetch)",
       run: function () {
-        var s = window.LunariumAuth.get();
-        var t = window.LunariumTheme.get();
-        var rows = [
-          ["usuário", s ? s.name : "—"],
-          ["estilo", t.style],
-          ["matiz", t.hue + "°"],
-          ["projetos", (window.LUNARIUM_PROJECTS || []).length],
-          ["motor", "Lunarium's Lab v1.0"]
-        ];
-        var html = rows.map(function (r) { return '<div class="term-help-row"><span class="accent">' + r[0] + '</span><span class="dim">' + r[1] + '</span></div>'; }).join("");
-        line('<div class="term-help">' + html + '</div>');
+        window.LunariumAuth.getProfile().then(function (p) {
+          var t = window.LunariumTheme.get();
+          var rows = [
+            ["usuário", p ? (p.display_name || p.username) : "—"],
+            ["estilo", t.style],
+            ["matiz", t.hue + "°"],
+            ["projetos", (window.LUNARIUM_PROJECTS || []).length],
+            ["motor", "Lunarium's Lab v2.0"]
+          ];
+          var html = rows.map(function (r) { return '<div class="term-help-row"><span class="accent">' + r[0] + '</span><span class="dim">' + r[1] + '</span></div>'; }).join("");
+          line('<div class="term-help">' + html + '</div>');
+        });
       }
     },
     download_dv: {

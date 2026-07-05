@@ -2,6 +2,8 @@
    LUNARIUM'S LAB — nav.js
    Monta o app-shell (sidebar + topbar) em todas as páginas
    internas a partir de <div id="app-nav"> + <body data-page="">.
+   Agora é assíncrono: espera a sessão/perfil do Supabase antes
+   de desenhar a tela.
    ============================================================ */
 
 (function () {
@@ -13,7 +15,8 @@
     { page: "news",  href: "news.html",  icon: "fa-tower-broadcast", label: "Notícias" },
     { page: "repo",  href: "repo.html",  icon: "fa-code-branch", label: "Repositórios" },
     { page: "chat",  href: "chat.html",  icon: "fa-comments", label: "Chat" },
-    { page: "cantinho", href: "cantinho.html", icon: "fa-heart", label: "Cantinho" }
+    { page: "cantinho", href: "cantinho.html", icon: "fa-heart", label: "Cantinho" },
+    { page: "profile", href: "profile.html", icon: "fa-id-badge", label: "Perfil" }
   ];
 
   var TITLES = {
@@ -22,15 +25,27 @@
     news: { title: "Notícias", eyebrow: "Atividade dos repositórios" },
     repo: { title: "Repositórios", eyebrow: "Scripts, apps & versões" },
     chat: { title: "Chat", eyebrow: "Conversas" },
-    cantinho: { title: "Cantinho", eyebrow: "Referências & links" }
+    cantinho: { title: "Cantinho", eyebrow: "Meus trabalhos & links" },
+    profile: { title: "Perfil", eyebrow: "Sua conta" }
   };
 
   function build() {
     var navRoot = document.getElementById("app-nav");
     if (!navRoot) return;
 
+    window.LunariumAuth.requireSession().then(function (session) {
+      if (!session) return; // já foi redirecionado pro login
+      return window.LunariumAuth.getProfile().then(function (profile) {
+        renderShell(session, profile, navRoot);
+      });
+    }).catch(function (err) {
+      console.error("Erro ao carregar sessão:", err);
+      window.location.href = "index.html";
+    });
+  }
+
+  function renderShell(session, profile, navRoot) {
     var page = document.body.dataset.page || "";
-    var session = window.LunariumAuth ? window.LunariumAuth.requireSession() : null;
 
     var linksHtml = LINKS.map(function (l) {
       return (
@@ -39,6 +54,12 @@
         '</a>'
       );
     }).join("");
+
+    var displayName = (profile && (profile.display_name || profile.username)) || "?";
+    var initials = displayName.slice(0, 2).toUpperCase();
+    var avatarHtml = (profile && profile.avatar_url)
+      ? '<img src="' + profile.avatar_url + '" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
+      : initials;
 
     navRoot.innerHTML =
       '<div class="sidebar-overlay" id="sidebar-overlay"></div>' +
@@ -56,10 +77,10 @@
           '<button class="nav-link" type="button" data-theme-toggle style="width:100%;background:none;border:1px solid transparent;font:inherit;cursor:pointer;">' +
             '<i class="fa-solid fa-palette"></i><span>Aparência</span>' +
           '</button>' +
-          '<div class="session-chip">' +
-            '<span class="session-avatar">' + (session ? session.initials : "??") + '</span>' +
-            '<span>' + (session ? session.name : "Visitante") + '<br><small class="dim">' + (session ? session.role : "") + '</small></span>' +
-          '</div>' +
+          '<a class="session-chip" href="profile.html" style="text-decoration:none;">' +
+            '<span class="session-avatar">' + avatarHtml + '</span>' +
+            '<span>' + displayName + (profile && profile.is_admin ? '<br><small class="dim">ADMIN</small>' : '') + '</span>' +
+          '</a>' +
           '<button class="btn btn-ghost" id="logout-btn" type="button" style="width:100%;justify-content:center;">' +
             '<i class="fa-solid fa-right-from-bracket"></i> Sair' +
           '</button>' +
@@ -81,7 +102,7 @@
     }
 
     document.getElementById("logout-btn").addEventListener("click", function () {
-      if (window.LunariumAuth) window.LunariumAuth.logout();
+      window.LunariumAuth.logout();
     });
 
     var sidebar = document.getElementById("sidebar");
@@ -97,6 +118,8 @@
         overlay.classList.remove("show");
       });
     }
+
+    document.dispatchEvent(new CustomEvent("lunarium:nav-ready", { detail: { session: session, profile: profile } }));
   }
 
   if (document.readyState === "loading") {

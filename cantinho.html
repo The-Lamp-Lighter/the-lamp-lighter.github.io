@@ -18,32 +18,17 @@
 
   .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px; flex-wrap:wrap; }
   .section-head h2 { font-size:1rem; margin:0; }
-  .sync-status { font-size:.72rem; color:var(--text-faint); font-family:var(--font-mono); display:flex; align-items:center; gap:8px; }
-  .sync-btn {
-    font-family: var(--font-mono); font-size:.7rem; padding:.4em .8em; border-radius:999px;
-    border:1px solid var(--border); background:var(--surface); color:var(--text-dim); cursor:pointer;
-    display:flex; align-items:center; gap:6px;
-  }
-  .sync-btn:hover { color:var(--text-strong); border-color:var(--text-dim); }
-  .sync-btn.spinning i { animation: spin 1s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .art-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap:14px; }
-  .art-card {
-    display:flex; flex-direction:column; border-radius: var(--radius-sm); overflow:hidden;
-    border:1px solid var(--border); background:var(--surface); text-decoration:none; color:var(--text);
-    transition: transform .15s ease, border-color .15s ease;
-  }
-  .art-card:hover { transform: translateY(-3px); border-color: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .5); }
-  .art-cover { height:140px; background-size:cover; background-position:center; background-color: var(--surface-strong); }
-  .art-cover-empty { display:flex; align-items:center; justify-content:center; color:var(--text-faint); font-size:1.4rem; }
-  .art-body { padding:12px 14px; display:flex; flex-direction:column; gap:2px; }
-  .art-body strong { font-size:.88rem; color:var(--text-strong); }
-
-  .mood-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap:10px; margin-top:10px; }
-  .mood-item { border-radius: var(--radius-sm); overflow:hidden; border:1px solid var(--border); background:var(--surface); aspect-ratio: 3/4; position:relative; }
-  .mood-item img { width:100%; height:100%; object-fit:cover; display:block; }
-  .mood-item figcaption { position:absolute; bottom:0; left:0; right:0; padding:6px 8px; font-size:.68rem; background:linear-gradient(transparent, rgba(0,0,0,.65)); color:#fff; }
+  .work-card { padding:18px; margin-bottom:16px; }
+  .work-head { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:8px; }
+  .work-head h3 { margin:0; font-size:1rem; }
+  .work-head .dim { font-size:.72rem; font-family:var(--font-mono); white-space:nowrap; }
+  .work-admin-actions { display:flex; gap:6px; }
+  .work-desc { font-size:.85rem; color:var(--text-dim); margin:8px 0; white-space:pre-wrap; }
+  .work-tools { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:10px; }
+  .work-media-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:8px; margin-top:10px; }
+  .work-media-grid img, .work-media-grid video { width:100%; height:120px; object-fit:cover; border-radius: var(--radius-sm); border:1px solid var(--border); background:#000; }
+  .sketchfab-embed { width:100%; aspect-ratio:16/9; border:1px solid var(--border); border-radius: var(--radius-sm); margin-top:10px; }
 
   .link-card {
     display:flex; align-items:center; gap:12px; padding:14px 16px; text-decoration:none; color:var(--text);
@@ -52,6 +37,16 @@
   }
   .link-card:hover { transform: translateX(4px); border-color: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .5); }
   .link-card i { width:20px; text-align:center; color: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); }
+
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:85; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .modal-card { width:100%; max-width:560px; max-height:88vh; overflow-y:auto; padding:26px; }
+  .file-drop {
+    border:1.5px dashed var(--border); border-radius: var(--radius-sm); padding:22px; text-align:center;
+    cursor:pointer; color:var(--text-dim); font-size:.85rem; margin-bottom:16px;
+  }
+  .file-drop:hover { border-color: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .5); }
+  .file-preview-list { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+  .file-preview-list span { font-size:.7rem; background:var(--input-bg); padding:4px 8px; border-radius:6px; }
 </style>
 </head>
 <body data-page="cantinho">
@@ -64,17 +59,11 @@
           <section>
             <div class="section-head">
               <h2><i class="fa-solid fa-cubes accent"></i> Meus Trabalhos</h2>
-              <div class="sync-status">
-                <span id="sync-label">—</span>
-                <button class="sync-btn" id="sync-btn" type="button"><i class="fa-solid fa-arrows-rotate"></i> Sincronizar</button>
-              </div>
+              <button class="btn btn-solid hidden" id="new-work-btn" type="button" style="font-size:.78rem;">
+                <i class="fa-solid fa-plus"></i> Novo trabalho
+              </button>
             </div>
-            <div id="art-grid" class="art-grid"></div>
-
-            <div id="mood-extra" class="hidden" style="margin-top:26px;">
-              <div class="section-head"><h2 style="font-size:.92rem;"><i class="fa-solid fa-images accent"></i> Outras referências</h2></div>
-              <div id="mood-grid" class="mood-grid"></div>
-            </div>
+            <div id="works-list"><div class="empty-state"><div class="orbit"></div><h3>Carregando…</h3></div></div>
           </section>
 
           <section>
@@ -87,80 +76,210 @@
       </main>
     </div>
   </div>
+
+  <div id="modal-root"></div>
   <div id="theme-panel-root"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/nav.js"></script>
   <script src="data/cantinho.js"></script>
-  <script src="js/artstation.js"></script>
   <script>
-    (function () {
-      function escapeHtml(str) { var d = document.createElement("div"); d.textContent = str || ""; return d.innerHTML; }
+  (function () {
+    function escapeHtml(str) { var d = document.createElement("div"); d.textContent = str || ""; return d.innerHTML; }
+    var isAdmin = false;
+    var pendingFiles = [];
 
-      // links rápidos
-      var links = window.LUNARIUM_CANTINHO_LINKS || [];
-      document.getElementById("links-list").innerHTML = links.map(function (l) {
-        return '<a class="link-card" href="' + l.url + '" target="_blank" rel="noopener"><i class="' + l.icon + '"></i>' + escapeHtml(l.label) + '</a>';
-      }).join("") || '<p class="dim" style="font-size:.82rem;">Nenhum link cadastrado ainda.</p>';
+    var links = window.LUNARIUM_CANTINHO_LINKS || [];
+    document.getElementById("links-list").innerHTML = links.map(function (l) {
+      return '<a class="link-card" href="' + l.url + '" target="_blank" rel="noopener"><i class="' + l.icon + '"></i>' + escapeHtml(l.label) + '</a>';
+    }).join("") || '<p class="dim" style="font-size:.82rem;">Nenhum link cadastrado ainda.</p>';
 
-      // referências manuais extra (opcional, além do ArtStation)
-      var mood = window.LUNARIUM_MOODBOARD || [];
-      if (mood.length) {
-        document.getElementById("mood-extra").classList.remove("hidden");
-        document.getElementById("mood-grid").innerHTML = mood.map(function (m) {
-          return '<figure class="mood-item"><img src="' + m.url + '" alt="' + escapeHtml(m.caption || "") + '" loading="lazy">' +
-            (m.caption ? '<figcaption>' + escapeHtml(m.caption) + '</figcaption>' : '') + '</figure>';
-        }).join("");
-      }
+    function renderWork(w) {
+      var dateStr = new Date(w.created_at).toLocaleDateString("pt-BR");
+      var toolsHtml = (w.software || []).length
+        ? '<div class="work-tools">' + w.software.map(function (t) { return '<span class="tag" style="margin-right:0;">' + escapeHtml(t) + '</span>'; }).join("") + '</div>'
+        : "";
+      var mediaHtml = (w.work_media || []).length
+        ? '<div class="work-media-grid">' + w.work_media.slice().sort(function (a, b) { return a.position - b.position; }).map(function (m) {
+            return m.media_type === "video"
+              ? '<video src="' + m.url + '" controls muted></video>'
+              : '<img src="' + m.url + '" alt="" loading="lazy">';
+          }).join("") + '</div>'
+        : "";
+      var sketchfabHtml = w.sketchfab_embed_url
+        ? '<iframe class="sketchfab-embed" src="' + w.sketchfab_embed_url + '" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>'
+        : "";
+      var adminActions = isAdmin
+        ? '<div class="work-admin-actions">' +
+            '<button class="btn-icon btn-ghost" data-toggle-pub="' + w.id + '" data-current="' + w.published + '" title="' + (w.published ? "Despublicar" : "Publicar") + '"><i class="fa-solid ' + (w.published ? "fa-eye" : "fa-eye-slash") + '"></i></button>' +
+            '<button class="btn-icon btn-danger" data-delete="' + w.id + '" title="Excluir"><i class="fa-solid fa-trash"></i></button>' +
+          '</div>'
+        : "";
 
-      // sincronização com o ArtStation
-      var artGrid = document.getElementById("art-grid");
-      var syncLabel = document.getElementById("sync-label");
-      var syncBtn = document.getElementById("sync-btn");
-      var username = window.LUNARIUM_ARTSTATION_USERNAME;
-      var manualWorks = (window.LUNARIUM_ARTWORKS || []).map(function (w) {
-        return {
-          id: "manual-" + w.title,
-          title: w.title,
-          url: w.url || "#",
-          cover: w.cover || "",
-          date: w.date || null,
-          likes: 0,
-          description: w.description || "",
-          tools: w.tools || []
-        };
+      return (
+        '<article class="panel work-card">' +
+          '<div class="work-head">' +
+            '<h3>' + escapeHtml(w.title) + (w.published ? "" : ' <span class="tag" style="background:rgba(255,150,60,.18);color:#ffb060;">rascunho</span>') + '</h3>' +
+            '<div style="display:flex;align-items:center;gap:10px;">' +
+              '<span class="dim">' + dateStr + '</span>' + adminActions +
+            '</div>' +
+          '</div>' +
+          (w.description ? '<p class="work-desc">' + escapeHtml(w.description) + '</p>' : "") +
+          toolsHtml + sketchfabHtml + mediaHtml +
+        '</article>'
+      );
+    }
+
+    function loadWorks() {
+      return window.sb.from("works")
+        .select("*, work_media(*)")
+        .order("created_at", { ascending: false })
+        .then(function (res) {
+          if (res.error) throw res.error;
+          var list = document.getElementById("works-list");
+          if (!res.data.length) {
+            list.innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Nenhum trabalho publicado ainda</h3>' +
+              (isAdmin ? '<p class="dim">Clique em "Novo trabalho" pra começar.</p>' : '') + '</div>';
+            return;
+          }
+          list.innerHTML = res.data.map(renderWork).join("");
+          bindWorkActions();
+        }).catch(function (err) {
+          document.getElementById("works-list").innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Não deu pra carregar</h3><p class="dim">' + escapeHtml(err.message || "erro desconhecido") + '</p></div>';
+        });
+    }
+
+    function bindWorkActions() {
+      document.querySelectorAll("[data-toggle-pub]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var id = btn.dataset.togglePub;
+          var current = btn.dataset.current === "true";
+          window.sb.from("works").update({ published: !current }).eq("id", id).then(function (res) {
+            if (res.error) { alert(res.error.message); return; }
+            loadWorks();
+          });
+        });
       });
+      document.querySelectorAll("[data-delete]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          if (!confirm("Excluir este trabalho? Isso não pode ser desfeito.")) return;
+          window.sb.from("works").delete().eq("id", btn.dataset.delete).then(function (res) {
+            if (res.error) { alert(res.error.message); return; }
+            loadWorks();
+          });
+        });
+      });
+    }
 
-      function renderArt(synced) {
-        var all = manualWorks.concat(synced || []);
-        if (!all.length) {
-          artGrid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="orbit"></div><h3>Nenhum trabalho ainda</h3><p class="dim">Preencha <code>LUNARIUM_ARTWORKS</code> em <code>data/cantinho.js</code> (garantido) ou configure o usuário do ArtStation pra sincronização automática.</p></div>';
-          return;
-        }
-        artGrid.innerHTML = all.map(window.LunariumArtstation.renderCard).join("");
+    function openModal() {
+      pendingFiles = [];
+      var root = document.getElementById("modal-root");
+      root.innerHTML =
+        '<div class="modal-overlay" id="modal-overlay">' +
+          '<div class="panel modal-card">' +
+            '<h2 style="margin-bottom:16px;"><i class="fa-solid fa-cubes accent"></i> Novo trabalho</h2>' +
+            '<form id="work-form">' +
+              '<div class="field"><label>Título</label><input type="text" id="w-title" required></div>' +
+              '<div class="field"><label>Descrição</label><textarea id="w-desc" rows="3" style="resize:vertical;"></textarea></div>' +
+              '<div class="field"><label>Programas usados (separados por vírgula)</label><input type="text" id="w-tools" placeholder="Blender, Photoshop, Substance Painter"></div>' +
+              '<div class="field"><label>Embed do Sketchfab (opcional)</label><input type="text" id="w-sketchfab" placeholder="https://sketchfab.com/models/xxxxx/embed"></div>' +
+              '<div class="field">' +
+                '<label>Imagens / vídeos</label>' +
+                '<div class="file-drop" id="file-drop">Clique ou arraste arquivos aqui</div>' +
+                '<input type="file" id="file-input" accept="image/*,video/*" multiple class="hidden">' +
+                '<div class="file-preview-list" id="file-preview-list"></div>' +
+              '</div>' +
+              '<label style="display:flex;align-items:center;gap:8px;font-size:.85rem;margin-bottom:16px;"><input type="checkbox" id="w-published" checked style="width:auto;"> Publicar imediatamente</label>' +
+              '<div style="display:flex;gap:10px;">' +
+                '<button type="button" class="btn btn-ghost" id="modal-cancel" style="flex:1;justify-content:center;">Cancelar</button>' +
+                '<button type="submit" class="btn btn-solid" id="modal-submit" style="flex:1;justify-content:center;"><i class="fa-solid fa-floppy-disk"></i> Publicar</button>' +
+              '</div>' +
+              '<p id="modal-error" class="hidden" style="color:#ff8a8a;font-size:.8rem;margin-top:10px;"></p>' +
+            '</form>' +
+          '</div>' +
+        '</div>';
+
+      document.getElementById("modal-overlay").addEventListener("click", function (e) { if (e.target.id === "modal-overlay") closeModal(); });
+      document.getElementById("modal-cancel").addEventListener("click", closeModal);
+      document.getElementById("file-drop").addEventListener("click", function () { document.getElementById("file-input").click(); });
+      document.getElementById("file-input").addEventListener("change", function (e) {
+        pendingFiles = pendingFiles.concat(Array.from(e.target.files));
+        renderFilePreview();
+      });
+      document.getElementById("work-form").addEventListener("submit", submitWork);
+    }
+
+    function renderFilePreview() {
+      document.getElementById("file-preview-list").innerHTML = pendingFiles.map(function (f) {
+        return '<span>' + escapeHtml(f.name) + '</span>';
+      }).join("");
+    }
+
+    function closeModal() { document.getElementById("modal-root").innerHTML = ""; }
+
+    function submitWork(e) {
+      e.preventDefault();
+      var submitBtn = document.getElementById("modal-submit");
+      var errorEl = document.getElementById("modal-error");
+      submitBtn.disabled = true;
+      errorEl.classList.add("hidden");
+
+      var title = document.getElementById("w-title").value.trim();
+      var description = document.getElementById("w-desc").value.trim();
+      var tools = document.getElementById("w-tools").value.split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+      var sketchfab = document.getElementById("w-sketchfab").value.trim();
+      var published = document.getElementById("w-published").checked;
+
+      window.LunariumAuth.getSession().then(function (session) {
+        return window.sb.from("works").insert({
+          author_id: session.user.id,
+          title: title,
+          description: description,
+          software: tools,
+          sketchfab_embed_url: sketchfab || null,
+          published: published
+        }).select().single();
+      }).then(function (res) {
+        if (res.error) throw res.error;
+        var workId = res.data.id;
+        return Promise.all(pendingFiles.map(function (file, i) {
+          var isVideo = file.type.indexOf("video") === 0;
+          var ext = file.name.split(".").pop();
+          var path = workId + "/" + Date.now() + "-" + i + "." + ext;
+          return window.sb.storage.from("work-media").upload(path, file).then(function (upRes) {
+            if (upRes.error) throw upRes.error;
+            var pub = window.sb.storage.from("work-media").getPublicUrl(path);
+            return window.sb.from("work_media").insert({
+              work_id: workId,
+              media_type: isVideo ? "video" : "image",
+              url: pub.data.publicUrl,
+              position: i
+            });
+          });
+        }));
+      }).then(function () {
+        closeModal();
+        loadWorks();
+      }).catch(function (err) {
+        errorEl.textContent = err.message || "algo deu errado ao publicar.";
+        errorEl.classList.remove("hidden");
+        submitBtn.disabled = false;
+      });
+    }
+
+    window.LunariumAuth.getProfile().then(function (profile) {
+      isAdmin = !!(profile && profile.is_admin);
+      if (isAdmin) {
+        var btn = document.getElementById("new-work-btn");
+        btn.classList.remove("hidden");
+        btn.addEventListener("click", openModal);
       }
-
-      function sync(force) {
-        if (!username) {
-          renderArt([]);
-          syncLabel.textContent = manualWorks.length ? "só trabalhos manuais" : "ArtStation não configurado";
-          return;
-        }
-        syncBtn.classList.add("spinning");
-        syncLabel.textContent = "sincronizando…";
-        window.LunariumArtstation.fetchProjects(username, force).then(function (res) {
-          renderArt(res.projects);
-          syncLabel.textContent = (res.fromCache ? "sincronizado " : "atualizado ") + window.LunariumArtstation.timeAgo(res.fetchedAt);
-        }).catch(function () {
-          renderArt([]);
-          syncLabel.textContent = "sincronização falhou" + (manualWorks.length ? " · mostrando manuais" : "");
-        }).then(function () { syncBtn.classList.remove("spinning"); });
-      }
-
-      syncBtn.addEventListener("click", function () { sync(true); });
-      renderArt([]);
-      sync(false);
-    })();
+      loadWorks();
+    });
+  })();
   </script>
 </body>
 </html>
