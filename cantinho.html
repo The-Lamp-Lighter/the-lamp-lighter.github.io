@@ -19,16 +19,57 @@
   .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px; flex-wrap:wrap; }
   .section-head h2 { font-size:1rem; margin:0; }
 
-  .work-card { padding:18px; margin-bottom:16px; }
-  .work-head { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:8px; }
-  .work-head h3 { margin:0; font-size:1rem; }
-  .work-head .dim { font-size:.72rem; font-family:var(--font-mono); white-space:nowrap; }
-  .work-admin-actions { display:flex; gap:6px; }
-  .work-desc { font-size:.85rem; color:var(--text-dim); margin:8px 0; white-space:pre-wrap; }
-  .work-tools { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:10px; }
-  .work-media-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:8px; margin-top:10px; }
-  .work-media-grid img, .work-media-grid video { width:100%; height:120px; object-fit:cover; border-radius: var(--radius-sm); border:1px solid var(--border); background:#000; }
-  .sketchfab-embed { width:100%; aspect-ratio:16/9; border:1px solid var(--border); border-radius: var(--radius-sm); margin-top:10px; }
+  .works-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:16px; }
+  .work-tile {
+    position:relative; border-radius: var(--radius-sm); overflow:hidden; cursor:pointer;
+    border:1px solid var(--border); background:var(--surface);
+    transition: transform .2s ease, box-shadow .2s ease; aspect-ratio: 4/3;
+  }
+  .work-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .work-tile img { width:100%; height:100%; object-fit:cover; display:block; }
+  .work-tile-empty { width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-faint); font-size:2rem; background:var(--surface-strong); }
+  .work-tile-overlay {
+    position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.8) 0%, rgba(0,0,0,0) 60%);
+    display:flex; align-items:flex-end; padding:12px; opacity:0; transition:opacity .2s ease;
+  }
+  .work-tile:hover .work-tile-overlay { opacity:1; }
+  .work-tile-overlay strong { color:#fff; font-size:.88rem; display:block; }
+  .work-tile-overlay small { color:rgba(255,255,255,.7); font-size:.7rem; }
+  .work-tile-draft { position:absolute; top:8px; left:8px; }
+  .work-tile-admin { position:absolute; top:8px; right:8px; display:flex; gap:6px; opacity:0; transition:opacity .2s ease; }
+  .work-tile:hover .work-tile-admin { opacity:1; }
+  .work-tile-admin button { width:30px; height:30px; border-radius:50%; border:none; background:rgba(10,10,14,.7); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .work-tile-admin button:hover { background:rgba(10,10,14,.9); }
+
+  /* visualizador em tela cheia, estilo ArtStation */
+  .lightbox-overlay { position:fixed; inset:0; background:rgba(6,5,10,.94); z-index:95; display:flex; flex-direction:column; }
+  .lightbox-topbar { display:flex; justify-content:flex-end; padding:14px 18px; flex-shrink:0; }
+  .lightbox-close { width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); color:#fff; cursor:pointer; font-size:1rem; }
+  .lightbox-close:hover { background:rgba(255,255,255,.18); }
+  .lightbox-body { flex:1; display:grid; grid-template-columns: 1fr 340px; overflow:hidden; min-height:0; }
+  @media (max-width: 860px) { .lightbox-body { grid-template-columns:1fr; overflow-y:auto; } }
+  .lightbox-viewer { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; min-height:0; overflow:hidden; }
+  .lightbox-frame { flex:1; width:100%; display:flex; align-items:center; justify-content:center; min-height:0; }
+  .lightbox-frame img, .lightbox-frame video { max-width:100%; max-height:100%; object-fit:contain; border-radius:8px; }
+  .lightbox-frame iframe { width:100%; height:100%; min-height:320px; border:none; border-radius:8px; }
+  .lightbox-nav-btn {
+    position:absolute; top:50%; translate:0 -50%; width:44px; height:44px; border-radius:50%;
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); color:#fff;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1.1rem; z-index:2;
+  }
+  .lightbox-nav-btn:hover { background:rgba(255,255,255,.18); }
+  .lightbox-nav-btn.prev { left:12px; } .lightbox-nav-btn.next { right:12px; }
+  .lightbox-thumbs { display:flex; gap:8px; margin-top:14px; overflow-x:auto; max-width:100%; padding:2px; flex-shrink:0; }
+  .lightbox-thumb { width:64px; height:48px; object-fit:cover; border-radius:4px; cursor:pointer; border:2px solid transparent; opacity:.55; flex-shrink:0; transition: opacity .15s ease, border-color .15s ease; }
+  .lightbox-thumb.active { opacity:1; border-color: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); }
+  .lightbox-thumb-sketchfab { width:64px; height:48px; border-radius:4px; cursor:pointer; flex-shrink:0; background:var(--surface); border:2px solid transparent; display:flex; align-items:center; justify-content:center; color:var(--text-dim); opacity:.55; }
+  .lightbox-thumb-sketchfab.active { opacity:1; border-color: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); color:var(--text-strong); }
+  .lightbox-sidebar { background: var(--surface-strong); padding:28px; overflow-y:auto; border-left:1px solid var(--border); }
+  .lightbox-sidebar h2 { font-size:1.25rem; margin-bottom:6px; }
+  .lightbox-sidebar .dim { font-size:.78rem; }
+  .lightbox-desc { font-size:.86rem; color:var(--text-dim); white-space:pre-wrap; margin:16px 0; line-height:1.6; }
+  .lightbox-admin-row { display:flex; gap:8px; margin-top:20px; padding-top:20px; border-top:1px solid var(--border); }
+  .work-tools { display:flex; flex-wrap:wrap; gap:4px; margin:12px 0; }
 
   .link-card {
     display:flex; align-items:center; gap:12px; padding:14px 16px; text-decoration:none; color:var(--text);
@@ -63,7 +104,7 @@
                 <i class="fa-solid fa-plus"></i> Novo trabalho
               </button>
             </div>
-            <div id="works-list"><div class="empty-state"><div class="orbit"></div><h3>Carregando…</h3></div></div>
+            <div id="works-list" class="works-grid"><div class="empty-state" style="grid-column:1/-1;"><div class="orbit"></div><h3>Carregando…</h3></div></div>
           </section>
 
           <section>
@@ -77,6 +118,7 @@
     </div>
   </div>
 
+  <div id="lightbox-root"></div>
   <div id="modal-root"></div>
   <div id="theme-panel-root"></div>
 
@@ -97,39 +139,34 @@
       return '<a class="link-card" href="' + l.url + '" target="_blank" rel="noopener"><i class="' + l.icon + '"></i>' + escapeHtml(l.label) + '</a>';
     }).join("") || '<p class="dim" style="font-size:.82rem;">Nenhum link cadastrado ainda.</p>';
 
-    function renderWork(w) {
-      var dateStr = new Date(w.created_at).toLocaleDateString("pt-BR");
-      var toolsHtml = (w.software || []).length
-        ? '<div class="work-tools">' + w.software.map(function (t) { return '<span class="tag" style="margin-right:0;">' + escapeHtml(t) + '</span>'; }).join("") + '</div>'
-        : "";
-      var mediaHtml = (w.work_media || []).length
-        ? '<div class="work-media-grid">' + w.work_media.slice().sort(function (a, b) { return a.position - b.position; }).map(function (m) {
-            return m.media_type === "video"
-              ? '<video src="' + m.url + '" controls muted></video>'
-              : '<img src="' + m.url + '" alt="" loading="lazy">';
-          }).join("") + '</div>'
-        : "";
-      var sketchfabHtml = w.sketchfab_embed_url
-        ? '<iframe class="sketchfab-embed" src="' + w.sketchfab_embed_url + '" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>'
-        : "";
-      var adminActions = isAdmin
-        ? '<div class="work-admin-actions">' +
-            '<button class="btn-icon btn-ghost" data-toggle-pub="' + w.id + '" data-current="' + w.published + '" title="' + (w.published ? "Despublicar" : "Publicar") + '"><i class="fa-solid ' + (w.published ? "fa-eye" : "fa-eye-slash") + '"></i></button>' +
-            '<button class="btn-icon btn-danger" data-delete="' + w.id + '" title="Excluir"><i class="fa-solid fa-trash"></i></button>' +
+    var worksCache = [];
+    var lightboxState = { work: null, media: [], index: 0 };
+
+    function getMediaList(w) {
+      var list = (w.work_media || []).slice().sort(function (a, b) { return a.position - b.position; })
+        .map(function (m) { return { type: m.media_type, url: m.url }; });
+      if (w.sketchfab_embed_url) list.unshift({ type: "sketchfab", url: w.sketchfab_embed_url });
+      return list;
+    }
+
+    function renderWorkTile(w) {
+      var media = getMediaList(w);
+      var cover = media.find(function (m) { return m.type === "image"; }) || media.find(function (m) { return m.type === "video"; });
+      var coverHtml = cover
+        ? (cover.type === "video" ? '<video src="' + cover.url + '" muted></video>' : '<img src="' + cover.url + '" alt="" loading="lazy">')
+        : '<div class="work-tile-empty"><i class="fa-solid fa-cubes"></i></div>';
+      var adminHtml = isAdmin
+        ? '<div class="work-tile-admin">' +
+            '<button data-toggle-pub="' + w.id + '" data-current="' + w.published + '" title="' + (w.published ? "Despublicar" : "Publicar") + '"><i class="fa-solid ' + (w.published ? "fa-eye" : "fa-eye-slash") + '"></i></button>' +
+            '<button data-delete="' + w.id + '" title="Excluir"><i class="fa-solid fa-trash"></i></button>' +
           '</div>'
         : "";
-
+      var draftHtml = !w.published ? '<span class="tag work-tile-draft" style="background:rgba(255,150,60,.85);color:#241200;">rascunho</span>' : "";
       return (
-        '<article class="panel work-card">' +
-          '<div class="work-head">' +
-            '<h3>' + escapeHtml(w.title) + (w.published ? "" : ' <span class="tag" style="background:rgba(255,150,60,.18);color:#ffb060;">rascunho</span>') + '</h3>' +
-            '<div style="display:flex;align-items:center;gap:10px;">' +
-              '<span class="dim">' + dateStr + '</span>' + adminActions +
-            '</div>' +
-          '</div>' +
-          (w.description ? '<p class="work-desc">' + escapeHtml(w.description) + '</p>' : "") +
-          toolsHtml + sketchfabHtml + mediaHtml +
-        '</article>'
+        '<div class="work-tile" data-open="' + w.id + '">' +
+          coverHtml + draftHtml + adminHtml +
+          '<div class="work-tile-overlay"><div><strong>' + escapeHtml(w.title) + '</strong><small>' + new Date(w.created_at).toLocaleDateString("pt-BR") + '</small></div></div>' +
+        '</div>'
       );
     }
 
@@ -139,39 +176,165 @@
         .order("created_at", { ascending: false })
         .then(function (res) {
           if (res.error) throw res.error;
+          worksCache = res.data || [];
           var list = document.getElementById("works-list");
-          if (!res.data.length) {
-            list.innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Nenhum trabalho publicado ainda</h3>' +
+          if (!worksCache.length) {
+            list.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="orbit"></div><h3>Nenhum trabalho publicado ainda</h3>' +
               (isAdmin ? '<p class="dim">Clique em "Novo trabalho" pra começar.</p>' : '') + '</div>';
             return;
           }
-          list.innerHTML = res.data.map(renderWork).join("");
+          list.innerHTML = worksCache.map(renderWorkTile).join("");
           bindWorkActions();
         }).catch(function (err) {
-          document.getElementById("works-list").innerHTML = '<div class="empty-state"><div class="orbit"></div><h3>Não deu pra carregar</h3><p class="dim">' + escapeHtml(err.message || "erro desconhecido") + '</p></div>';
+          document.getElementById("works-list").innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="orbit"></div><h3>Não deu pra carregar</h3><p class="dim">' + escapeHtml(err.message || "erro desconhecido") + '</p></div>';
         });
     }
 
     function bindWorkActions() {
+      document.querySelectorAll("[data-open]").forEach(function (tile) {
+        tile.addEventListener("click", function (e) {
+          if (e.target.closest("[data-toggle-pub], [data-delete]")) return;
+          openLightbox(tile.dataset.open);
+        });
+      });
       document.querySelectorAll("[data-toggle-pub]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          var id = btn.dataset.togglePub;
-          var current = btn.dataset.current === "true";
-          window.sb.from("works").update({ published: !current }).eq("id", id).then(function (res) {
-            if (res.error) { alert(res.error.message); return; }
-            loadWorks();
-          });
+        btn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          togglePublished(btn.dataset.togglePub, btn.dataset.current === "true");
         });
       });
       document.querySelectorAll("[data-delete]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          if (!confirm("Excluir este trabalho? Isso não pode ser desfeito.")) return;
-          window.sb.from("works").delete().eq("id", btn.dataset.delete).then(function (res) {
-            if (res.error) { alert(res.error.message); return; }
-            loadWorks();
-          });
+        btn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          deleteWork(btn.dataset.delete);
         });
       });
+    }
+
+    function togglePublished(id, current) {
+      window.sb.from("works").update({ published: !current }).eq("id", id).then(function (res) {
+        if (res.error) { alert(res.error.message); return; }
+        loadWorks();
+      });
+    }
+
+    function deleteWork(id) {
+      if (!confirm("Excluir este trabalho? Isso não pode ser desfeito.")) return;
+      window.sb.from("works").delete().eq("id", id).then(function (res) {
+        if (res.error) { alert(res.error.message); return; }
+        closeLightbox();
+        loadWorks();
+      });
+    }
+
+    // ---------- visualizador em tela cheia (estilo ArtStation) ----------
+    function openLightbox(workId) {
+      var w = worksCache.find(function (x) { return x.id === workId; });
+      if (!w) return;
+      lightboxState = { work: w, media: getMediaList(w), index: 0 };
+      var root = document.getElementById("lightbox-root");
+      root.innerHTML =
+        '<div class="lightbox-overlay" id="lightbox-overlay">' +
+          '<div class="lightbox-topbar"><button class="lightbox-close" id="lightbox-close"><i class="fa-solid fa-xmark"></i></button></div>' +
+          '<div class="lightbox-body">' +
+            '<div class="lightbox-viewer">' +
+              '<div class="lightbox-frame" id="lightbox-frame"></div>' +
+              '<div class="lightbox-thumbs" id="lightbox-thumbs"></div>' +
+            '</div>' +
+            '<div class="lightbox-sidebar" id="lightbox-sidebar"></div>' +
+          '</div>' +
+        '</div>';
+
+      document.getElementById("lightbox-close").addEventListener("click", closeLightbox);
+      document.getElementById("lightbox-overlay").addEventListener("click", function (e) {
+        if (e.target.id === "lightbox-overlay") closeLightbox();
+      });
+      document.addEventListener("keydown", lightboxKeyHandler);
+
+      renderLightboxFrame();
+      renderLightboxThumbs();
+      renderLightboxSidebar();
+    }
+
+    function lightboxKeyHandler(e) {
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowRight") stepLightbox(1);
+      if (e.key === "ArrowLeft") stepLightbox(-1);
+    }
+
+    function closeLightbox() {
+      document.getElementById("lightbox-root").innerHTML = "";
+      document.removeEventListener("keydown", lightboxKeyHandler);
+    }
+
+    function stepLightbox(delta) {
+      var n = lightboxState.media.length;
+      if (n < 2) return;
+      lightboxState.index = (lightboxState.index + delta + n) % n;
+      renderLightboxFrame();
+      renderLightboxThumbs();
+    }
+
+    function renderLightboxFrame() {
+      var frame = document.getElementById("lightbox-frame");
+      var m = lightboxState.media[lightboxState.index];
+      var navHtml = lightboxState.media.length > 1
+        ? '<button class="lightbox-nav-btn prev" id="lightbox-prev"><i class="fa-solid fa-chevron-left"></i></button>' +
+          '<button class="lightbox-nav-btn next" id="lightbox-next"><i class="fa-solid fa-chevron-right"></i></button>'
+        : "";
+      var mediaHtml = !m
+        ? '<div class="work-tile-empty" style="width:100%;height:100%;"><i class="fa-solid fa-cubes"></i></div>'
+        : m.type === "sketchfab"
+          ? '<iframe src="' + m.url + '" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen></iframe>'
+          : m.type === "video"
+            ? '<video src="' + m.url + '" controls autoplay muted></video>'
+            : '<img src="' + m.url + '" alt="">';
+      frame.innerHTML = navHtml + mediaHtml;
+      if (lightboxState.media.length > 1) {
+        document.getElementById("lightbox-prev").addEventListener("click", function () { stepLightbox(-1); });
+        document.getElementById("lightbox-next").addEventListener("click", function () { stepLightbox(1); });
+      }
+    }
+
+    function renderLightboxThumbs() {
+      var wrap = document.getElementById("lightbox-thumbs");
+      if (lightboxState.media.length < 2) { wrap.innerHTML = ""; return; }
+      wrap.innerHTML = lightboxState.media.map(function (m, i) {
+        var active = i === lightboxState.index ? " active" : "";
+        if (m.type === "sketchfab") return '<div class="lightbox-thumb-sketchfab' + active + '" data-idx="' + i + '"><i class="fa-solid fa-cube"></i></div>';
+        if (m.type === "video") return '<video class="lightbox-thumb' + active + '" data-idx="' + i + '" src="' + m.url + '" muted></video>';
+        return '<img class="lightbox-thumb' + active + '" data-idx="' + i + '" src="' + m.url + '" alt="">';
+      }).join("");
+      wrap.querySelectorAll("[data-idx]").forEach(function (el) {
+        el.addEventListener("click", function () {
+          lightboxState.index = parseInt(el.dataset.idx, 10);
+          renderLightboxFrame();
+          renderLightboxThumbs();
+        });
+      });
+    }
+
+    function renderLightboxSidebar() {
+      var w = lightboxState.work;
+      var toolsHtml = (w.software || []).length
+        ? '<div class="work-tools">' + w.software.map(function (t) { return '<span class="tag" style="margin-right:0;">' + escapeHtml(t) + '</span>'; }).join("") + '</div>'
+        : "";
+      var adminHtml = isAdmin
+        ? '<div class="lightbox-admin-row">' +
+            '<button class="btn btn-ghost" id="lb-toggle-pub" style="flex:1;justify-content:center;font-size:.78rem;"><i class="fa-solid ' + (w.published ? "fa-eye-slash" : "fa-eye") + '"></i> ' + (w.published ? "Despublicar" : "Publicar") + '</button>' +
+            '<button class="btn btn-danger" id="lb-delete" style="flex:1;justify-content:center;font-size:.78rem;"><i class="fa-solid fa-trash"></i> Excluir</button>' +
+          '</div>'
+        : "";
+      document.getElementById("lightbox-sidebar").innerHTML =
+        '<span class="dim" style="font-family:var(--font-mono);">' + new Date(w.created_at).toLocaleDateString("pt-BR") + (w.published ? "" : " · rascunho") + '</span>' +
+        '<h2>' + escapeHtml(w.title) + '</h2>' +
+        toolsHtml +
+        (w.description ? '<p class="lightbox-desc">' + escapeHtml(w.description) + '</p>' : '<p class="lightbox-desc dim">Sem descrição.</p>') +
+        adminHtml;
+      if (isAdmin) {
+        document.getElementById("lb-toggle-pub").addEventListener("click", function () { togglePublished(w.id, w.published); closeLightbox(); });
+        document.getElementById("lb-delete").addEventListener("click", function () { deleteWork(w.id); });
+      }
     }
 
     function openModal() {
