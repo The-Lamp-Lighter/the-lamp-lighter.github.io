@@ -49,7 +49,27 @@
   .msg.me { align-self:flex-end; background: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); color: var(--on-accent); border-bottom-right-radius:2px; }
   .msg.them { align-self:flex-start; background: var(--surface); border:1px solid var(--border); border-bottom-left-radius:2px; }
   .msg time { display:block; font-size:.62rem; opacity:.7; margin-top:4px; }
-  .chat-inputrow { display:flex; gap:8px; padding:14px 18px; border-top:1px solid var(--border); }
+  .msg img, .msg video { max-width:100%; max-height:260px; border-radius:8px; display:block; margin-bottom:4px; }
+
+  .chat-settings-menu {
+    position:absolute; top:100%; right:16px; margin-top:6px; z-index:20;
+    background: var(--surface-strong); border:1px solid var(--border); border-radius: var(--radius-sm);
+    box-shadow: var(--shadow); display:flex; flex-direction:column; min-width:190px; overflow:hidden;
+  }
+  .chat-settings-menu button {
+    display:flex; align-items:center; gap:10px; padding:10px 14px; background:none; border:none;
+    color:var(--text); font-size:.82rem; cursor:pointer; text-align:left; font-family:var(--font-body);
+  }
+  .chat-settings-menu button:hover { background:var(--surface); }
+  .chat-settings-menu button.danger { color:#ff8a8a; }
+
+  .attach-preview {
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:8px 18px; font-size:.78rem; color:var(--text-dim); border-top:1px solid var(--border); background:var(--surface);
+  }
+  .attach-preview button { background:none; border:none; color:var(--text-dim); cursor:pointer; }
+
+  .chat-inputrow { display:flex; align-items:center; gap:8px; padding:14px 18px; border-top:1px solid var(--border); }
   .chat-inputrow input { flex:1; }
 </style>
 </head>
@@ -82,16 +102,26 @@
               <p class="dim">Ou adicione alguém pelo código ao lado.</p>
             </div>
             <div id="chat-active" class="hidden" style="display:contents;">
-              <div class="chat-head">
+              <div class="chat-head" style="position:relative;">
                 <span class="avatar-badge" id="active-avatar"></span>
                 <div>
                   <strong id="active-name"></strong><br>
                   <small id="active-sub"></small>
                 </div>
-                <button class="btn btn-danger" id="remove-contact-btn" style="margin-left:auto;font-size:.72rem;padding:.4em .8em;"><i class="fa-solid fa-trash"></i></button>
+                <button class="btn-icon btn-ghost" id="chat-settings-btn" style="margin-left:auto;" aria-label="Configurações da conversa"><i class="fa-solid fa-gear"></i></button>
+                <div class="chat-settings-menu hidden" id="chat-settings-menu">
+                  <button type="button" id="clear-history-btn"><i class="fa-solid fa-broom"></i> Limpar histórico</button>
+                  <button type="button" id="remove-contact-btn" class="danger"><i class="fa-solid fa-user-slash"></i> Remover contato</button>
+                </div>
               </div>
               <div class="chat-messages" id="chat-messages"></div>
+              <div class="attach-preview hidden" id="attach-preview">
+                <span id="attach-preview-name"></span>
+                <button type="button" id="attach-cancel" aria-label="Cancelar anexo"><i class="fa-solid fa-xmark"></i></button>
+              </div>
               <form class="chat-inputrow" id="send-form">
+                <input type="file" id="attach-input" accept="image/*,video/*" class="hidden">
+                <button type="button" class="btn-icon btn-ghost" id="attach-btn" aria-label="Anexar mídia"><i class="fa-solid fa-paperclip"></i></button>
                 <input type="text" id="send-input" placeholder="Escreva uma mensagem…" autocomplete="off">
                 <button class="btn btn-solid btn-icon" type="submit" aria-label="Enviar"><i class="fa-solid fa-paper-plane"></i></button>
               </form>
@@ -177,7 +207,13 @@
       }
       box.innerHTML = rows.map(function (m) {
         var mine = m.sender_id === me.id;
-        return '<div class="msg ' + (mine ? "me" : "them") + '">' + escapeHtml(m.content) + '<time>' + fmtTime(m.created_at) + '</time></div>';
+        var mediaHtml = "";
+        if (m.media_url) {
+          mediaHtml = m.media_type === "video"
+            ? '<video src="' + m.media_url + '" controls></video>'
+            : '<img src="' + m.media_url + '" alt="">';
+        }
+        return '<div class="msg ' + (mine ? "me" : "them") + '">' + mediaHtml + (m.content ? escapeHtml(m.content) : "") + '<time>' + fmtTime(m.created_at) + '</time></div>';
       }).join("");
       box.scrollTop = box.scrollHeight;
     }
@@ -227,16 +263,78 @@
       });
     });
 
+    var pendingAttachment = null;
+
+    document.getElementById("attach-btn").addEventListener("click", function () {
+      document.getElementById("attach-input").click();
+    });
+    document.getElementById("attach-input").addEventListener("change", function (e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 15 * 1024 * 1024) { alert("Arquivo maior que 15MB."); e.target.value = ""; return; }
+      pendingAttachment = file;
+      document.getElementById("attach-preview-name").textContent = "📎 " + file.name;
+      document.getElementById("attach-preview").classList.remove("hidden");
+    });
+    document.getElementById("attach-cancel").addEventListener("click", function () {
+      pendingAttachment = null;
+      document.getElementById("attach-input").value = "";
+      document.getElementById("attach-preview").classList.add("hidden");
+    });
+
     document.getElementById("send-form").addEventListener("submit", function (e) {
       e.preventDefault();
       var input = document.getElementById("send-input");
       var text = input.value.trim();
-      if (!activeId || !text) return;
+      if (!activeId || (!text && !pendingAttachment)) return;
+
+      var payload = { sender_id: me.id, receiver_id: activeId, content: text || null };
+      var attachment = pendingAttachment;
       input.value = "";
-      window.sb.from("chat_messages").insert({ sender_id: me.id, receiver_id: activeId, content: text }).then(function (res) {
-        if (res.error) { alert("não deu pra enviar: " + res.error.message); return; }
+      pendingAttachment = null;
+      document.getElementById("attach-input").value = "";
+      document.getElementById("attach-preview").classList.add("hidden");
+
+      var upload = Promise.resolve();
+      if (attachment) {
+        var isVideo = attachment.type.indexOf("video") === 0;
+        var ext = attachment.name.split(".").pop();
+        var path = me.id + "/" + Date.now() + "." + ext;
+        upload = window.sb.storage.from("chat-media").upload(path, attachment).then(function (upRes) {
+          if (upRes.error) throw upRes.error;
+          var pub = window.sb.storage.from("chat-media").getPublicUrl(path);
+          payload.media_url = pub.data.publicUrl;
+          payload.media_type = isVideo ? "video" : "image";
+        });
+      }
+
+      upload.then(function () {
+        return window.sb.from("chat_messages").insert(payload);
+      }).then(function (res) {
+        if (res && res.error) throw res.error;
         loadMessages(activeId);
+      }).catch(function (err) {
+        alert("não deu pra enviar: " + (err.message || err));
       });
+    });
+
+    document.getElementById("chat-settings-btn").addEventListener("click", function (e) {
+      e.stopPropagation();
+      document.getElementById("chat-settings-menu").classList.toggle("hidden");
+    });
+    document.addEventListener("click", function () {
+      document.getElementById("chat-settings-menu").classList.add("hidden");
+    });
+
+    document.getElementById("clear-history-btn").addEventListener("click", function () {
+      if (!activeId) return;
+      if (!confirm("Apagar todo o histórico dessa conversa? Isso remove as mensagens dos dois lados e não pode ser desfeito.")) return;
+      window.sb.from("chat_messages").delete()
+        .or("and(sender_id.eq." + me.id + ",receiver_id.eq." + activeId + "),and(sender_id.eq." + activeId + ",receiver_id.eq." + me.id + ")")
+        .then(function (res) {
+          if (res.error) { alert("não deu pra apagar: " + res.error.message); return; }
+          loadMessages(activeId);
+        });
     });
 
     document.getElementById("remove-contact-btn").addEventListener("click", function () {

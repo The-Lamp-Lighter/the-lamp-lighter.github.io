@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogos — Lunarium's Lab</title>
+<link rel="icon" href="assets/favicon.png">
+<script src="js/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=VT323&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Mono&family=Chakra+Petch:wght@500;600;700&family=Share+Tech+Mono&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/base.css">
+<style>
+  .stardust-banner {
+    display:flex; align-items:center; gap:14px; padding:18px 22px; margin-bottom:24px;
+  }
+  .stardust-icon {
+    width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .18); font-size:1.4rem;
+    color: hsl(var(--accent-h) var(--accent-s) calc(var(--accent-l) + 10%));
+  }
+  .stardust-banner strong { font-size:1.4rem; font-family: var(--font-display); }
+  .games-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:16px; }
+  .game-card {
+    padding:22px; text-decoration:none; color:var(--text); display:flex; flex-direction:column; gap:8px;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .game-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .game-emoji { font-size:2rem; }
+  .game-card h3 { margin:0; font-size:1rem; }
+  .game-card p { margin:0; font-size:.8rem; color:var(--text-dim); flex:1; }
+  .game-card .best { font-size:.72rem; font-family:var(--font-mono); color:var(--text-faint); }
+</style>
+</head>
+<body data-page="games">
+  <div id="app-shell">
+    <div id="app-nav"></div>
+    <div>
+      <header class="topbar" id="app-topbar"></header>
+      <main id="app-main">
+        <div class="panel stardust-banner">
+          <span class="stardust-icon"><i class="fa-solid fa-star"></i></span>
+          <div>
+            <span class="dim" style="font-size:.75rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;">Seu estelar</span><br>
+            <strong id="stardust-total">—</strong>
+          </div>
+        </div>
+
+        <div class="games-grid" id="games-grid"></div>
+      </main>
+    </div>
+  </div>
+  <div id="theme-panel-root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script>
+  (function () {
+    var GAMES = [
+      { id: "snake", emoji: "🐍", name: "Cobrinha", desc: "O clássico. Coma, cresça, não bata na parede.", href: "game-snake.html" }
+      // adicione novos jogos aqui: { id, emoji, name, desc, href }
+    ];
+
+    document.getElementById("games-grid").innerHTML = GAMES.map(function (g) {
+      return (
+        '<a class="panel game-card" href="' + g.href + '">' +
+          '<span class="game-emoji">' + g.emoji + '</span>' +
+          '<h3>' + g.name + '</h3>' +
+          '<p>' + g.desc + '</p>' +
+          '<span class="best" data-best="' + g.id + '">recorde: —</span>' +
+        '</a>'
+      );
+    }).join("");
+
+    window.LunariumAuth.getProfile().then(function (profile) {
+      if (!profile) return;
+      document.getElementById("stardust-total").textContent = (profile.stardust || 0) + " ⭐";
+
+      GAMES.forEach(function (g) {
+        window.sb.from("game_scores").select("score").eq("user_id", profile.id).eq("game_id", g.id)
+          .order("score", { ascending: false }).limit(1).then(function (res) {
+            var el = document.querySelector('[data-best="' + g.id + '"]');
+            if (el && res.data && res.data.length) el.textContent = "seu recorde: " + res.data[0].score;
+          });
+      });
+    });
+  })();
+  </script>
+</body>
+</html>

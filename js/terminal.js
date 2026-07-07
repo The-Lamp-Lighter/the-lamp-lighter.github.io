@@ -87,25 +87,6 @@
         line("matiz definido para " + ((hue % 360 + 360) % 360) + "°");
       }
     },
-    repo: {
-      desc: "repo list | repo info <id>",
-      run: function (args) {
-        var projects = window.LUNARIUM_PROJECTS || [];
-        if (args[0] === "info" && args[1]) {
-          var p = projects.find(function (x) { return x.id === args[1]; });
-          if (!p) { line("projeto não encontrado.", "term-err"); return; }
-          var v = p.versions[0];
-          line('<strong>' + p.name + '</strong> <span class="dim">(' + p.category + ')</span>');
-          line(escapeHtml(p.description), "dim");
-          line("versão atual: " + v.version + " — " + v.date, "dim");
-          return;
-        }
-        var rows = projects.map(function (p) {
-          return '<div class="term-help-row"><span class="accent">' + p.id + '</span><span class="dim">' + p.name + " · " + p.versions[0].version + '</span></div>';
-        }).join("");
-        line('<div class="term-help">' + (rows || '<span class="dim">nenhum projeto catalogado.</span>') + '</div>');
-      }
-    },
     ratelimit: {
       desc: "checa o limite atual da API do GitHub",
       run: function () {
@@ -132,11 +113,11 @@
       }
     },
     open: {
-      desc: "open <home|terminal|news|repo|chat>",
+      desc: "open <home|terminal|news|games|chat|cantinho>",
       run: function (args) {
-        var map = { home: "home.html", terminal: "terminal.html", news: "news.html", repo: "repo.html", chat: "chat.html" };
+        var map = { home: "home.html", terminal: "terminal.html", news: "news.html", games: "games.html", chat: "chat.html", cantinho: "cantinho.html" };
         var target = map[args[0]];
-        if (!target) { line("destinos: home, terminal, news, repo, chat", "term-err"); return; }
+        if (!target) { line("destinos: home, terminal, news, games, chat, cantinho", "term-err"); return; }
         line("abrindo " + args[0] + "…");
         setTimeout(function () { window.location.href = target; }, 300);
       }
@@ -150,7 +131,6 @@
             ["usuário", p ? (p.display_name || p.username) : "—"],
             ["estilo", t.style],
             ["matiz", t.hue + "°"],
-            ["projetos", (window.LUNARIUM_PROJECTS || []).length],
             ["motor", "Lunarium's Lab v2.0"]
           ];
           var html = rows.map(function (r) { return '<div class="term-help-row"><span class="accent">' + r[0] + '</span><span class="dim">' + r[1] + '</span></div>'; }).join("");

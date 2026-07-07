@@ -67,10 +67,16 @@
             <p>Console com comandos próprios do laboratório, atalhos e utilidades</p>
             <i class="fa-solid fa-arrow-right card-arrow"></i>
           </a>
-          <a class="action-card" href="repo.html">
-            <i class="fa-solid fa-code-branch card-icon"></i>
-            <h3>Repositórios</h3>
-            <p>Scripts, apps e projetos com histórico de versões</p>
+          <a class="action-card" href="https://app.diversion.dev/dashboard" target="_blank" rel="noopener noreferrer">
+            <i class="fa-solid fa-layer-group card-icon"></i>
+            <h3>Diversion</h3>
+            <p>Acesse uma ferramenta de versionamento de arquivos</p>
+            <i class="fa-solid fa-arrow-right card-arrow"></i>
+          </a>
+          <a class="action-card" href="games.html">
+            <i class="fa-solid fa-gamepad card-icon"></i>
+            <h3>Jogos</h3>
+            <p>Mini jogos pra jogar e acumular estelar</p>
             <i class="fa-solid fa-arrow-right card-arrow"></i>
           </a>
           <a class="action-card" href="news.html">
@@ -85,12 +91,6 @@
             <p>Converse com amigos</p>
             <i class="fa-solid fa-arrow-right card-arrow"></i>
           </a>
-          <a class="action-card" href="https://app.diversion.dev/dashboard" target="_blank" rel="noopener noreferrer">
-            <i class="fa-solid fa-layer-group card-icon"></i>
-            <h3>Diversion</h3>
-            <p>Acesse uma ferramenta de versionamento de arquivos</p>
-            <i class="fa-solid fa-arrow-right card-arrow"></i>
-          </a>
           <a class="action-card" data-theme-toggle>
             <i class="fa-solid fa-palette card-icon"></i>
             <h3>Aparência</h3>
@@ -98,7 +98,7 @@
             <i class="fa-solid fa-arrow-right card-arrow"></i>
           </a>
         </div>
-         
+
         <div class="split">
           <section class="panel" style="padding:20px;">
             <div class="section-title">
@@ -152,9 +152,6 @@
         document.getElementById("stat-style").textContent = p2 ? p2.label : t2.style;
       });
 
-      if (window.LUNARIUM_PROJECTS) {
-        document.getElementById("stat-repos").textContent = window.LUNARIUM_PROJECTS.length;
-      }
       try {
         var contacts = JSON.parse(localStorage.getItem("lunarium.chat.contacts") || "[]");
         document.getElementById("stat-contacts").textContent = contacts.length;

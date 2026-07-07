@@ -1,76 +1,10 @@
 /* ============================================================
    LUNARIUM'S LAB — data/projects.js
-   Edite este arquivo à mão pra manter o laboratório atualizado.
-   Nenhum build step: é só um objeto JS carregado antes das
-   páginas que precisam dele (home, news, repo).
+   Alimenta a aba "Notícias" com a atividade dos seus repositórios
+   reais do GitHub. Formato: { owner: "usuário", repo: "nome" }.
    ============================================================ */
 
-/* Repositórios do GitHub que alimentam a aba "Notícias".
-   Troque/adicione pelos seus repositórios reais — o formato é
-   sempre { owner: "usuário-ou-organização", repo: "nome-do-repositorio" }.
-   Já deixei o repositório do próprio Lunarium's Lab configurado (achei
-   o usuário certo no código do site antigo). Adicione os outros embaixo
-   quando souber o nome exato deles no GitHub. */
 window.LUNARIUM_GITHUB_REPOS = [
   { owner: "The-Lamp-Lighter", repo: "the-lamp-lighter.github.io" }
   // { owner: "The-Lamp-Lighter", repo: "nome-do-outro-repositorio" },
-];
-
-/* Projetos/scripts/apps — cada um com histórico de versões,
-   como um mini "Diversion" embutido no site.
-   `diversionUrl`: link direto pro repositório real no Diversion
-   (ex: "https://app.diversion.dev/w/SEU-WORKSPACE/SEU-REPO"). Deixe
-   null enquanto o projeto ainda não estiver versionado lá — o botão
-   "Abrir no Diversion" some sozinho quando o campo está vazio. */
-window.LUNARIUM_PROJECTS = [
-  {
-    id: "anthology-ue5",
-    name: "Anthology — UE5",
-    category: "Unreal Engine",
-    icon: "fa-solid fa-cubes",
-    description: "Antologia com histórias de gêneros diferentes num único executável, convergindo num final em comum.",
-    diversionUrl: null,
-    versions: [
-      { version: "v0.4.0", date: "2026-06-28", changelog: "Terminal estilizado (Arch/Garuda) com DataTable de comandos.", downloadUrl: "#" },
-      { version: "v0.3.0", date: "2026-06-10", changelog: "Sistema de partículas Niagara reativo à música via submix.", downloadUrl: "#" },
-      { version: "v0.2.0", date: "2026-05-22", changelog: "Player de cinemática em loop com HUD de auto-hide.", downloadUrl: "#" },
-      { version: "v0.1.0", date: "2026-05-02", changelog: "Arquitetura de pastas e sistema de botão reutilizável.", downloadUrl: "#" }
-    ]
-  },
-  {
-    id: "kon-desktop",
-    name: "kon-desktop",
-    category: "Electron",
-    icon: "fa-solid fa-desktop",
-    description: "Companion desktop do K-ON! com máquina de estados por personagem e diálogos com efeito de digitação.",
-    diversionUrl: null,
-    versions: [
-      { version: "v1.2.0", date: "2026-03-14", changelog: "Agendador de eventos ponderado + animações via spritesheet.", downloadUrl: "#" },
-      { version: "v1.0.0", date: "2026-02-01", changelog: "Primeira versão pública com as cinco integrantes da HTT.", downloadUrl: "#" }
-    ]
-  },
-  {
-    id: "arka",
-    name: "A.R.K.A",
-    category: "Web · Nova aba",
-    icon: "fa-solid fa-window-restore",
-    description: "Nova aba modular com cinco temas visuais, janelas flutuantes, visualizador 3D e terminal.",
-    diversionUrl: null,
-    versions: [
-      { version: "v2.1.0", date: "2026-01-18", changelog: "Visualizador 3D com Three.js e widget de missões.", downloadUrl: "#" },
-      { version: "v2.0.0", date: "2025-12-02", changelog: "Reescrita com janelas flutuantes arrastáveis e notas locais.", downloadUrl: "#" }
-    ]
-  },
-  {
-    id: "card-game",
-    name: "VORRHN — jogo de cartas",
-    category: "Design de jogos",
-    icon: "fa-solid fa-layer-group",
-    description: "Cinco tipos de carta e um grimório de tradução de símbolos, parte do universo do jogo de terror/ARG.",
-    diversionUrl: null,
-    versions: [
-      { version: "v0.2.0", date: "2026-04-09", changelog: "Seis finais mapeados, um deles sem gatilho documentado (proposital).", downloadUrl: "#" },
-      { version: "v0.1.0", date: "2026-03-01", changelog: "Primeira lista de tipos de carta e sessão estimada de 15–30 min.", downloadUrl: "#" }
-    ]
-  }
 ];

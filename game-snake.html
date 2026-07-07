@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cobrinha — Lunarium's Lab</title>
+<link rel="icon" href="assets/favicon.png">
+<script src="js/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=VT323&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Mono&family=Chakra+Petch:wght@500;600;700&family=Share+Tech+Mono&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/base.css">
+<style>
+  .snake-wrap { display:flex; flex-direction:column; align-items:center; gap:16px; }
+  .snake-hud { display:flex; gap:24px; font-family:var(--font-mono); font-size:.9rem; }
+  .snake-hud strong { color: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); }
+  #snake-canvas {
+    background: var(--surface-strong); border:1px solid var(--border); border-radius: var(--radius-sm);
+    max-width:100%; touch-action:none;
+  }
+  .snake-controls-mobile { display:none; }
+  @media (max-width: 600px) {
+    .snake-controls-mobile { display:grid; grid-template-columns:repeat(3,56px); grid-template-rows:repeat(2,56px); gap:8px; margin-top:6px; }
+    .snake-controls-mobile button { border-radius: var(--radius-sm); border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:1.2rem; }
+  }
+  .snake-overlay {
+    position:absolute; inset:0; background:rgba(5,5,10,.82); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:12px; border-radius: var(--radius-sm); text-align:center; padding:20px;
+  }
+  .snake-canvas-wrap { position:relative; }
+</style>
+</head>
+<body data-page="games">
+  <div id="app-shell">
+    <div id="app-nav"></div>
+    <div>
+      <header class="topbar" id="app-topbar"></header>
+      <main id="app-main">
+        <a href="games.html" class="btn btn-ghost" style="margin-bottom:18px;font-size:.8rem;"><i class="fa-solid fa-arrow-left"></i> Jogos</a>
+
+        <div class="snake-wrap">
+          <div class="snake-hud">
+            <span>Pontos: <strong id="hud-score">0</strong></span>
+            <span>Recorde: <strong id="hud-best">0</strong></span>
+            <span>Estelar: <strong id="hud-stardust">—</strong> ⭐</span>
+          </div>
+
+          <div class="snake-canvas-wrap">
+            <canvas id="snake-canvas" width="400" height="400"></canvas>
+            <div class="snake-overlay" id="snake-start">
+              <h2 style="margin:0;">🐍 Cobrinha</h2>
+              <p class="dim" style="font-size:.85rem;max-width:26ch;">Setas ou WASD pra mover. Cada fruta = 1 ponto = 1 estelar.</p>
+              <button class="btn btn-solid" id="btn-start"><i class="fa-solid fa-play"></i> Jogar</button>
+            </div>
+            <div class="snake-overlay hidden" id="snake-gameover">
+              <h2 style="margin:0;">Fim de jogo</h2>
+              <p style="font-size:.9rem;">Você fez <strong id="final-score" class="accent">0</strong> pontos.</p>
+              <p class="dim" id="stardust-earned-msg" style="font-size:.8rem;"></p>
+              <button class="btn btn-solid" id="btn-restart"><i class="fa-solid fa-rotate-right"></i> Jogar de novo</button>
+            </div>
+          </div>
+
+          <div class="snake-controls-mobile" id="mobile-controls">
+            <span></span><button data-dir="up"><i class="fa-solid fa-chevron-up"></i></button><span></span>
+            <button data-dir="left"><i class="fa-solid fa-chevron-left"></i></button>
+            <button data-dir="down"><i class="fa-solid fa-chevron-down"></i></button>
+            <button data-dir="right"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div id="theme-panel-root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script>
+  (function () {
+    var GAME_ID = "snake";
+    var GRID = 20, CELLS = 20; // canvas 400x400 / 20 = 20 células
+    var canvas = document.getElementById("snake-canvas");
+    var ctx = canvas.getContext("2d");
+    var profile = null;
+
+    var snake, dir, nextDir, food, score, loopId, running;
+
+    function resetState() {
+      snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
+      dir = "right"; nextDir = "right";
+      score = 0;
+      placeFood();
+      document.getElementById("hud-score").textContent = "0";
+    }
+
+    function placeFood() {
+      food = { x: Math.floor(Math.random() * CELLS), y: Math.floor(Math.random() * CELLS) };
+      if (snake.some(function (s) { return s.x === food.x && s.y === food.y; })) placeFood();
+    }
+
+    function getAccentColor() {
+      return getComputedStyle(document.documentElement).getPropertyValue("--accent-h") || "258";
+    }
+
+    function draw() {
+      var accentH = getAccentColor();
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--surface-strong") || "#12101f";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "hsl(" + accentH + " 80% 60%)";
+      ctx.beginPath();
+      ctx.arc(food.x * GRID + GRID / 2, food.y * GRID + GRID / 2, GRID / 2.6, 0, Math.PI * 2);
+      ctx.fill();
+
+      snake.forEach(function (s, i) {
+        ctx.fillStyle = i === 0 ? "hsl(" + accentH + " 70% 68%)" : "hsl(" + accentH + " 55% 45%)";
+        ctx.fillRect(s.x * GRID + 1, s.y * GRID + 1, GRID - 2, GRID - 2);
+      });
+    }
+
+    function tick() {
+      dir = nextDir;
+      var head = { x: snake[0].x, y: snake[0].y };
+      if (dir === "up") head.y--; else if (dir === "down") head.y++;
+      else if (dir === "left") head.x--; else head.x++;
+
+      var hitWall = head.x < 0 || head.x >= CELLS || head.y < 0 || head.y >= CELLS;
+      var hitSelf = snake.some(function (s) { return s.x === head.x && s.y === head.y; });
+      if (hitWall || hitSelf) { gameOver(); return; }
+
+      snake.unshift(head);
+      if (head.x === food.x && head.y === food.y) {
+        score++;
+        document.getElementById("hud-score").textContent = score;
+        placeFood();
+      } else {
+        snake.pop();
+      }
+      draw();
+    }
+
+    function startGame() {
+      resetState();
+      document.getElementById("snake-start").classList.add("hidden");
+      document.getElementById("snake-gameover").classList.add("hidden");
+      running = true;
+      draw();
+      loopId = setInterval(tick, 110);
+    }
+
+    function gameOver() {
+      running = false;
+      clearInterval(loopId);
+      document.getElementById("final-score").textContent = score;
+      document.getElementById("snake-gameover").classList.remove("hidden");
+      submitScore(score);
+    }
+
+    function submitScore(finalScore) {
+      var msgEl = document.getElementById("stardust-earned-msg");
+      if (finalScore <= 0) { msgEl.textContent = "tenta de novo pra ganhar estelar!"; return; }
+      window.sb.rpc("submit_game_score", { p_game_id: GAME_ID, p_score: finalScore, p_stardust: finalScore }).then(function (res) {
+        if (res.error) { msgEl.textContent = "não deu pra salvar a pontuação: " + res.error.message; return; }
+        msgEl.textContent = "+" + finalScore + " estelar creditado! (total: " + res.data + ")";
+        document.getElementById("hud-stardust").textContent = res.data;
+        refreshBest();
+      });
+    }
+
+    function refreshBest() {
+      if (!profile) return;
+      window.sb.from("game_scores").select("score").eq("user_id", profile.id).eq("game_id", GAME_ID)
+        .order("score", { ascending: false }).limit(1).then(function (res) {
+          document.getElementById("hud-best").textContent = (res.data && res.data.length) ? res.data[0].score : 0;
+        });
+    }
+
+    document.getElementById("btn-start").addEventListener("click", startGame);
+    document.getElementById("btn-restart").addEventListener("click", startGame);
+
+    var KEYS = {
+      ArrowUp: "up", w: "up", W: "up",
+      ArrowDown: "down", s: "down", S: "down",
+      ArrowLeft: "left", a: "left", A: "left",
+      ArrowRight: "right", d: "right", D: "right"
+    };
+    var OPPOSITE = { up: "down", down: "up", left: "right", right: "left" };
+
+    document.addEventListener("keydown", function (e) {
+      var d = KEYS[e.key];
+      if (!d || !running) return;
+      if (d !== OPPOSITE[dir]) nextDir = d;
+      e.preventDefault();
+    });
+
+    document.getElementById("mobile-controls").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-dir]");
+      if (!btn || !running) return;
+      var d = btn.dataset.dir;
+      if (d !== OPPOSITE[dir]) nextDir = d;
+    });
+
+    window.LunariumAuth.getProfile().then(function (p) {
+      profile = p;
+      if (profile) {
+        document.getElementById("hud-stardust").textContent = profile.stardust || 0;
+        refreshBest();
+      }
+      draw();
+    });
+  })();
+  </script>
+</body>
+</html>

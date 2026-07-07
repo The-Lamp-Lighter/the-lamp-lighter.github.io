@@ -13,7 +13,7 @@
     { page: "home",  href: "home.html",  icon: "fa-satellite-dish", label: "Painel" },
     { page: "terminal", href: "terminal.html", icon: "fa-terminal", label: "Terminal" },
     { page: "news",  href: "news.html",  icon: "fa-tower-broadcast", label: "Notícias" },
-    { page: "repo",  href: "repo.html",  icon: "fa-code-branch", label: "Repositórios" },
+    { page: "games", href: "games.html", icon: "fa-gamepad", label: "Jogos" },
     { page: "chat",  href: "chat.html",  icon: "fa-comments", label: "Chat" },
     { page: "cantinho", href: "cantinho.html", icon: "fa-heart", label: "Cantinho" },
     { page: "profile", href: "profile.html", icon: "fa-id-badge", label: "Perfil" }
@@ -23,7 +23,7 @@
     home: { title: "Painel", eyebrow: "Centro de ações" },
     terminal: { title: "Terminal", eyebrow: "Console do laboratório" },
     news: { title: "Notícias", eyebrow: "Atividade dos repositórios" },
-    repo: { title: "Repositórios", eyebrow: "Scripts, apps & versões" },
+    games: { title: "Jogos", eyebrow: "Mini jogos & estelar" },
     chat: { title: "Chat", eyebrow: "Conversas" },
     cantinho: { title: "Cantinho", eyebrow: "Meus trabalhos & links" },
     profile: { title: "Perfil", eyebrow: "Sua conta" }
