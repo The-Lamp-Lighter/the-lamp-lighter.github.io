@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha DAW — Lunarium's Lab</title>
+<link rel="icon" href="assets/favicon.png">
+<script src="js/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=VT323&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Mono&family=Chakra+Petch:wght@500;600;700&family=Share+Tech+Mono&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/base.css">
+<style>
+  #app-main { max-width: none; padding: 20px 24px; }
+  .daw-shell { display:flex; flex-direction:column; gap:12px; height: calc(100vh - 110px); }
+
+  .daw-toolbar {
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:12px 16px;
+  }
+  .daw-toolbar input[type="text"] { width:180px; }
+  .daw-transport { display:flex; align-items:center; gap:8px; }
+  .daw-transport button { width:38px; height:38px; border-radius:50%; border:1px solid var(--border); background:var(--surface); color:var(--text); cursor:pointer; }
+  .daw-transport button.play { background: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); color: var(--on-accent); border:none; }
+  .bpm-field { display:flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:.8rem; }
+  .bpm-field input { width:60px; padding:.4em .5em; text-align:center; }
+  .daw-toolbar .spacer { flex:1; }
+  .daw-toolbar select { width:auto; padding:.5em .8em; font-size:.8rem; }
+
+  .daw-body { flex:1; display:grid; grid-template-columns: 230px 1fr; gap:12px; min-height:0; }
+  .track-panel { display:flex; flex-direction:column; overflow:hidden; }
+  .track-panel-head { padding:12px 14px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .track-list { overflow-y:auto; flex:1; }
+  .track-row { padding:10px 12px; border-bottom:1px solid var(--border); cursor:pointer; border-left:3px solid transparent; }
+  .track-row.active { background: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .12); border-left-color: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); }
+  .track-row-top { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+  .track-row input[type="text"] { background:none; border:none; padding:2px 0; font-size:.82rem; color:var(--text-strong); font-family:var(--font-body); width:100%; }
+  .track-row-controls { display:flex; align-items:center; gap:4px; }
+  .track-mini-btn { width:22px; height:22px; border-radius:4px; border:1px solid var(--border); background:var(--surface); color:var(--text-dim); font-size:.65rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .track-mini-btn.on-mute { background:#ff5a5a; color:#fff; border-color:transparent; }
+  .track-mini-btn.on-solo { background:#ffb020; color:#1a1200; border-color:transparent; }
+  .track-row select { font-size:.7rem; padding:.3em .4em; margin-bottom:6px; }
+  .track-row input[type="range"] { width:100%; }
+
+  .roll-panel { display:flex; flex-direction:column; overflow:hidden; }
+  .roll-scroll { flex:1; overflow:auto; position:relative; }
+  .roll-grid { position:relative; }
+  .roll-row-label {
+    position:sticky; left:0; z-index:3; width:64px; box-sizing:border-box;
+    display:flex; align-items:center; justify-content:flex-end; padding-right:8px;
+    font-size:.62rem; font-family:var(--font-mono); color:var(--text-faint); background:var(--surface-strong);
+    border-bottom:1px solid var(--border); border-right:1px solid var(--border);
+  }
+  .roll-row-label.black { color: var(--text-dim); }
+  .roll-cellrow { position:relative; }
+  .note-block {
+    position:absolute; top:1px; bottom:1px; border-radius:3px;
+    background: hsl(var(--accent-h) var(--accent-s) var(--accent-l));
+    box-shadow: 0 0 6px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .5);
+    cursor:pointer;
+  }
+  .playhead {
+    position:absolute; top:0; bottom:0; width:2px; background:#fff; opacity:.85; pointer-events:none; z-index:4;
+    box-shadow: 0 0 6px #fff;
+  }
+  .empty-state.small { padding: 40px 16px; }
+</style>
+</head>
+<body data-page="daw">
+  <div id="app-shell">
+    <div id="app-nav"></div>
+    <div>
+      <header class="topbar" id="app-topbar"></header>
+      <main id="app-main">
+        <div class="daw-shell">
+          <div class="panel daw-toolbar">
+            <div class="daw-transport">
+              <button class="play" id="btn-play" aria-label="Tocar/Parar"><i class="fa-solid fa-play" id="play-icon"></i></button>
+              <button id="btn-stop" aria-label="Parar e voltar ao início"><i class="fa-solid fa-stop"></i></button>
+            </div>
+            <div class="bpm-field"><i class="fa-solid fa-gauge-high dim"></i><input type="number" id="bpm-input" min="40" max="240" value="100"> BPM</div>
+            <label class="dim" style="display:flex;align-items:center;gap:6px;font-size:.78rem;"><input type="checkbox" id="loop-toggle" checked style="width:auto;"> loop</label>
+            <input type="text" id="project-name" value="Sem título">
+            <div class="spacer"></div>
+            <select id="load-select"><option value="">Meus projetos…</option></select>
+            <button class="btn btn-ghost" id="btn-new" style="font-size:.78rem;"><i class="fa-solid fa-file"></i> Novo</button>
+            <button class="btn btn-solid" id="btn-save" style="font-size:.78rem;"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+          </div>
+
+          <div class="daw-body">
+            <aside class="panel track-panel">
+              <div class="track-panel-head">
+                <strong style="font-size:.85rem;">Faixas</strong>
+                <select id="new-track-preset" style="font-size:.7rem;padding:.3em .4em;"></select>
+              </div>
+              <div class="track-list" id="track-list"></div>
+              <div style="padding:10px;"><button class="btn btn-ghost" id="btn-add-track" style="width:100%;justify-content:center;font-size:.78rem;"><i class="fa-solid fa-plus"></i> Adicionar faixa</button></div>
+            </aside>
+
+            <section class="panel roll-panel">
+              <div class="roll-scroll" id="roll-scroll">
+                <div class="empty-state small" id="roll-empty"><div class="orbit"></div><h3>Nenhuma faixa selecionada</h3><p class="dim">Adicione uma faixa pra começar a compor.</p></div>
+                <div class="roll-grid hidden" id="roll-grid"></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div id="theme-panel-root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/daw-engine.js"></script>
+</body>
+</html>

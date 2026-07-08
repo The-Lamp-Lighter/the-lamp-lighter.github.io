@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAWs — Lunarium's Lab</title>
+<link rel="icon" href="assets/favicon.png">
+<script src="js/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=VT323&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Mono&family=Chakra+Petch:wght@500;600;700&family=Share+Tech+Mono&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/base.css">
+<style>
+  .daw-feature {
+    display:flex; align-items:center; gap:20px; padding:28px; margin-bottom:26px; text-decoration:none; color:var(--text);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .daw-feature:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .daw-feature-icon {
+    width:64px; height:64px; border-radius: var(--radius-sm); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:1.8rem;
+    background: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .18);
+    color: hsl(var(--accent-h) var(--accent-s) calc(var(--accent-l) + 10%));
+  }
+  .daw-feature h2 { margin:0 0 4px 0; font-size:1.1rem; }
+  .daw-feature p { margin:0; font-size:.85rem; color:var(--text-dim); }
+
+  .ext-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:16px; }
+  .ext-card {
+    padding:20px; text-decoration:none; color:var(--text); display:flex; flex-direction:column; gap:8px;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .ext-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .ext-card i.card-icon {
+    font-size:1.2rem; width:40px; height:40px; border-radius: var(--radius-sm);
+    display:flex; align-items:center; justify-content:center;
+    background: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .15);
+    color: hsl(var(--accent-h) var(--accent-s) calc(var(--accent-l) + 10%));
+  }
+  .ext-card h3 { margin:0; font-size:.95rem; }
+  .ext-card p { margin:0; font-size:.78rem; color:var(--text-dim); flex:1; }
+</style>
+</head>
+<body data-page="daws">
+  <div id="app-shell">
+    <div id="app-nav"></div>
+    <div>
+      <header class="topbar" id="app-topbar"></header>
+      <main id="app-main">
+        <a class="panel daw-feature" href="daw.html">
+          <span class="daw-feature-icon"><i class="fa-solid fa-wave-square"></i></span>
+          <div>
+            <h2><i class="fa-solid fa-moon accent" style="font-size:.85rem;"></i> Minha DAW</h2>
+            <p>O estúdio da casa — piano roll, presets de som, múltiplas faixas e projetos salvos na sua conta.</p>
+          </div>
+        </a>
+
+        <p class="dim" style="font-size:.78rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;">DAWs externas que eu uso</p>
+        <div class="ext-grid">
+          <a class="panel ext-card" href="https://www.soundtrap.com/studio" target="_blank" rel="noopener">
+            <i class="fa-solid fa-music card-icon"></i>
+            <h3>Soundtrap</h3>
+            <p>A mais intuitiva das que já testei, com presets prontos.</p>
+          </a>
+          <a class="panel ext-card" href="https://www.bandlab.com/mixeditor" target="_blank" rel="noopener">
+            <i class="fa-solid fa-sliders card-icon"></i>
+            <h3>BandLab</h3>
+            <p>Boa opção alternativa, direto no navegador.</p>
+          </a>
+          <a class="panel ext-card" href="https://www.beepbox.co" target="_blank" rel="noopener">
+            <i class="fa-solid fa-chart-simple card-icon"></i>
+            <h3>Beepbox.co</h3>
+            <p>Chiptune rápido — o piano roll numerado que inspirou parte da DAW própria.</p>
+          </a>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div id="theme-panel-root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+</body>
+</html>

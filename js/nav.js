@@ -14,6 +14,7 @@
     { page: "terminal", href: "terminal.html", icon: "fa-terminal", label: "Terminal" },
     { page: "news",  href: "news.html",  icon: "fa-tower-broadcast", label: "Notícias" },
     { page: "games", href: "games.html", icon: "fa-gamepad", label: "Jogos" },
+    { page: "daws", href: "daws.html", icon: "fa-sliders", label: "DAWs" },
     { page: "chat",  href: "chat.html",  icon: "fa-comments", label: "Chat" },
     { page: "cantinho", href: "cantinho.html", icon: "fa-heart", label: "Cantinho" },
     { page: "profile", href: "profile.html", icon: "fa-id-badge", label: "Perfil" }
@@ -24,6 +25,8 @@
     terminal: { title: "Terminal", eyebrow: "Console do laboratório" },
     news: { title: "Notícias", eyebrow: "Atividade dos repositórios" },
     games: { title: "Jogos", eyebrow: "Mini jogos & estelar" },
+    daws: { title: "DAWs", eyebrow: "Faça música" },
+    daw: { title: "Minha DAW", eyebrow: "Estúdio" },
     chat: { title: "Chat", eyebrow: "Conversas" },
     cantinho: { title: "Cantinho", eyebrow: "Meus trabalhos & links" },
     profile: { title: "Perfil", eyebrow: "Sua conta" }
