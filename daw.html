@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="css/base.css">
 <style>
   #app-main { max-width: none; padding: 20px 24px; }
+  body { --bar-w: 56px; }
   .daw-shell { display:flex; flex-direction:column; gap:12px; height: calc(100vh - 110px); }
 
   .daw-toolbar {
@@ -66,6 +67,41 @@
   }
   .empty-state.small { padding: 40px 16px; }
 
+  .roll-editbar { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid var(--border); flex-shrink:0; }
+  .roll-editbar strong { font-size:.85rem; }
+
+  /* ---- timeline (blocos) ---- */
+  .tl-scroll { flex:1; overflow:auto; position:relative; }
+  .tl-ruler { position:sticky; top:0; z-index:3; display:flex; background:var(--surface-strong); border-bottom:1px solid var(--border); }
+  .tl-ruler span {
+    flex-shrink:0; font-family:var(--font-mono); font-size:.62rem; color:var(--text-faint);
+    border-right:1px solid var(--border); padding:4px 0 4px 4px; box-sizing:border-box;
+  }
+  .tl-track-row { display:flex; height:56px; border-bottom:1px solid var(--border); }
+  .tl-lane {
+    position:relative; flex-shrink:0; height:100%;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0, rgba(255,255,255,.05) 1px, transparent 1px, transparent var(--bar-w)),
+      repeating-linear-gradient(90deg, var(--border) 0, var(--border) 1px, transparent 1px, transparent calc(var(--bar-w) * 4));
+  }
+  .tl-clip {
+    position:absolute; top:6px; bottom:6px; border-radius:5px; cursor:grab;
+    background: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .28);
+    border:1px solid hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .7);
+    overflow:hidden; user-select:none; touch-action:none;
+  }
+  .tl-clip.selected { box-shadow: 0 0 0 2px hsl(var(--accent-h) var(--accent-s) var(--accent-l)); }
+  .tl-clip-repeats { position:absolute; inset:0; display:flex; }
+  .tl-clip-repeats span { flex-shrink:0; border-right:1px dashed hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .4); height:100%; }
+  .tl-clip-label { position:relative; z-index:1; font-size:.65rem; padding:3px 6px; color:var(--text-strong); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tl-clip-resize { position:absolute; right:0; top:0; bottom:0; width:8px; cursor:ew-resize; }
+  .tl-clip-toolbar {
+    position:absolute; z-index:10; display:flex; gap:4px; background:var(--surface-strong); border:1px solid var(--border);
+    border-radius:6px; padding:3px; box-shadow: var(--shadow);
+  }
+  .tl-clip-toolbar button { width:24px; height:24px; border-radius:4px; border:none; background:none; color:var(--text); cursor:pointer; }
+  .tl-clip-toolbar button:hover { background: var(--surface); }
+
   .icon-picker-overlay { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:80; display:flex; align-items:center; justify-content:center; padding:20px; }
   .icon-picker-card { width:100%; max-width:380px; max-height:70vh; overflow-y:auto; padding:20px; }
   .icon-picker-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap:6px; margin-top:12px; }
@@ -106,10 +142,25 @@
               <div style="padding:10px;"><button class="btn btn-ghost" id="btn-add-track" style="width:100%;justify-content:center;font-size:.78rem;"><i class="fa-solid fa-plus"></i> Adicionar faixa</button></div>
             </aside>
 
-            <section class="panel roll-panel">
-              <div class="roll-scroll" id="roll-scroll">
-                <div class="empty-state small" id="roll-empty"><div class="orbit"></div><h3>Nenhuma faixa selecionada</h3><p class="dim">Adicione uma faixa pra começar a compor.</p></div>
-                <div class="roll-grid hidden" id="roll-grid"></div>
+            <section class="panel roll-panel" id="workspace">
+              <!-- visão Timeline (blocos) -->
+              <div id="view-timeline">
+                <div class="tl-scroll" id="tl-scroll">
+                  <div id="tl-ruler-wrap"></div>
+                  <div id="tl-rows"></div>
+                </div>
+              </div>
+              <!-- visão Piano Roll (edição de um bloco) -->
+              <div id="view-roll" class="hidden" style="display:flex;flex-direction:column;height:100%;">
+                <div class="roll-editbar">
+                  <button class="btn btn-ghost" id="btn-back-timeline" style="font-size:.76rem;"><i class="fa-solid fa-arrow-left"></i> Linha do tempo</button>
+                  <strong id="roll-editbar-title">—</strong>
+                  <div class="spacer" style="flex:1;"></div>
+                  <button class="btn-icon btn-ghost" id="btn-delete-clip" title="Excluir bloco"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                <div class="roll-scroll" id="roll-scroll" style="flex:1;">
+                  <div class="roll-grid" id="roll-grid"></div>
+                </div>
               </div>
             </section>
           </div>

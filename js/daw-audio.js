@@ -103,21 +103,45 @@
     return new Blob([view], { type: "audio/wav" });
   }
 
-  function renderProjectToWav(data, totalSteps) {
+  /* Converte os blocos (clips) de uma faixa numa lista plana de notas em
+     posição absoluta — repete o padrão de cada bloco conforme repeatCount.
+     Também aceita o formato antigo (track.notes direto), pra projetos
+     salvos antes dos blocos existirem continuarem funcionando. */
+  function resolveTrackNotes(track) {
+    if (Array.isArray(track.clips)) {
+      var out = [];
+      track.clips.forEach(function (clip) {
+        for (var r = 0; r < clip.repeatCount; r++) {
+          var baseStep = (clip.startBar + r * clip.patternBars) * 16;
+          (clip.notes || []).forEach(function (n) {
+            out.push({ pitch: n.pitch, step: baseStep + n.step, length: n.length, velocity: n.velocity });
+          });
+        }
+      });
+      return out;
+    }
+    return (track.notes || []).slice();
+  }
+
+  function renderProjectToWav(data) {
     var stepSeconds = Tone.Time("16n").toSeconds();
-    var totalSeconds = stepSeconds * (totalSteps || 64) + 1.5;
     var tracks = data.tracks || [];
+    var resolved = tracks.map(function (t) { return { meta: t, notes: resolveTrackNotes(t) }; });
+    var maxStep = 16;
+    resolved.forEach(function (r) { r.notes.forEach(function (n) { maxStep = Math.max(maxStep, n.step + n.length); }); });
+    var totalSeconds = stepSeconds * maxStep + 1.5;
     var anySolo = tracks.some(function (t) { return t.solo; });
 
     return Tone.Offline(function () {
-      tracks.forEach(function (t) {
+      resolved.forEach(function (r) {
+        var t = r.meta;
         if (t.muted) return;
         if (anySolo && !t.solo) return;
         var presetKey = PRESETS[t.preset] ? t.preset : "piano";
         var preset = PRESETS[presetKey];
         var inst = preset.make();
         inst.volume.value = t.volumeDb || 0;
-        (t.notes || []).forEach(function (n) {
+        r.notes.forEach(function (n) {
           var time = n.step * stepSeconds;
           if (preset.type === "drums") {
             inst.trigger(n.pitch, time, n.velocity);
@@ -148,6 +172,7 @@
     MELODIC_PITCHES: MELODIC_PITCHES,
     buildDrumKit: buildDrumKit,
     audioBufferToWav: audioBufferToWav,
+    resolveTrackNotes: resolveTrackNotes,
     renderProjectToWav: renderProjectToWav,
     triggerDownload: triggerDownload
   };

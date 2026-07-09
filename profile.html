@@ -203,7 +203,7 @@
               if (!proj) return;
               btn.disabled = true;
               btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-              window.LunariumDawAudio.renderProjectToWav(proj.data, 64).then(function (blob) {
+              window.LunariumDawAudio.renderProjectToWav(proj.data).then(function (blob) {
                 window.LunariumDawAudio.triggerDownload(blob, proj.name.replace(/[^\w\-]+/g, "_") + ".wav");
               }).catch(function (err) {
                 alert("não deu pra exportar: " + (err.message || err));
