@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VORRHN — Lunarium's Lab</title>
+<link rel="icon" href="assets/favicon.png">
+<script src="js/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=VT323&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Mono&family=Chakra+Petch:wght@500;600;700&family=Share+Tech+Mono&family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/base.css">
+<style>
+  body { --card-w: 48px; }
+  @media (min-width: 560px) { body { --card-w: 64px; } }
+
+  .vorrhn-wrap { display:flex; flex-direction:column; align-items:center; gap:18px; }
+  .vorrhn-hud { display:flex; gap:22px; font-family:var(--font-mono); font-size:.85rem; flex-wrap:wrap; justify-content:center; }
+  .vorrhn-hud strong { color: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); }
+
+  .vorrhn-board {
+    display:grid; grid-template-columns: repeat(7, var(--card-w));
+    grid-template-rows: repeat(7, calc(var(--card-w) * 1.32));
+    gap:4px; padding:10px; background: var(--surface-strong); border:1px solid var(--border); border-radius: var(--radius-sm);
+  }
+  .vorrhn-cell {
+    border:1px dashed var(--border); border-radius:4px; position:relative;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .vorrhn-cell.drag-over { border-color: hsl(var(--accent-h) var(--accent-s) var(--accent-l)); background: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .12); }
+  .vorrhn-cell.drag-invalid { border-color:#ff5a5a; background: rgba(255,90,90,.12); }
+
+  .vorrhn-card {
+    width: 100%; height:100%; border-radius:5px; overflow:hidden; position:relative;
+    display:flex; flex-direction:column; background:#0b0b0e; border:1px solid rgba(255,255,255,.15);
+    cursor:grab; user-select:none; touch-action:none;
+  }
+  .vorrhn-card.dragging { opacity:.3; }
+  .vorrhn-card .art { flex:0 0 58%; width:100%; }
+  .vorrhn-card .art svg { width:100%; height:100%; display:block; }
+  .vorrhn-card .info { flex:1; padding:3px 4px; display:flex; flex-direction:column; justify-content:space-between; min-height:0; }
+  .vorrhn-card .name { font-size:.5rem; line-height:1.1; color:#eee; font-family:var(--font-body); overflow:hidden; }
+  .vorrhn-card .powerrow { display:flex; justify-content:space-between; align-items:center; }
+  .vorrhn-card .power { font-family:var(--font-mono); font-weight:700; font-size:.72rem; color:#fff; }
+  .vorrhn-card .typetag { font-size:.44rem; text-transform:uppercase; letter-spacing:.03em; padding:1px 3px; border-radius:3px; color:#fff; }
+  .vorrhn-card.fused::after {
+    content:"☣"; position:absolute; top:2px; right:2px; font-size:.6rem; color:#8fd18f; text-shadow:0 0 4px #000;
+  }
+
+  .vorrhn-hand {
+    display:flex; gap:8px; padding:10px; min-height: calc(var(--card-w) * 1.32 + 20px);
+    background: var(--surface); border:1px solid var(--border); border-radius: var(--radius-sm);
+    flex-wrap:wrap; justify-content:center;
+  }
+  .vorrhn-hand .vorrhn-card { width:var(--card-w); flex-shrink:0; }
+  .ghost-card { position:fixed; z-index:60; pointer-events:none; width:var(--card-w); opacity:.92; top:0; left:0; }
+
+  .vorrhn-overlay {
+    position:absolute; inset:0; background:rgba(5,5,10,.9); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:10px; text-align:center; padding:20px; border-radius: var(--radius-sm); z-index:5;
+  }
+  .vorrhn-board-wrap { position:relative; }
+</style>
+</head>
+<body data-page="games">
+  <div id="app-shell">
+    <div id="app-nav"></div>
+    <div>
+      <header class="topbar" id="app-topbar"></header>
+      <main id="app-main">
+        <a href="games.html" class="btn btn-ghost" style="margin-bottom:16px;font-size:.8rem;"><i class="fa-solid fa-arrow-left"></i> Jogos</a>
+
+        <div class="vorrhn-wrap">
+          <div class="vorrhn-hud">
+            <span>Poder no tabuleiro: <strong id="hud-score">0</strong></span>
+            <span>Baralho: <strong id="hud-deck">0</strong></span>
+            <span>Estelar: <strong id="hud-stardust">—</strong> ⭐</span>
+          </div>
+
+          <div class="vorrhn-board-wrap">
+            <div class="vorrhn-board" id="board"></div>
+            <div class="vorrhn-overlay" id="start-overlay">
+              <h2 style="margin:0;">🕳️ VORRHN</h2>
+              <p class="dim" style="max-width:34ch;font-size:.85rem;">
+                Arraste cartas da mão pro tabuleiro 7x7. Criaturas só pontuam por si.
+                Anjos abençoam vizinhos, Demônios os amaldiçoam, Parasitas se fundem
+                a uma carta já colocada, e as raras Entidades Cósmicas mudam tudo.
+                O jogo acaba quando o baralho e a mão se esgotam — maximize o poder total.
+              </p>
+              <button class="btn btn-solid" id="btn-start"><i class="fa-solid fa-play"></i> Começar</button>
+            </div>
+            <div class="vorrhn-overlay hidden" id="end-overlay">
+              <h2 style="margin:0;">Fim de jogo</h2>
+              <p>Poder total: <strong id="final-score" class="accent">0</strong></p>
+              <p class="dim" id="stardust-msg" style="font-size:.8rem;"></p>
+              <button class="btn btn-solid" id="btn-restart"><i class="fa-solid fa-rotate-right"></i> Jogar de novo</button>
+            </div>
+          </div>
+
+          <div class="vorrhn-hand" id="hand"></div>
+          <p class="dim" id="effect-log" style="font-size:.78rem;min-height:1.2em;text-align:center;max-width:44ch;"></p>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div id="theme-panel-root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/vorrhn-cards.js"></script>
+  <script src="js/vorrhn-engine.js"></script>
+</body>
+</html>
