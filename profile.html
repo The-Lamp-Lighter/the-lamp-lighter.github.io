@@ -29,6 +29,18 @@
   #save-msg { font-size:.8rem; margin-top:10px; }
   #save-msg.ok { color: #6ee0a0; }
   #save-msg.err { color: #ff8a8a; }
+
+  .projects-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:14px; }
+  .project-card { padding:18px; display:flex; flex-direction:column; gap:10px; }
+  .project-card .picon {
+    width:42px; height:42px; border-radius: var(--radius-sm); display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem; background: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .18);
+    color: hsl(var(--accent-h) var(--accent-s) calc(var(--accent-l) + 10%));
+  }
+  .project-card .pname { font-size:1rem; font-weight:600; color:var(--text-strong); word-break:break-word; }
+  .project-card .pmeta { font-size:.72rem; color:var(--text-faint); font-family:var(--font-mono); }
+  .project-card .pactions { display:flex; gap:8px; margin-top:auto; }
+  .project-card .pactions .btn { flex:1; justify-content:center; font-size:.74rem; padding:.5em; }
 </style>
 </head>
 <body data-page="profile">
@@ -68,16 +80,25 @@
             <p id="save-msg" class="hidden"></p>
           </form>
         </div>
+
+        <div style="max-width:820px;margin-top:28px;">
+          <p class="dim" style="font-size:.78rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;">
+            <i class="fa-solid fa-moon"></i> Meus projetos — Luna DAW
+          </p>
+          <div class="projects-grid" id="projects-grid"><div class="empty-state small"><div class="orbit"></div><h3>Carregando…</h3></div></div>
+        </div>
       </main>
     </div>
   </div>
   <div id="theme-panel-root"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/nav.js"></script>
+  <script src="js/daw-audio.js"></script>
   <script>
     (function () {
       var profile = null;
@@ -145,6 +166,56 @@
           msg.className = "err";
         });
       });
+
+      function escapeHtml(str) { var d = document.createElement("div"); d.textContent = str || ""; return d.innerHTML; }
+
+      function loadProjects() {
+        window.LunariumAuth.getSession().then(function (session) {
+          if (!session) return;
+          return window.sb.from("daw_projects").select("*").eq("owner_id", session.user.id).order("updated_at", { ascending: false });
+        }).then(function (res) {
+          if (!res) return;
+          var grid = document.getElementById("projects-grid");
+          if (res.error) { grid.innerHTML = '<p class="dim">não deu pra carregar: ' + escapeHtml(res.error.message) + '</p>'; return; }
+          if (!res.data.length) {
+            grid.innerHTML = '<div class="empty-state small"><div class="orbit"></div><h3>Nenhum projeto ainda</h3><p class="dim">Crie um na <a class="accent" href="daw.html">Luna DAW</a>.</p></div>';
+            return;
+          }
+          grid.innerHTML = res.data.map(function (p) {
+            var trackCount = (p.data && p.data.tracks) ? p.data.tracks.length : 0;
+            var when = new Date(p.updated_at).toLocaleDateString("pt-BR");
+            return (
+              '<div class="panel project-card">' +
+                '<span class="picon"><i class="' + (p.icon || "fa-solid fa-music") + '"></i></span>' +
+                '<span class="pname">' + escapeHtml(p.name) + '</span>' +
+                '<span class="pmeta">' + trackCount + ' faixa(s) · ' + when + '</span>' +
+                '<div class="pactions">' +
+                  '<a class="btn btn-ghost" href="daw.html?load=' + p.id + '"><i class="fa-solid fa-pen"></i> Abrir</a>' +
+                  '<button class="btn btn-solid" data-download="' + p.id + '"><i class="fa-solid fa-download"></i></button>' +
+                '</div>' +
+              '</div>'
+            );
+          }).join("");
+
+          grid.querySelectorAll("[data-download]").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              var proj = res.data.filter(function (p) { return p.id === btn.dataset.download; })[0];
+              if (!proj) return;
+              btn.disabled = true;
+              btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+              window.LunariumDawAudio.renderProjectToWav(proj.data, 64).then(function (blob) {
+                window.LunariumDawAudio.triggerDownload(blob, proj.name.replace(/[^\w\-]+/g, "_") + ".wav");
+              }).catch(function (err) {
+                alert("não deu pra exportar: " + (err.message || err));
+              }).then(function () {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-download"></i>';
+              });
+            });
+          });
+        });
+      }
+      loadProjects();
     })();
   </script>
 </body>

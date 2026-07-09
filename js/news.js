@@ -31,11 +31,16 @@
         if (!res.ok) return { items: [], error: "other", status: res.status };
         return res.json().then(function (commits) {
           if (!Array.isArray(commits)) return { items: [], error: "other" };
+          var repoCfg = (window.LUNARIUM_GITHUB_REPOS || []).filter(function (r) { return r.repo === repo; })[0];
           var items = commits.map(function (c) {
+            var fullMsg = (c.commit && c.commit.message) ? c.commit.message : "";
+            var parts = fullMsg.split("\n");
             return {
               repo: repo,
               owner: owner,
-              message: (c.commit && c.commit.message ? c.commit.message.split("\n")[0] : "(sem mensagem)"),
+              message: parts[0] || "(sem mensagem)",
+              description: parts.slice(1).join("\n").trim(),
+              image: repoCfg && repoCfg.image ? repoCfg.image : null,
               author: (c.commit && c.commit.author ? c.commit.author.name : "desconhecido"),
               date: c.commit && c.commit.author ? c.commit.author.date : null,
               url: c.html_url,
@@ -65,8 +70,11 @@
   }
 
   function renderCard(item, compact) {
+    var imgHtml = item.image ? '<img src="' + item.image + '" alt="" style="width:100%;max-height:160px;object-fit:cover;border-radius:var(--radius-sm);margin-bottom:8px;">' : "";
+    var descHtml = (!compact && item.description) ? '<p style="font-size:.8rem;color:var(--text-dim);margin-top:6px;white-space:pre-wrap;">' + escapeHtml(item.description) + '</p>' : "";
     return (
       '<div class="card">' +
+        imgHtml +
         '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;">' +
           '<div>' +
             '<span class="tag">' + item.repo + '</span>' +
@@ -74,6 +82,7 @@
           '</div>' +
           '<span class="dim" style="font-family:var(--font-mono);font-size:.72rem;white-space:nowrap;">' + timeAgo(item.date) + '</span>' +
         '</div>' +
+        descHtml +
         (compact ? "" : '<p class="dim" style="margin-top:8px;font-size:.78rem;">por ' + escapeHtml(item.author) + ' · <a class="accent" href="' + item.url + '" target="_blank" rel="noopener">' + item.sha + '</a></p>')
       + '</div>'
     );

@@ -26,7 +26,7 @@
     news: { title: "Notícias", eyebrow: "Atividade dos repositórios" },
     games: { title: "Jogos", eyebrow: "Mini jogos & estelar" },
     daws: { title: "DAWs", eyebrow: "Faça música" },
-    daw: { title: "Minha DAW", eyebrow: "Estúdio" },
+    daw: { title: "Luna DAW", eyebrow: "Estúdio" },
     chat: { title: "Chat", eyebrow: "Conversas" },
     cantinho: { title: "Cantinho", eyebrow: "Meus trabalhos & links" },
     profile: { title: "Perfil", eyebrow: "Sua conta" }

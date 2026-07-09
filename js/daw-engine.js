@@ -11,66 +11,22 @@
   var BARS = 4, STEPS_PER_BAR = 16, TOTAL_STEPS = BARS * STEPS_PER_BAR;
   var STEP_W = 26, ROW_H = 20;
 
-  function buildPitchRange(startOct, endOct) {
-    var names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-    var out = [];
-    for (var oct = endOct; oct >= startOct; oct--) {
-      for (var i = names.length - 1; i >= 0; i--) out.push(names[i] + oct);
-    }
-    return out;
-  }
-  var MELODIC_PITCHES = buildPitchRange(3, 4); // 24 notas, B4 (topo) até C3 (base)
+  var MELODIC_PITCHES = window.LunariumDawAudio.MELODIC_PITCHES;
+  var PRESETS = window.LunariumDawAudio.PRESETS;
   var DRUM_NAMES = ["Kick", "Snare", "Clap", "Chimbal fechado", "Chimbal aberto", "Tom"];
 
   function uid() { return "id" + Math.random().toString(36).slice(2, 10); }
 
-  function buildDrumKit() {
-    var vol = new Tone.Volume(0).toDestination();
-    var kick = new Tone.MembraneSynth({ pitchDecay: 0.05, octaves: 6, envelope: { attack: 0.001, decay: 0.3, sustain: 0 } }).connect(vol);
-    var snare = new Tone.NoiseSynth({ noise: { type: "white" }, envelope: { attack: 0.001, decay: 0.15, sustain: 0 } }).connect(vol);
-    var clap = new Tone.NoiseSynth({ noise: { type: "pink" }, envelope: { attack: 0.001, decay: 0.1, sustain: 0 } }).connect(vol);
-    var hhC = new Tone.MetalSynth({ envelope: { attack: 0.001, decay: 0.05, release: 0.01 }, harmonicity: 5.1, modulationIndex: 32, resonance: 4000, octaves: 1.5 }).connect(vol);
-    var hhO = new Tone.MetalSynth({ envelope: { attack: 0.001, decay: 0.3, release: 0.1 }, harmonicity: 5.1, modulationIndex: 32, resonance: 4000, octaves: 1.5 }).connect(vol);
-    var tom = new Tone.MembraneSynth({ pitchDecay: 0.08, octaves: 4, envelope: { attack: 0.001, decay: 0.4, sustain: 0 } }).connect(vol);
-    return {
-      volume: vol,
-      trigger: function (row, time, v) {
-        v = v || 0.85;
-        if (row === 0) kick.triggerAttackRelease("C1", "8n", time, v);
-        else if (row === 1) snare.triggerAttackRelease("8n", time, v);
-        else if (row === 2) clap.triggerAttackRelease("16n", time, v);
-        else if (row === 3) hhC.triggerAttackRelease("C6", "32n", time, v);
-        else if (row === 4) hhO.triggerAttackRelease("C6", "8n", time, v);
-        else if (row === 5) tom.triggerAttackRelease("G2", "8n", time, v);
-      },
-      dispose: function () { [kick, snare, clap, hhC, hhO, tom, vol].forEach(function (n) { n.dispose(); }); }
-    };
-  }
-
-  var PRESETS = {
-    piano: { label: "Piano Suave", type: "melodic", make: function () {
-      return new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.01, decay: 0.25, sustain: 0.3, release: 0.9 } }).toDestination();
-    } },
-    lead: { label: "Synth Lead", type: "melodic", make: function () {
-      return new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sawtooth" }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.6, release: 0.3 } }).toDestination();
-    } },
-    bass: { label: "Baixo Grave", type: "melodic", make: function () {
-      return new Tone.MonoSynth({ oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 0.3, sustain: 0.4, release: 0.4 }, filterEnvelope: { attack: 0.01, decay: 0.2, sustain: 0.5, release: 0.4, baseFrequency: 200, octaves: 2 } }).toDestination();
-    } },
-    pad: { label: "Pad Etéreo", type: "melodic", make: function () {
-      var verb = new Tone.Reverb({ decay: 6, wet: 0.45 }).toDestination();
-      return new Tone.PolySynth(Tone.AMSynth, { envelope: { attack: 0.6, decay: 0.3, sustain: 0.8, release: 2.5 } }).connect(verb);
-    } },
-    pluck: { label: "Pluck Cristalino", type: "melodic", make: function () {
-      return new Tone.PluckSynth({ attackNoise: 0.5, dampening: 3000, resonance: 0.9 }).toDestination();
-    } },
-    weird: { label: "FM Estranho", type: "melodic", make: function () {
-      return new Tone.PolySynth(Tone.FMSynth, { harmonicity: 3.2, modulationIndex: 12, envelope: { attack: 0.02, decay: 0.3, sustain: 0.4, release: 1 } }).toDestination();
-    } },
-    drums: { label: "Bateria", type: "drums", make: buildDrumKit }
-  };
-
-  var state = { id: null, name: "Sem título", bpm: 100, tracks: [] };
+  var state = { id: null, name: "Sem título", icon: "fa-solid fa-music", bpm: 100, tracks: [] };
+  var ICON_CHOICES = [
+    "fa-solid fa-music", "fa-solid fa-guitar", "fa-solid fa-drum", "fa-solid fa-headphones",
+    "fa-solid fa-microphone", "fa-solid fa-compact-disc", "fa-solid fa-wave-square", "fa-solid fa-volume-high",
+    "fa-solid fa-star", "fa-solid fa-moon", "fa-solid fa-ghost", "fa-solid fa-fire",
+    "fa-solid fa-bolt", "fa-solid fa-heart", "fa-solid fa-skull", "fa-solid fa-cloud",
+    "fa-solid fa-gamepad", "fa-solid fa-dragon", "fa-solid fa-leaf", "fa-solid fa-snowflake",
+    "fa-solid fa-sun", "fa-solid fa-water", "fa-solid fa-mask", "fa-solid fa-cat",
+    "fa-solid fa-dove", "fa-solid fa-spider", "fa-solid fa-wand-magic-sparkles", "fa-solid fa-gem"
+  ];
   var selectedTrackId = null;
   var sequence = null;
   var playing = false;
@@ -328,6 +284,22 @@
     movePlayhead(0);
   }
 
+  function downloadWav() {
+    var btn = document.getElementById("btn-download");
+    if (!state.tracks.length) { alert("adicione ao menos uma faixa com notas antes de exportar."); return; }
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    window.LunariumDawAudio.renderProjectToWav(serialize(), TOTAL_STEPS).then(function (blob) {
+      window.LunariumDawAudio.triggerDownload(blob, (state.name || "projeto").replace(/[^\w\-]+/g, "_") + ".wav");
+    }).catch(function (err) {
+      alert("não deu pra exportar: " + (err.message || err));
+    }).then(function () {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-download"></i>';
+    });
+  }
+  document.getElementById("btn-download").addEventListener("click", downloadWav);
+
   function serialize() {
     return {
       bpm: state.bpm,
@@ -336,6 +308,37 @@
       })
     };
   }
+
+  function iconPickerRender() {
+    var preview = document.getElementById("icon-picker-preview");
+    if (preview) preview.className = state.icon;
+  }
+
+  function openIconPicker() {
+    var root = document.getElementById("icon-picker-root");
+    root.innerHTML =
+      '<div class="icon-picker-overlay" id="icon-picker-overlay">' +
+        '<div class="panel icon-picker-card">' +
+          '<strong style="font-size:.85rem;">Ícone do projeto</strong>' +
+          '<div class="icon-picker-grid" id="icon-picker-grid"></div>' +
+        '</div>' +
+      '</div>';
+    var grid = document.getElementById("icon-picker-grid");
+    grid.innerHTML = ICON_CHOICES.map(function (ic) {
+      return '<button type="button" data-icon="' + ic + '" class="' + (ic === state.icon ? "active" : "") + '"><i class="' + ic + '"></i></button>';
+    }).join("");
+    grid.querySelectorAll("button").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.icon = btn.dataset.icon;
+        iconPickerRender();
+        root.innerHTML = "";
+      });
+    });
+    document.getElementById("icon-picker-overlay").addEventListener("click", function (e) {
+      if (e.target.id === "icon-picker-overlay") root.innerHTML = "";
+    });
+  }
+  document.getElementById("icon-picker-btn").addEventListener("click", openIconPicker);
 
   function loadFromData(data) {
     state.tracks.forEach(function (t) { if (t.instrument) { try { t.instrument.dispose(); } catch (e) {} } });
@@ -355,8 +358,9 @@
   function newProject() {
     if (!confirm("Começar um projeto novo? O que não foi salvo se perde.")) return;
     state.tracks.forEach(function (t) { if (t.instrument) { try { t.instrument.dispose(); } catch (e) {} } });
-    state = { id: null, name: "Sem título", bpm: 100, tracks: [] };
+    state = { id: null, name: "Sem título", icon: "fa-solid fa-music", bpm: 100, tracks: [] };
     selectedTrackId = null;
+    iconPickerRender();
     document.getElementById("project-name").value = state.name;
     document.getElementById("bpm-input").value = state.bpm;
     Tone.Transport.bpm.value = state.bpm;
@@ -367,7 +371,7 @@
     state.name = document.getElementById("project-name").value.trim() || "Sem título";
     window.LunariumAuth.getSession().then(function (session) {
       if (!session) throw new Error("não autenticado");
-      var payload = { owner_id: session.user.id, name: state.name, data: serialize(), updated_at: new Date().toISOString() };
+      var payload = { owner_id: session.user.id, name: state.name, icon: state.icon, data: serialize(), updated_at: new Date().toISOString() };
       if (state.id) {
         return window.sb.from("daw_projects").update(payload).eq("id", state.id).select().single();
       }
@@ -400,7 +404,9 @@
       if (res.error) { alert(res.error.message); return; }
       state.id = res.data.id;
       state.name = res.data.name;
+      state.icon = res.data.icon || "fa-solid fa-music";
       document.getElementById("project-name").value = state.name;
+      iconPickerRender();
       loadFromData(res.data.data);
     });
   }
@@ -430,8 +436,15 @@
   });
 
   window.LunariumAuth.getProfile().then(function () {
+    iconPickerRender();
     renderTracks();
-    addTrack("piano");
     refreshProjectList();
+    var params = new URLSearchParams(window.location.search);
+    var loadId = params.get("load");
+    if (loadId) {
+      loadProject(loadId);
+    } else {
+      addTrack("piano");
+    }
   });
 })();
