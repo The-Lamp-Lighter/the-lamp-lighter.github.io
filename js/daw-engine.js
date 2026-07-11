@@ -10,15 +10,16 @@
 
   var SONG_BARS = 16;
   var STEPS_PER_BAR = 16;
-  var BAR_W = 56;     // precisa bater com --bar-w no CSS
+  var BAR_W = 84;     // precisa bater com --bar-w no CSS
   var STEP_W = 26;
-  var ROW_H = 20;
+  var ROW_H = 22;
+  var ROLL_LABEL_W = 84;
   var DEFAULT_PATTERN_BARS = 2;
   var TRACK_ROW_H = 56;
 
   var MELODIC_PITCHES = window.LunariumDawAudio.MELODIC_PITCHES;
   var PRESETS = window.LunariumDawAudio.PRESETS;
-  var DRUM_NAMES = ["Kick", "Snare", "Clap", "Chimbal fechado", "Chimbal aberto", "Tom"];
+  var DRUM_NAMES = ["Kick", "Snare", "Clap", "Chimb. Fech.", "Chimb. Abt.", "Tom"];
 
   function uid() { return "id" + Math.random().toString(36).slice(2, 10); }
   function escapeHtml(str) { var d = document.createElement("div"); d.textContent = str || ""; return d.innerHTML; }
@@ -123,7 +124,9 @@
       el.addEventListener("change", function () {
         var t = getTrack(el.dataset.preset);
         setTrackPreset(t, el.value);
+        t.name = PRESETS[el.value].label;
         renderTracks();
+        renderTimeline();
       });
     });
     list.querySelectorAll("[data-volume]").forEach(function (el) {
@@ -345,7 +348,7 @@
     var stepsInClip = clip.patternBars * STEPS_PER_BAR;
     var totalW = stepsInClip * STEP_W;
 
-    var html = '<div style="position:relative;width:' + (totalW + 64) + 'px;">';
+    var html = '<div style="position:relative;width:' + (totalW + ROLL_LABEL_W) + 'px;">';
     rows.forEach(function (label, rowIdx) {
       var isBlack = !isDrum && label.indexOf("#") > -1;
       html +=

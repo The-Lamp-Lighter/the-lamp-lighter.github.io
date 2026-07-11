@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="css/base.css">
 <style>
   #app-main { max-width: none; padding: 20px 24px; }
-  body { --bar-w: 56px; }
+  body { --bar-w: 84px; }
   .daw-shell { display:flex; flex-direction:column; gap:12px; height: calc(100vh - 110px); }
 
   .daw-toolbar {
@@ -29,7 +29,7 @@
   .daw-toolbar .spacer { flex:1; }
   .daw-toolbar select { width:auto; padding:.5em .8em; font-size:.8rem; }
 
-  .daw-body { flex:1; display:grid; grid-template-columns: 230px 1fr; gap:12px; min-height:0; }
+  .daw-body { flex:1; display:grid; grid-template-columns: 250px 1fr; gap:12px; min-height:0; }
   .track-panel { display:flex; flex-direction:column; overflow:hidden; }
   .track-panel-head { padding:12px 14px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
   .track-list { overflow-y:auto; flex:1; }
@@ -48,10 +48,10 @@
   .roll-scroll { flex:1; overflow:auto; position:relative; }
   .roll-grid { position:relative; }
   .roll-row-label {
-    position:sticky; left:0; z-index:3; width:64px; box-sizing:border-box;
+    position:sticky; left:0; z-index:3; width:84px; box-sizing:border-box;
     display:flex; align-items:center; justify-content:flex-end; padding-right:8px;
-    font-size:.62rem; font-family:var(--font-mono); color:var(--text-faint); background:var(--surface-strong);
-    border-bottom:1px solid var(--border); border-right:1px solid var(--border);
+    font-size:.64rem; font-family:var(--font-mono); color:var(--text-faint); background:var(--surface-strong);
+    border-bottom:1px solid var(--border); border-right:1px solid var(--border); white-space:nowrap; overflow:hidden;
   }
   .roll-row-label.black { color: var(--text-dim); }
   .roll-cellrow { position:relative; }
@@ -79,7 +79,7 @@
   }
   .tl-track-row { display:flex; height:56px; border-bottom:1px solid var(--border); }
   .tl-lane {
-    position:relative; flex-shrink:0; height:100%;
+    position:relative; flex-shrink:0; height:100%; min-width:100%;
     background-image:
       repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0, rgba(255,255,255,.05) 1px, transparent 1px, transparent var(--bar-w)),
       repeating-linear-gradient(90deg, var(--border) 0, var(--border) 1px, transparent 1px, transparent calc(var(--bar-w) * 4));
@@ -136,10 +136,12 @@
             <aside class="panel track-panel">
               <div class="track-panel-head">
                 <strong style="font-size:.85rem;">Faixas</strong>
-                <select id="new-track-preset" style="font-size:.7rem;padding:.3em .4em;"></select>
               </div>
               <div class="track-list" id="track-list"></div>
-              <div style="padding:10px;"><button class="btn btn-ghost" id="btn-add-track" style="width:100%;justify-content:center;font-size:.78rem;"><i class="fa-solid fa-plus"></i> Adicionar faixa</button></div>
+              <div style="padding:10px;display:flex;flex-direction:column;gap:6px;">
+                <select id="new-track-preset" style="font-size:.76rem;padding:.5em .6em;"></select>
+                <button class="btn btn-ghost" id="btn-add-track" style="width:100%;justify-content:center;font-size:.78rem;"><i class="fa-solid fa-plus"></i> Adicionar faixa</button>
+              </div>
             </aside>
 
             <section class="panel roll-panel" id="workspace">

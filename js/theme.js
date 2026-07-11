@@ -15,7 +15,11 @@
     { id: "retro",      label: "Retrô",      hue: 130, icon: "fa-tv",          desc: "Terminal CRT · fósforo" },
     { id: "futurista",  label: "Futurista",  hue: 195, icon: "fa-satellite",   desc: "HUD holográfico · claro" },
     { id: "cyberpunk",  label: "Cyberpunk",  hue: 320, icon: "fa-bolt",        desc: "Neon duotone · noturno" },
-    { id: "fofo",       label: "Fofo",       hue: 330, icon: "fa-heart",       desc: "Pastel arredondado" }
+    { id: "fofo",       label: "Fofo",       hue: 330, icon: "fa-heart",       desc: "Pastel arredondado" },
+    { id: "vazio",      label: "Vazio",      hue: 250, icon: "fa-circle-dot",  desc: "Minimalismo extremo" },
+    { id: "musgo",      label: "Musgo",      hue: 100, icon: "fa-leaf",        desc: "Cottagecore · floresta" },
+    { id: "pergaminho", label: "Pergaminho", hue: 25,  icon: "fa-scroll",      desc: "Grimório antigo · sépia" },
+    { id: "vaporwave",  label: "Vaporwave",  hue: 320, icon: "fa-compact-disc", desc: "Rosa/roxo saturado · retrô" }
   ];
 
   var DEFAULT_HUES = {};
@@ -211,6 +215,12 @@
 
     syncUI();
   }
+
+  // brilho sutil que segue o cursor — só tem efeito visível no tema "Vazio"
+  document.addEventListener("pointermove", function (e) {
+    document.documentElement.style.setProperty("--cursor-x", e.clientX + "px");
+    document.documentElement.style.setProperty("--cursor-y", e.clientY + "px");
+  }, { passive: true });
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", buildPanel);

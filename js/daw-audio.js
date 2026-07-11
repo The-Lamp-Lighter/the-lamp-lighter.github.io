@@ -45,18 +45,95 @@
     piano: { label: "Piano Suave", type: "melodic", make: function () {
       return new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, envelope: { attack: 0.01, decay: 0.25, sustain: 0.3, release: 0.9 } }).toDestination();
     } },
+    piano_real: { label: "Piano de Cauda", type: "melodic", make: function () {
+      // amostras reais de piano, hospedadas pelo próprio time do Tone.js
+      return new Tone.Sampler({
+        urls: {
+          A0: "A0.mp3", C1: "C1.mp3", "D#1": "Ds1.mp3", "F#1": "Fs1.mp3", A1: "A1.mp3",
+          C2: "C2.mp3", "D#2": "Ds2.mp3", "F#2": "Fs2.mp3", A2: "A2.mp3",
+          C3: "C3.mp3", "D#3": "Ds3.mp3", "F#3": "Fs3.mp3", A3: "A3.mp3",
+          C4: "C4.mp3", "D#4": "Ds4.mp3", "F#4": "Fs4.mp3", A4: "A4.mp3",
+          C5: "C5.mp3", "D#5": "Ds5.mp3", "F#5": "Fs5.mp3", A5: "A5.mp3",
+          C6: "C6.mp3", "D#6": "Ds6.mp3", "F#6": "Fs6.mp3", A6: "A6.mp3",
+          C7: "C7.mp3", "D#7": "Ds7.mp3", "F#7": "Fs7.mp3", A7: "A7.mp3", C8: "C8.mp3"
+        },
+        release: 1,
+        baseUrl: "https://tonejs.github.io/audio/salamander/"
+      }).toDestination();
+    } },
     lead: { label: "Synth Lead", type: "melodic", make: function () {
       return new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sawtooth" }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.6, release: 0.3 } }).toDestination();
     } },
     bass: { label: "Baixo Grave", type: "melodic", make: function () {
       return new Tone.MonoSynth({ oscillator: { type: "sine" }, envelope: { attack: 0.01, decay: 0.3, sustain: 0.4, release: 0.4 }, filterEnvelope: { attack: 0.01, decay: 0.2, sustain: 0.5, release: 0.4, baseFrequency: 200, octaves: 2 } }).toDestination();
     } },
+    bass_elec: { label: "Baixo Elétrico", type: "melodic", make: function () {
+      return new Tone.MonoSynth({ oscillator: { type: "fmsquare", modulationType: "sawtooth", modulationIndex: 2 }, envelope: { attack: 0.02, decay: 0.4, sustain: 0.2, release: 0.3 }, filterEnvelope: { attack: 0.02, decay: 0.15, sustain: 0.4, release: 0.3, baseFrequency: 250, octaves: 2.5 } }).toDestination();
+    } },
     pad: { label: "Pad Etéreo", type: "melodic", make: function () {
       var verb = new Tone.Reverb({ decay: 6, wet: 0.45 }).toDestination();
       return new Tone.PolySynth(Tone.AMSynth, { envelope: { attack: 0.6, decay: 0.3, sustain: 0.8, release: 2.5 } }).connect(verb);
     } },
+    strings: { label: "Cordas", type: "melodic", make: function () {
+      var chorus = new Tone.Chorus(4, 2.5, 0.4).start().toDestination();
+      return new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: "fatsawtooth", count: 3, spread: 25 },
+        envelope: { attack: 0.35, decay: 0.2, sustain: 0.85, release: 1.2 }
+      }).connect(chorus);
+    } },
+    choir: { label: "Coro", type: "melodic", make: function () {
+      var verb = new Tone.Reverb({ decay: 4, wet: 0.35 }).toDestination();
+      return new Tone.PolySynth(Tone.AMSynth, {
+        harmonicity: 1.5, oscillator: { type: "sine" }, modulation: { type: "sine" },
+        envelope: { attack: 0.5, decay: 0.3, sustain: 0.8, release: 1.5 }
+      }).connect(verb);
+    } },
+    organ: { label: "Órgão", type: "melodic", make: function () {
+      return new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: "fatsquare", count: 3, spread: 10 },
+        envelope: { attack: 0.02, decay: 0.05, sustain: 1, release: 0.15 }
+      }).toDestination();
+    } },
+    guitar_dist: { label: "Guitarra Elétrica", type: "melodic", make: function () {
+      var dist = new Tone.Distortion(0.35).toDestination();
+      return new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: "sawtooth" },
+        envelope: { attack: 0.005, decay: 0.25, sustain: 0.15, release: 0.3 }
+      }).connect(dist);
+    } },
+    guitar_ac: { label: "Violão", type: "melodic", make: function () {
+      return new Tone.PluckSynth({ attackNoise: 1, dampening: 4000, resonance: 0.94 }).toDestination();
+    } },
     pluck: { label: "Pluck Cristalino", type: "melodic", make: function () {
       return new Tone.PluckSynth({ attackNoise: 0.5, dampening: 3000, resonance: 0.9 }).toDestination();
+    } },
+    bells: { label: "Sino", type: "melodic", make: function () {
+      var verb = new Tone.Reverb({ decay: 3, wet: 0.3 }).toDestination();
+      return new Tone.PolySynth(Tone.FMSynth, {
+        harmonicity: 3.01, modulationIndex: 14, oscillator: { type: "sine" },
+        envelope: { attack: 0.001, decay: 2, sustain: 0, release: 2 },
+        modulation: { type: "square" }, modulationEnvelope: { attack: 0.002, decay: 0.2, sustain: 0, release: 0.2 }
+      }).connect(verb);
+    } },
+    marimba: { label: "Marimba", type: "melodic", make: function () {
+      return new Tone.PolySynth(Tone.AMSynth, {
+        harmonicity: 2, oscillator: { type: "sine" },
+        envelope: { attack: 0.001, decay: 0.6, sustain: 0, release: 0.3 }
+      }).toDestination();
+    } },
+    brass: { label: "Metais", type: "melodic", make: function () {
+      return new Tone.PolySynth(Tone.MonoSynth, {
+        oscillator: { type: "fatsawtooth", count: 2, spread: 20 },
+        envelope: { attack: 0.08, decay: 0.2, sustain: 0.7, release: 0.4 },
+        filterEnvelope: { attack: 0.08, decay: 0.3, sustain: 0.5, release: 0.4, baseFrequency: 300, octaves: 3 }
+      }).toDestination();
+    } },
+    flute: { label: "Flauta", type: "melodic", make: function () {
+      var vibrato = new Tone.Vibrato(5, 0.15).toDestination();
+      return new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: "sine" },
+        envelope: { attack: 0.15, decay: 0.1, sustain: 0.8, release: 0.4 }
+      }).connect(vibrato);
     } },
     weird: { label: "FM Estranho", type: "melodic", make: function () {
       return new Tone.PolySynth(Tone.FMSynth, { harmonicity: 3.2, modulationIndex: 12, envelope: { attack: 0.02, decay: 0.3, sustain: 0.4, release: 1 } }).toDestination();

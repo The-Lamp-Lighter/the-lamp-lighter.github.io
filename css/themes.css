@@ -181,3 +181,138 @@
 }
 [data-style="fofo"] html { color-scheme: light; }
 [data-style="fofo"] .card { border-left-width: 4px; border-radius: var(--radius-sm); }
+
+/* ---------------------------------------------------------
+   6. VAZIO — minimalismo extremo, quase todo preto
+--------------------------------------------------------- */
+[data-style="vazio"] {
+  --bg: radial-gradient(ellipse 100% 60% at 50% 0%, #0a0a0c 0%, #030303 60%);
+  --bg-texture: none;
+  --surface: rgba(255,255,255,.025);
+  --surface-strong: rgba(8,8,10,.92);
+  --surface-weak: rgba(5,5,6,.7);
+  --border: rgba(255,255,255,.07);
+  --input-bg: rgba(0,0,0,.45);
+  --text: #cfcfd4;
+  --text-strong: #f5f5f7;
+  --text-dim: #6c6c74;
+  --text-faint: #444448;
+  --on-accent: #050505;
+  --accent-s: 40%;
+  --accent-l: 68%;
+  --radius: 4px;
+  --radius-sm: 2px;
+  --shadow: 0 30px 80px rgba(0,0,0,.85);
+  --glow-sm: 0 0 14px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .25);
+  --font-display: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --display-weight: 300;
+  --display-tracking: .03em;
+}
+[data-style="vazio"] .card { border-left-width: 1px; }
+[data-style="vazio"] body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  background: radial-gradient(circle 260px at var(--cursor-x, 50%) var(--cursor-y, 50%),
+    hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .06), transparent 70%);
+}
+
+/* ---------------------------------------------------------
+   7. MUSGO — cottagecore, floresta, cantos orgânicos
+--------------------------------------------------------- */
+[data-style="musgo"] {
+  --bg: linear-gradient(160deg, #2b3a28 0%, #1e2a1c 60%, #171f14 100%);
+  --bg-texture:
+    radial-gradient(3px 3px at 12% 20%, rgba(210,220,170,.15) 0, transparent 60%),
+    radial-gradient(2px 2px at 70% 55%, rgba(210,220,170,.12) 0, transparent 60%),
+    radial-gradient(2.5px 2.5px at 40% 80%, rgba(210,220,170,.1) 0, transparent 60%);
+  --surface: rgba(140,160,100,.07);
+  --surface-strong: rgba(30,38,26,.88);
+  --surface-weak: rgba(30,38,26,.68);
+  --border: rgba(170,190,130,.22);
+  --input-bg: rgba(18,24,14,.5);
+  --text: #d8e0c8;
+  --text-strong: #eef2e0;
+  --text-dim: #9aa886;
+  --text-faint: #6c7a5c;
+  --on-accent: #182010;
+  --accent-s: 38%;
+  --accent-l: 48%;
+  --radius: 20px;
+  --radius-sm: 13px;
+  --shadow: 0 16px 40px rgba(15,25,8,.4);
+  --glow-sm: 0 0 16px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .3);
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Nunito', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --display-weight: 550;
+  --display-tracking: 0;
+}
+[data-style="musgo"] .card { border-radius: var(--radius-sm); }
+
+/* ---------------------------------------------------------
+   8. PERGAMINHO — grimório antigo, sépia, serifado
+--------------------------------------------------------- */
+[data-style="pergaminho"] {
+  --bg: linear-gradient(155deg, #ecdfc2 0%, #ddccA3 55%, #d0bd94 100%);
+  --bg-texture:
+    radial-gradient(2px 2px at 20% 30%, rgba(90,70,30,.08) 0, transparent 60%),
+    radial-gradient(2px 2px at 75% 60%, rgba(90,70,30,.07) 0, transparent 60%),
+    radial-gradient(2px 2px at 40% 85%, rgba(90,70,30,.06) 0, transparent 60%);
+  --surface: rgba(120,100,60,.08);
+  --surface-strong: rgba(232,222,196,.88);
+  --surface-weak: rgba(232,222,196,.68);
+  --border: rgba(110,90,50,.28);
+  --input-bg: rgba(255,250,235,.65);
+  --text: #4a3f2a;
+  --text-strong: #2c2415;
+  --text-dim: #7a6b4a;
+  --text-faint: #a39370;
+  --on-accent: #fff8e8;
+  --accent-s: 48%;
+  --accent-l: 34%;
+  --radius: 6px;
+  --radius-sm: 3px;
+  --shadow: 0 10px 30px rgba(80,60,20,.28);
+  --glow-sm: 0 0 14px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .3);
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --display-weight: 620;
+  --display-tracking: 0;
+}
+[data-style="pergaminho"] html { color-scheme: light; }
+[data-style="pergaminho"] .card { border-left-width: 2px; }
+
+/* ---------------------------------------------------------
+   9. VAPORWAVE — rosa/roxo/ciano saturado, grid retrô
+--------------------------------------------------------- */
+[data-style="vaporwave"] {
+  --bg: linear-gradient(160deg, #2a1b4a 0%, #4a1b5e 45%, #1b3a5e 100%);
+  --bg-texture:
+    repeating-linear-gradient(180deg, rgba(255,255,255,.035) 0 1px, transparent 1px 26px);
+  --surface: rgba(255,100,200,.08);
+  --surface-strong: rgba(30,15,50,.78);
+  --surface-weak: rgba(30,15,50,.58);
+  --border: rgba(255,150,220,.3);
+  --input-bg: rgba(20,10,35,.5);
+  --text: #f0d9ff;
+  --text-strong: #fff0ff;
+  --text-dim: #c79ee0;
+  --text-faint: #8a6aa8;
+  --on-accent: #1a0a2a;
+  --accent-s: 90%;
+  --accent-l: 65%;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 20px 50px rgba(180,0,150,.3);
+  --glow-sm: 0 0 24px hsl(var(--accent-h) var(--accent-s) var(--accent-l) / .5), 0 0 40px hsl(calc(var(--accent-h) + 60) 90% 65% / .3);
+  --font-display: 'Chakra Petch', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+  --display-weight: 700;
+  --display-tracking: .02em;
+}
+[data-style="vaporwave"] h1, [data-style="vaporwave"] h2 {
+  text-shadow: 1px 0 0 hsl(calc(var(--accent-h) + 60) 90% 65% / .6), -1px 0 0 hsl(var(--accent-h) 90% 65% / .6);
+}
